@@ -59,23 +59,23 @@ export default function BridgeScreen() {
       <View style={styles.content} {...pan.panHandlers}>
         {/* header */}
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: rgba(palette.rgb, 0.20) }]}>KATALEYA</Text>
-        </View>
-
-        {/* headline */}
-        <View style={styles.headlineWrap}>
-          <Text style={[styles.headline, { color: rgba(palette.rgb, 0.40) }]}>
-            life rewritten by choice
-          </Text>
+          <Text style={[styles.headerTitle, { color: rgba(palette.rgb, 0.50) }]}>KATALEYA</Text>
         </View>
 
         {/* labels */}
-        <Text style={[styles.label, { color: rgba(palette.rgb, 0.45) }]}>
+        <Text style={[styles.label, { color: rgba(palette.rgb, 0.80) }]}>
           {palette.displayName}
         </Text>
-        <Text style={[styles.task, { color: rgba(palette.rgb, 0.30) }]}>
+        <Text style={[styles.task, { color: rgba(palette.rgb, 0.60) }]}>
           {palette.existential}
         </Text>
+
+        {/* headline */}
+        <View style={styles.headlineWrap}>
+          <Text style={[styles.headline, { color: rgba(palette.rgb, 0.85) }]}>
+            life rewritten by choice
+          </Text>
+        </View>
 
         {/* center: ring + orb */}
         <View style={styles.center}>
@@ -94,7 +94,7 @@ export default function BridgeScreen() {
         <View style={styles.phraseContainer}>
           <TypewriterText
             text={phrase}
-            color={rgba(palette.rgb, 0.65)}
+            color={rgba(palette.rgb, 0.85)}
             speed={44}
             key={phrase}
           />
@@ -102,12 +102,12 @@ export default function BridgeScreen() {
 
         {/* frequency bridge */}
         <View style={styles.frequencyBridge} pointerEvents="none">
-          <View style={[styles.frequencyLine, { backgroundColor: rgba(palette.rgb, 0.15) }]}>
-            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.35) }]}>..:</Text>
-            <View style={[styles.frequencyGlow, { backgroundColor: rgba(palette.rgb, 0.08) }]} />
-            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.35) }]}>:..</Text>
+          <View style={[styles.frequencyLine, { backgroundColor: rgba(palette.rgb, 0.30) }]}>
+            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.60) }]}>..:</Text>
+            <View style={[styles.frequencyGlow, { backgroundColor: rgba(palette.rgb, 0.20) }]} />
+            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.60) }]}>:..</Text>
           </View>
-          <Text style={[styles.frequencySub, { color: rgba(palette.rgb, 0.12) }]}>
+          <Text style={[styles.frequencySub, { color: rgba(palette.rgb, 0.40) }]}>
             Resonance Synchronization: 11.0s
           </Text>
         </View>
@@ -115,7 +115,7 @@ export default function BridgeScreen() {
 
       {!checkedIn && (
         <View style={styles.hintRow} pointerEvents="none">
-          <Text style={[styles.hint, { color: rgba(palette.rgb, 0.18) }]}>
+          <Text style={[styles.hint, { color: rgba(palette.rgb, 0.35) }]}>
             {showCheckIn ? '' : 'tap orb · check in  ·  swipe right · return'}
           </Text>
         </View>
@@ -123,7 +123,7 @@ export default function BridgeScreen() {
 
       {/* origin footer */}
       <View style={styles.footer} pointerEvents="none">
-        <Text style={[styles.footerText, { color: rgba(palette.rgb, 0.08) }]}>
+        <Text style={[styles.footerText, { color: rgba(palette.rgb, 0.25) }]}>
           // origin: thinkBad-doGood-sa.my
         </Text>
       </View>
@@ -141,31 +141,31 @@ const styles = StyleSheet.create({
   screen:          { flex: 1, backgroundColor: BASE.bg },
   content:         { flex: 1, alignItems: 'center' },
   header: {
-    position: 'absolute', top: 8, left: 0, right: 0,
+    position: 'absolute', top: 12, left: 0, right: 0,
     alignItems: 'center', paddingHorizontal: 24,
   },
   headerTitle: {
     fontFamily: 'Courier Prime', fontSize: 14, letterSpacing: 4,
   },
   headlineWrap: {
-    position: 'absolute', top: 56, left: 0, right: 0,
+    position: 'absolute', top: 80, left: 0, right: 0,
     alignItems: 'center', paddingHorizontal: 32,
   },
   headline: {
-    fontFamily: 'Courier Prime', fontSize: 13,
-    letterSpacing: 3, textAlign: 'center', lineHeight: 22,
+    fontFamily: 'Courier Prime', fontSize: 16,
+    letterSpacing: 3, textAlign: 'center', lineHeight: 24,
     textTransform: 'lowercase',
   },
-  center:          { width: 320, height: 320, alignItems: 'center', justifyContent: 'center', marginTop: 120 },
+  center:          { width: 320, height: 320, alignItems: 'center', justifyContent: 'center', marginTop: 128 },
   ringWrap:        { position: 'absolute' },
   phraseContainer: { marginTop: 40, paddingHorizontal: 48, alignItems: 'center' },
   label: {
-    position: 'absolute', top: 8, left: 24,
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
+    position: 'absolute', top: 44, left: 24,
+    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 3, textTransform: 'lowercase',
   },
   task: {
-    position: 'absolute', top: 8, right: 24,
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
+    position: 'absolute', top: 44, right: 24,
+    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 3, textTransform: 'lowercase',
   },
   frequencyBridge: {
     position: 'absolute', bottom: 64, left: 0, right: 0,
@@ -176,25 +176,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
   },
   frequencyText: {
-    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 3,
+    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 3,
   },
   frequencyGlow: {
-    width: 80, height: 2,
+    width: 80, height: 3,
   },
   frequencySub: {
-    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 1,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 1,
     textTransform: 'uppercase',
   },
   hintRow: { alignItems: 'center', paddingBottom: 24, position: 'absolute', bottom: 32, left: 0, right: 0 },
   hint: {
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2, textTransform: 'lowercase',
+    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 2, textTransform: 'lowercase',
   },
   footer: {
     position: 'absolute', bottom: 16, left: 0, right: 0,
     alignItems: 'center',
   },
   footerText: {
-    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 2,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2,
     textTransform: 'lowercase',
   },
 })

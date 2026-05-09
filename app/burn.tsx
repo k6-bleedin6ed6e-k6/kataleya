@@ -1,18 +1,16 @@
 // app/burn.tsx
 // burn ritual — dissolve a thought into the mercury river.
-// type → hold → watch it blur and sink.
+// tap the thought to ignite → watch it blur and sink.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Animated,
   Dimensions,
   Easing,
-  Keyboard,
   PanResponder,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native'
 import { useRouter } from 'expo-router'
@@ -22,15 +20,21 @@ import { useCircadian } from '../hooks/use-circadian'
 import { BASE } from '../constants/palettes'
 
 const { width: W, height: H } = Dimensions.get('window')
-const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
 
-type BurnState = 'idle' | 'typing' | 'holding' | 'dissolving' | 'gone'
+const THOUGHTS = [
+  "i feel like i am going to fail",
+  "the weight of everything",
+  "i don't know if i can do this",
+  "it would be easier to give up",
+  "nobody would notice",
+]
 
 export default function BurnScreen() {
   const router = useRouter()
   const { phase, palette } = useCircadian()
-  const [text, setText] = useState('')
-  const [burnState, setBurnState] = useState<BurnState>('idle')
+  const [thoughtIndex, setThoughtIndex] = useState(0)
+  const [burning, setBurning] = useState(false)
+  const [done, setDone] = useState(false)
 
   const blurAnim = useRef(new Animated.Value(0)).current
   const sinkAnim = useRef(new Animated.Value(0)).current
@@ -48,26 +52,26 @@ export default function BurnScreen() {
     return () => anim.stop()
   }, [])
 
-  const startDissolve = useCallback(() => {
-    if (!text.trim()) return
-    Keyboard.dismiss()
-    setBurnState('dissolving')
+  const ignite = useCallback(() => {
+    if (burning || done) return
+    setBurning(true)
 
     Animated.parallel([
       Animated.timing(blurAnim, { toValue: 1, duration: 4000, easing: Easing.in(Easing.quad), useNativeDriver: true }),
       Animated.timing(sinkAnim, { toValue: 1, duration: 4000, easing: Easing.in(Easing.cubic), useNativeDriver: true }),
       Animated.timing(opacityAnim, { toValue: 0, duration: 5000, easing: Easing.in(Easing.quad), useNativeDriver: true }),
     ]).start(() => {
-      setBurnState('gone')
+      setDone(true)
       setTimeout(() => {
-        setText('')
+        setThoughtIndex(i => (i + 1) % THOUGHTS.length)
         blurAnim.setValue(0)
         sinkAnim.setValue(0)
         opacityAnim.setValue(1)
-        setBurnState('idle')
-      }, 1500)
+        setBurning(false)
+        setDone(false)
+      }, 2000)
     })
-  }, [text])
+  }, [burning, done])
 
   const pan = useRef(
     PanResponder.create({
@@ -83,12 +87,10 @@ export default function BurnScreen() {
     })
   ).current
 
-  const textBlur = blurAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 8] })
-  const textSink = sinkAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 120] })
+  const textBlur = blurAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 10] })
+  const textSink = sinkAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 100] })
   const orbScale = orbPulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] })
   const orbOpacity = orbPulse.interpolate({ inputRange: [0, 1], outputRange: [0.3, 0.6] })
-
-  const isDissolving = burnState === 'dissolving' || burnState === 'gone'
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -96,12 +98,9 @@ export default function BurnScreen() {
 
         {/* header */}
         <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Text style={[styles.headerDot, { color: palette.accent }]}>●</Text>
-            <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
-          </View>
-          <Text style={[styles.headerTime, { color: `${palette.rgb}66` }]}>
-            {new Date().getHours()}:{new Date().getMinutes().toString().padStart(2, '0')} {new Date().getHours() >= 12 ? 'PM' : 'AM'}
+          <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
+          <Text style={[styles.headerTime, { color: `${palette.rgb}99` }]}>
+            {new Date().getHours()}:{new Date().getMinutes().toString().padStart(2, '0')}
           </Text>
         </View>
 
@@ -128,74 +127,61 @@ export default function BurnScreen() {
             <SphereOrbV2 phase={phase} size={140} variant="lung" />
           </Animated.View>
           <View style={styles.orbLabel}>
-            <Text style={[styles.orbLabelText, { color: `${palette.highlight}99` }]}>
+            <Text style={[styles.orbLabelText, { color: `${palette.highlight}cc` }]}>
               stay with me
             </Text>
-            <View style={[styles.orbLabelLine, { backgroundColor: `${palette.highlight}66` }]} />
+            <View style={[styles.orbLabelLine, { backgroundColor: `${palette.highlight}99` }]} />
           </View>
         </View>
 
         {/* text transmutation area */}
-        <View style={styles.transmuteArea}>
-          {burnState === 'idle' || burnState === 'typing' ? (
-            <>
-              <TextInput
-                style={[
-                  styles.input,
-                  { color: palette.highlight, borderColor: `${palette.accent}33` },
-                ]}
-                value={text}
-                onChangeText={setText}
-                onFocus={() => setBurnState('typing')}
-                onBlur={() => text.trim() ? setBurnState('idle') : setBurnState('idle')}
-                placeholder="what needs to dissolve..."
-                placeholderTextColor={`${palette.rgb}33`}
-                multiline
-                maxLength={120}
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="done"
-              />
-              {text.trim().length > 0 && (
-                <Pressable onPress={startDissolve} style={styles.igniteBtn}>
-                  <Text style={[styles.igniteText, { color: palette.accent }]}>
-                    ignite transmutation
-                  </Text>
-                </Pressable>
-              )}
-            </>
-          ) : (
-            <Animated.View
+        <Pressable onPress={ignite} style={styles.transmuteArea} disabled={burning || done}>
+          <Animated.View
+            style={[
+              styles.dissolvingTextWrap,
+              {
+                opacity: opacityAnim,
+                transform: [{ translateY: textSink }],
+              },
+            ]}
+          >
+            <Animated.Text
               style={[
-                styles.dissolvingTextWrap,
-                {
-                  opacity: opacityAnim,
-                  transform: [{ translateY: textSink }],
-                },
+                styles.dissolvingText,
+                { color: palette.highlight },
+                { textShadowRadius: textBlur },
               ]}
             >
-              <Animated.Text
-                style={[
-                  styles.dissolvingText,
-                  { color: palette.highlight },
-                  { textShadowRadius: textBlur },
-                ]}
-              >
-                {text}
-              </Animated.Text>
-              {burnState === 'dissolving' && (
-                <Text style={[styles.dissolvingHint, { color: `${palette.accent}66` }]}>
-                  just intention. release.
-                </Text>
-              )}
-              {burnState === 'gone' && (
-                <Text style={[styles.dissolvingHint, { color: `${palette.accent}99` }]}>
-                  transmuted.
-                </Text>
-              )}
-            </Animated.View>
+              {THOUGHTS[thoughtIndex]}
+            </Animated.Text>
+            {/* secondary trail */}
+            <Animated.Text
+              style={[
+                styles.dissolvingTrail,
+                { color: palette.highlight, opacity: Animated.multiply(opacityAnim, 0.2) },
+                { textShadowRadius: textBlur },
+              ]}
+            >
+              {THOUGHTS[thoughtIndex]}
+            </Animated.Text>
+          </Animated.View>
+
+          {!burning && !done && (
+            <Text style={[styles.hint, { color: `${palette.accent}99` }]}>
+              tap to release
+            </Text>
           )}
-        </View>
+          {burning && !done && (
+            <Text style={[styles.hint, { color: `${palette.accent}cc` }]}>
+              just intention. release.
+            </Text>
+          )}
+          {done && (
+            <Text style={[styles.hint, { color: `${palette.accent}cc` }]}>
+              transmuted.
+            </Text>
+          )}
+        </Pressable>
 
         {/* mercury river */}
         <View style={styles.river} pointerEvents="none">
@@ -203,48 +189,9 @@ export default function BurnScreen() {
           <View style={[styles.riverLine, { backgroundColor: `${palette.highlight}1a` }]} />
         </View>
 
-        {/* side nav */}
-        <View style={styles.sideNav}>
-          {[
-            { label: 'room', route: '/', icon: '○' },
-            { label: 'cocoon', route: '/cover', icon: '◐' },
-            { label: 'bridge', route: '/bridge', icon: '◑' },
-            { label: 'terminal', route: '/terminal', icon: '◒' },
-          ].map((item) => (
-            <Pressable
-              key={item.label}
-              onPress={() => {
-                if (item.route === '/burn') return
-                router.replace(item.route)
-              }}
-              style={styles.sideNavItem}
-            >
-              <Text style={[styles.sideNavIcon, { color: `${palette.highlight}66` }]}>
-                {item.icon}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        {/* phase / resonance footer */}
-        <View style={styles.footer} pointerEvents="none">
-          <View style={styles.footerLine}>
-            <View style={[styles.footerDash, { backgroundColor: `${palette.highlight}33` }]} />
-            <Text style={[styles.footerText, { color: `${palette.highlight}4d` }]}>
-              PHASE: {phase.toUpperCase()} VIGIL
-            </Text>
-          </View>
-          <View style={styles.footerLine}>
-            <View style={[styles.footerDash, { backgroundColor: `${palette.highlight}33` }]} />
-            <Text style={[styles.footerText, { color: `${palette.highlight}4d` }]}>
-              RESONANCE: 98%
-            </Text>
-          </View>
-        </View>
-
         {/* swipe hint */}
-        <View style={styles.hint} pointerEvents="none">
-          <Text style={[styles.hintText, { color: `${palette.rgb}12` }]}>
+        <View style={styles.swipeHint} pointerEvents="none">
+          <Text style={[styles.swipeHintText, { color: `${palette.rgb}33` }]}>
             ↓ swipe down to return
           </Text>
         </View>
@@ -268,30 +215,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 24,
-    paddingTop: 8,
+    paddingTop: 12,
     zIndex: 10,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerDot: {
-    fontSize: 10,
   },
   headerTitle: {
     fontFamily: 'Courier Prime',
-    fontSize: 14,
+    fontSize: 15,
     letterSpacing: 4,
   },
   headerTime: {
     fontFamily: 'Courier Prime',
-    fontSize: 10,
+    fontSize: 11,
     letterSpacing: 1,
   },
   geometry: {
     position: 'absolute',
-    top: H * 0.25,
+    top: H * 0.22,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
@@ -303,72 +242,59 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   orbArea: {
-    marginTop: H * 0.18,
+    marginTop: H * 0.16,
     alignItems: 'center',
     zIndex: 5,
   },
   orbLabel: {
-    marginTop: 16,
+    marginTop: 20,
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   orbLabelText: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 10,
     letterSpacing: 4,
     textTransform: 'uppercase',
   },
   orbLabelLine: {
     width: 1,
-    height: 24,
+    height: 28,
   },
   transmuteArea: {
-    marginTop: 32,
-    paddingHorizontal: 32,
+    marginTop: 40,
+    paddingHorizontal: 40,
     width: '100%',
     alignItems: 'center',
     zIndex: 5,
-    minHeight: 120,
-  },
-  input: {
-    width: '100%',
-    fontFamily: 'Courier Prime',
-    fontSize: 14,
-    lineHeight: 22,
-    textAlign: 'center',
-    borderBottomWidth: 1,
-    paddingVertical: 12,
-    letterSpacing: 0.5,
-  },
-  igniteBtn: {
-    marginTop: 16,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: '#1c1c28',
-    borderRadius: 20,
-  },
-  igniteText: {
-    fontFamily: 'Courier Prime',
-    fontSize: 9,
-    letterSpacing: 3,
-    textTransform: 'uppercase',
+    minHeight: 140,
   },
   dissolvingTextWrap: {
     alignItems: 'center',
-    gap: 16,
+    gap: 4,
   },
   dissolvingText: {
     fontFamily: 'Courier Prime',
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 18,
+    lineHeight: 28,
     textAlign: 'center',
     fontStyle: 'italic',
     letterSpacing: 0.5,
   },
-  dissolvingHint: {
+  dissolvingTrail: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 18,
+    lineHeight: 28,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    letterSpacing: 0.5,
+    position: 'absolute',
+    top: 4,
+  },
+  hint: {
+    marginTop: 24,
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
     letterSpacing: 4,
     textTransform: 'uppercase',
   },
@@ -397,51 +323,16 @@ const styles = StyleSheet.create({
     height: 2,
     opacity: 0.4,
   },
-  sideNav: {
+  swipeHint: {
     position: 'absolute',
-    right: 24,
-    top: '50%',
-    transform: [{ translateY: -80 }],
-    gap: 20,
-    zIndex: 10,
-  },
-  sideNavItem: {
-    alignItems: 'center',
-  },
-  sideNavIcon: {
-    fontSize: 14,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 48,
-    left: 24,
-    gap: 8,
-    zIndex: 10,
-  },
-  footerLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  footerDash: {
-    width: 36,
-    height: 1,
-  },
-  footerText: {
-    fontFamily: 'Courier Prime',
-    fontSize: 8,
-    letterSpacing: 3,
-  },
-  hint: {
-    position: 'absolute',
-    bottom: 16,
+    bottom: 20,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  hintText: {
+  swipeHintText: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 9,
     letterSpacing: 1.5,
   },
 })

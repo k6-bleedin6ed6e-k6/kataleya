@@ -1,6 +1,7 @@
 // app/terminal.tsx
-// long-press on orb — phosphor noir engine room
-// swipe right or tap close to return
+// phosphor noir engine room — the terminal IS the terminal.
+// sponsor signal is a separate overlay, not a replacement.
+// swipe right or tap exit to return.
 
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -21,14 +22,16 @@ import { useCircadian } from '../hooks/use-circadian';
 import {
   getBreathTechnique,
   setBreathTechnique,
+  clearSurfaceVault,
   type BreathTechnique,
 } from '../utils/storage';
-import { BASE } from '../constants/palettes';
 
 const GREEN = '#33ff33';
 const GREEN_DIM = '#22cc22';
 const GREEN_FAINT = '#113311';
 const BLACK = '#000000';
+const CYAN = '#a8bcd4';
+const CYAN_DIM = '#8090b0';
 
 const { width: W } = Dimensions.get('window');
 const RING_SIZE = Math.min(W * 0.55, 280);
@@ -45,13 +48,23 @@ export default function TerminalScreen() {
   const router = useRouter();
   const { phase, palette, hour, minute } = useCircadian();
   const [technique, setTechniqueState] = useState<BreathTechnique>('resonant');
-  const [showSignal, setShowSignal] = useState(true);
+  const [showSignal, setShowSignal] = useState(false);
+  const [showCursor, setShowCursor] = useState(true);
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     getBreathTechnique().then(setTechniqueState);
   }, []);
 
+  // cursor blink
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 530);
+    return () => clearInterval(interval);
+  }, []);
+
+  // sponsor signal pulse
   useEffect(() => {
     const anim = Animated.loop(
       Animated.sequence([
@@ -67,6 +80,11 @@ export default function TerminalScreen() {
     const next = TECHNIQUES[(TECHNIQUES.indexOf(technique) + 1) % TECHNIQUES.length];
     setTechniqueState(next);
     await setBreathTechnique(next);
+  }
+
+  async function handleOnboardingReset() {
+    await clearSurfaceVault();
+    router.replace('/onboarding');
   }
 
   const panResponder = useRef(
@@ -94,7 +112,132 @@ export default function TerminalScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <View style={styles.container} {...panResponder.panHandlers}>
-        {/* sponsor signal overlay */}
+        {/* ── PHOSPHOR NOIR TERMINAL (always rendered) ── */}
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* boot header */}
+          <Text style={styles.boot}>KATALEYA OS v1.0.4</Text>
+          <Text style={styles.origin}>// origin: thinkBad-doGood-sa.my</Text>
+          <View style={styles.divider} />
+
+          {/* status section */}
+          <View style={styles.section}>
+            <View style={styles.cmdRow}>
+              <Text style={styles.prompt}>$</Text>
+              <Text style={styles.cmd}>status --circadian</Text>
+            </View>
+            <View style={styles.outBlock}>
+              <Text style={styles.out}>  phase       : {phase}</Text>
+              <Text style={styles.out}>  accent      : {palette.accent}</Text>
+              <Text style={styles.out}>  existential : {palette.existential}</Text>
+              <Text style={styles.out}>  time        : {ts}</Text>
+            </View>
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* vault section */}
+          <View style={styles.section}>
+            <View style={styles.cmdRow}>
+              <Text style={styles.prompt}>$</Text>
+              <Text style={styles.cmd}>vault --status</Text>
+            </View>
+            <View style={styles.outBlock}>
+              <Text style={styles.out}>  surface     : initialised</Text>
+              <Text style={styles.out}>  sanctuary   : pending (milestone 3)</Text>
+              <Text style={styles.out}>  fortress    : pending (milestone 5)</Text>
+            </View>
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* breath section */}
+          <View style={styles.section}>
+            <View style={styles.cmdRow}>
+              <Text style={styles.prompt}>$</Text>
+              <Text style={styles.cmd}>breath --technique</Text>
+            </View>
+            <TouchableOpacity
+              onPress={cycleTechnique}
+              style={styles.techniqueRow}
+              activeOpacity={0.6}
+            >
+              <Text style={styles.techniqueMarker}>{'>'}</Text>
+              <Text style={styles.techniqueActive}>{TECHNIQUE_LABEL[technique]}</Text>
+            </TouchableOpacity>
+            <Text style={styles.hint}>  tap to cycle</Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* build section */}
+          <View style={styles.section}>
+            <View style={styles.cmdRow}>
+              <Text style={styles.prompt}>$</Text>
+              <Text style={styles.cmd}>build --status</Text>
+            </View>
+            <View style={styles.outBlock}>
+              <Text style={styles.out}>  milestone 0 : ✓ seed</Text>
+              <Text style={styles.out}>  milestone 1 : ✓ gestures</Text>
+              <Text style={styles.out}>  milestone 2 : ✓ engine room</Text>
+              <Text style={styles.out}>  milestone 3 : ✓ bridge check-in</Text>
+              <Text style={styles.out}>  milestone 4 : ✓ cover rain</Text>
+              <Text style={styles.out}>  milestone 5 : · vaults</Text>
+              <Text style={styles.out}>  milestone 6 : · physician mirror</Text>
+            </View>
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* navigation commands */}
+          <View style={styles.section}>
+            <View style={styles.cmdRow}>
+              <Text style={styles.prompt}>$</Text>
+              <Text style={styles.cmd}>nav --available</Text>
+            </View>
+            <View style={styles.outBlock}>
+              <TouchableOpacity onPress={() => router.push('/mirror')} style={styles.navRow}>
+                <Text style={styles.out}>  /mirror     </Text>
+                <Text style={styles.outAccent}>physician mirror</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowSignal(true)} style={styles.navRow}>
+                <Text style={styles.out}>  /signal     </Text>
+                <Text style={styles.outAccent}>sponsor signal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleOnboardingReset} style={styles.navRow}>
+                <Text style={styles.out}>  /reset      </Text>
+                <Text style={styles.outAccent}>onboarding --reset</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* blinking cursor */}
+          <Text style={[styles.cursor, { opacity: showCursor ? 0.85 : 0 }]}>█</Text>
+
+          {/* exit */}
+          <TouchableOpacity onPress={() => router.back()} style={styles.exitBtn}>
+            <Text style={styles.exitText}>$ exit</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+        {/* terminal footer nav */}
+        <View style={styles.terminalFooter}>
+          <TouchableOpacity onPress={() => setShowSignal(true)} style={styles.terminalFooterBtn}>
+            <Text style={styles.terminalFooterText}>◉ signal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/mirror')} style={styles.terminalFooterBtn}>
+            <Text style={styles.terminalFooterText}>◉ mirror</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()} style={styles.terminalFooterBtn}>
+            <Text style={styles.terminalFooterText}>◉ close</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ── SPONSOR SIGNAL OVERLAY (modal) ── */}
         {showSignal && (
           <View style={styles.signalOverlay}>
             <View style={styles.signalHeader}>
@@ -154,74 +297,6 @@ export default function TerminalScreen() {
             </View>
           </View>
         )}
-
-        {/* terminal content */}
-        {!showSignal && (
-          <>
-            <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-              <Text style={styles.boot}>KATALEYA OS v1.0.4</Text>
-              <Text style={styles.origin}>// origin: thinkBad-doGood-sa.my</Text>
-              <View style={styles.divider} />
-
-              <Text style={styles.cmd}>$ status --circadian</Text>
-              <Text style={styles.out}>  phase       : {phase}</Text>
-              <Text style={styles.out}>  accent      : {palette.accent}</Text>
-              <Text style={styles.out}>  existential : {palette.existential}</Text>
-              <Text style={styles.out}>  time        : {ts}</Text>
-
-              <View style={styles.divider} />
-
-              <Text style={styles.cmd}>$ vault --status</Text>
-              <Text style={styles.out}>  surface     : initialised</Text>
-              <Text style={styles.out}>  sanctuary   : pending (milestone 3)</Text>
-              <Text style={styles.out}>  fortress    : pending (milestone 5)</Text>
-
-              <View style={styles.divider} />
-
-              <Text style={styles.cmd}>$ breath --technique</Text>
-              <TouchableOpacity
-                onPress={cycleTechnique}
-                style={styles.techniqueRow}
-                activeOpacity={0.6}
-              >
-                <Text style={styles.techniqueMarker}>{'>'}</Text>
-                <Text style={styles.techniqueActive}>{TECHNIQUE_LABEL[technique]}</Text>
-              </TouchableOpacity>
-              <Text style={styles.out}>  tap to cycle</Text>
-
-              <View style={styles.divider} />
-
-              <Text style={styles.cmd}>$ build --status</Text>
-              <Text style={styles.out}>  milestone 0 : ✓ seed</Text>
-              <Text style={styles.out}>  milestone 1 : ✓ gestures</Text>
-              <Text style={styles.out}>  milestone 2 : ✓ engine room</Text>
-              <Text style={styles.out}>  milestone 3 : ✓ bridge check-in</Text>
-              <Text style={styles.out}>  milestone 4 : ✓ cover rain</Text>
-              <Text style={styles.out}>  milestone 5 : · vaults</Text>
-              <Text style={styles.out}>  milestone 6 : · physician mirror</Text>
-
-              <View style={styles.divider} />
-
-              <Text style={styles.blink}>█</Text>
-
-              <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-                <Text style={styles.closeText}>$ exit</Text>
-              </TouchableOpacity>
-            </ScrollView>
-
-            <View style={styles.terminalFooter}>
-              <TouchableOpacity onPress={() => setShowSignal(true)} style={styles.terminalFooterBtn}>
-                <Text style={[styles.terminalFooterText, { color: GREEN_DIM }]}>◉ signal</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.push('/mirror')} style={styles.terminalFooterBtn}>
-                <Text style={[styles.terminalFooterText, { color: GREEN_DIM }]}>◉ mirror</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.back()} style={styles.terminalFooterBtn}>
-                <Text style={[styles.terminalFooterText, { color: GREEN_DIM }]}>◉ close</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
       </View>
     </SafeAreaView>
   );
@@ -233,106 +308,160 @@ const styles = StyleSheet.create({
     backgroundColor: BLACK,
   },
   scroll: {
-    paddingTop: 56,
-    paddingHorizontal: 20,
+    paddingTop: 48,
+    paddingHorizontal: 22,
     paddingBottom: 48,
   },
+
+  // ── typography ──
   boot: {
     fontFamily: 'Courier Prime',
-    fontSize: 13,
+    fontSize: 14,
     color: GREEN,
     marginBottom: 4,
     letterSpacing: 0.5,
   },
   origin: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
-    color: GREEN,
-    opacity: 0.55,
+    fontSize: 12,
+    color: CYAN_DIM,
     marginBottom: 4,
     letterSpacing: 0.5,
   },
   divider: {
     height: 1,
     backgroundColor: GREEN_FAINT,
-    marginVertical: 14,
+    marginVertical: 16,
     opacity: 0.6,
+  },
+
+  // ── command sections ──
+  section: {
+    marginBottom: 4,
+  },
+  cmdRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 8,
+    marginBottom: 8,
+  },
+  prompt: {
+    fontFamily: 'Courier Prime',
+    fontSize: 13,
+    color: CYAN_DIM,
+    opacity: 0.55,
+    width: 14,
   },
   cmd: {
     fontFamily: 'Courier Prime',
-    fontSize: 12,
+    fontSize: 13,
     color: GREEN,
-    marginBottom: 6,
     letterSpacing: 0.3,
+  },
+  outBlock: {
+    marginTop: 2,
   },
   out: {
     fontFamily: 'Courier Prime',
+    fontSize: 12,
+    color: GREEN_DIM,
+    opacity: 0.85,
+    marginLeft: 4,
+    marginBottom: 3,
+    letterSpacing: 0.3,
+    lineHeight: 18,
+  },
+  outAccent: {
+    fontFamily: 'Courier Prime',
+    fontSize: 12,
+    color: CYAN,
+    opacity: 0.75,
+    letterSpacing: 0.3,
+    lineHeight: 18,
+  },
+  hint: {
+    fontFamily: 'Courier Prime',
     fontSize: 11,
     color: GREEN_DIM,
-    opacity: 0.8,
+    opacity: 0.5,
     marginLeft: 4,
-    marginBottom: 2,
+    marginTop: 4,
     letterSpacing: 0.3,
   },
+
+  // ── interactive rows ──
   techniqueRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
+    paddingVertical: 5,
     paddingLeft: 4,
   },
   techniqueMarker: {
     fontFamily: 'Courier Prime',
-    fontSize: 11,
+    fontSize: 12,
     color: GREEN_DIM,
-    width: 14,
+    width: 16,
     opacity: 0.6,
   },
   techniqueActive: {
     fontFamily: 'Courier Prime',
-    fontSize: 11,
+    fontSize: 12,
     color: GREEN,
     letterSpacing: 0.3,
   },
-  blink: {
-    fontFamily: 'Courier Prime',
-    fontSize: 13,
-    color: GREEN,
-    opacity: 0.7,
-    marginTop: 8,
+  navRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 3,
   },
-  closeBtn: {
-    marginTop: 20,
+
+  // ── cursor & exit ──
+  cursor: {
+    fontFamily: 'Courier Prime',
+    fontSize: 14,
+    color: GREEN,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  exitBtn: {
+    marginTop: 16,
     paddingVertical: 10,
     paddingHorizontal: 4,
     alignSelf: 'flex-start',
   },
-  closeText: {
+  exitText: {
     fontFamily: 'Courier Prime',
-    fontSize: 12,
+    fontSize: 13,
     color: GREEN,
     letterSpacing: 0.5,
   },
+
+  // ── footer ──
   terminalFooter: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderTopWidth: 1,
     borderTopColor: GREEN_FAINT,
+    backgroundColor: BLACK,
   },
   terminalFooterBtn: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 6,
   },
   terminalFooterText: {
     fontFamily: 'Courier Prime',
-    fontSize: 10,
-    letterSpacing: 1,
+    fontSize: 12,
+    color: GREEN_DIM,
+    letterSpacing: 1.2,
   },
-  // sponsor signal styles
+
+  // ── sponsor signal overlay ──
   signalOverlay: {
-    flex: 1,
-    backgroundColor: BASE.bg,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#050508',
     alignItems: 'center',
+    zIndex: 100,
   },
   signalHeader: {
     flexDirection: 'row',
@@ -350,7 +479,7 @@ const styles = StyleSheet.create({
   },
   signalPhase: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 11,
     color: '#8a8a9e',
     letterSpacing: 1,
   },
@@ -409,7 +538,7 @@ const styles = StyleSheet.create({
   },
   signalLabelSub: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 9,
     letterSpacing: 1,
   },
   signalMessage: {
@@ -432,7 +561,7 @@ const styles = StyleSheet.create({
   },
   signalBtnText: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 10,
     letterSpacing: 2,
     textTransform: 'lowercase',
   },

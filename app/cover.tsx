@@ -3,7 +3,7 @@
 // hold orb 2.5s → progress arc fills → auto-return. release early → arc resets.
 
 import React, { useRef, useState } from 'react'
-import { Animated, Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native'
+import { Animated, Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native'
 import Svg, { Circle } from 'react-native-svg'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
@@ -18,7 +18,7 @@ import { COVER_PHRASES } from '../constants/phrases'
 const AnimatedCircle = Animated.createAnimatedComponent(Circle)
 
 const VARIANT: OrbVariant = 'lung'
-const { width: WIN_W } = Dimensions.get('window')
+const { width: WIN_W, height: WIN_H } = Dimensions.get('window')
 const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
 
 // hold 2.5s → back. ring r=134 sits 12px outside the 244px orb (r=122).
@@ -111,27 +111,18 @@ export default function CoverScreen() {
 
       {/* header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Text style={[styles.headerDot, { color: palette.accent }]}>●</Text>
-          <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
-        </View>
-        <View style={styles.headerRight}>
-          <Text style={[styles.headerTerminal, { color: `${palette.accent}80` }]}>TERMINAL</Text>
-        </View>
+        <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
+        <Pressable onPress={() => router.push('/terminal')}>
+          <Text style={[styles.headerTerminal, { color: `${palette.accent}cc` }]}>TERMINAL</Text>
+        </Pressable>
       </View>
-
-      <Animated.View style={[styles.phraseWrap, { opacity: phraseOpacity }]} pointerEvents="none">
-        <Text style={[styles.phrase, { color: rgba(palette.rgb, 0.75) }]}>
-          {COVER_PHRASES[phraseIndex]}
-        </Text>
-      </Animated.View>
 
       <View style={styles.content} {...pan.panHandlers}>
         <View style={styles.center}>
           <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={WIN_W - 24} hour={hourDecimal} variant={VARIANT} scars={scars} />
+            <OuroborosRing phase={phase} size={WIN_W - 40} hour={hourDecimal} variant={VARIANT} scars={scars} />
           </View>
-          <SphereOrbV2 phase={phase} size={244} variant={VARIANT} />
+          <SphereOrbV2 phase={phase} size={220} variant={VARIANT} />
 
           {/* hold-to-return arc */}
           <Animated.View style={[styles.progressWrap, { opacity: progressOpacity }]} pointerEvents="none">
@@ -154,9 +145,16 @@ export default function CoverScreen() {
         </View>
       </View>
 
+      {/* phrase — below orb */}
+      <Animated.View style={[styles.phraseWrap, { opacity: phraseOpacity }]} pointerEvents="none">
+        <Text style={[styles.phrase, { color: rgba(palette.rgb, 0.85) }]}>
+          {COVER_PHRASES[phraseIndex]}
+        </Text>
+      </Animated.View>
+
       {/* stay with me */}
       <View style={styles.stayWrap} pointerEvents="none">
-        <Text style={[styles.stayText, { color: rgba(palette.rgb, 0.50) }]}>
+        <Text style={[styles.stayText, { color: rgba(palette.rgb, 0.70) }]}>
           stay with me.
         </Text>
       </View>
@@ -164,12 +162,12 @@ export default function CoverScreen() {
       {/* bottom nav hints */}
       <View style={styles.navHints} pointerEvents="none">
         <View style={styles.navHint}>
-          <Text style={[styles.navHintIcon, { color: rgba(palette.rgb, 0.25) }]}>↑</Text>
-          <Text style={[styles.navHintLabel, { color: rgba(palette.rgb, 0.25) }]}>COCOON</Text>
+          <Text style={[styles.navHintIcon, { color: rgba(palette.rgb, 0.50) }]}>↓</Text>
+          <Text style={[styles.navHintLabel, { color: rgba(palette.rgb, 0.50) }]}>BACK</Text>
         </View>
         <View style={styles.navHint}>
-          <Text style={[styles.navHintIcon, { color: rgba(palette.rgb, 0.25) }]}>←</Text>
-          <Text style={[styles.navHintLabel, { color: rgba(palette.rgb, 0.25) }]}>BRIDGE</Text>
+          <Text style={[styles.navHintIcon, { color: rgba(palette.rgb, 0.50) }]}>·</Text>
+          <Text style={[styles.navHintLabel, { color: rgba(palette.rgb, 0.50) }]}>TAP PHRASE</Text>
         </View>
       </View>
     </SafeAreaView>
@@ -180,19 +178,16 @@ const styles = StyleSheet.create({
   screen:   { flex: 1, backgroundColor: BASE.bg },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 24, paddingTop: 8, zIndex: 10,
+    paddingHorizontal: 24, paddingTop: 12, zIndex: 10,
   },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  headerDot: { fontSize: 10 },
-  headerTitle: { fontFamily: 'Courier Prime', fontSize: 14, letterSpacing: 4 },
-  headerRight: { paddingVertical: 4 },
-  headerTerminal: { fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2 },
+  headerTitle: { fontFamily: 'Courier Prime', fontSize: 15, letterSpacing: 4 },
+  headerTerminal: { fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 2 },
   content:  { flex: 1, alignItems: 'center', justifyContent: 'center' },
   center:   { alignItems: 'center', justifyContent: 'center' },
   ringWrap: { position: 'absolute' },
   phraseWrap: {
     position:        'absolute',
-    top:             72,
+    bottom:          140,
     left:            0,
     right:           0,
     alignItems:      'center',
@@ -201,10 +196,10 @@ const styles = StyleSheet.create({
   },
   phrase: {
     fontFamily: 'Courier Prime',
-    fontSize:   15,
-    letterSpacing: 1,
+    fontSize:   16,
+    letterSpacing: 0.5,
     textAlign:  'center',
-    lineHeight: 26,
+    lineHeight: 28,
   },
   progressWrap:   { position: 'absolute' },
   progressRotate: { transform: [{ rotate: '-90deg' }] },
@@ -213,12 +208,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stayText: {
-    fontFamily: 'Courier Prime', fontSize: 12,
+    fontFamily: 'Courier Prime', fontSize: 13,
     letterSpacing: 4, textTransform: 'lowercase',
   },
   navHints: {
-    position: 'absolute', bottom: 48, left: 24,
-    flexDirection: 'row', gap: 24, zIndex: 10,
+    position: 'absolute', bottom: 48, left: 0, right: 0,
+    flexDirection: 'row', justifyContent: 'center', gap: 32, zIndex: 10,
   },
   navHint: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
@@ -227,6 +222,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Courier Prime', fontSize: 12,
   },
   navHintLabel: {
-    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 3,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3,
   },
 })

@@ -12,7 +12,7 @@ import { OuroborosRing } from '../components/ouroboros-ring'
 import { TypewriterText } from '../components/typewriter-text'
 import { useCircadian } from '../hooks/use-circadian'
 import { useReEntry } from '../hooks/use-re-entry'
-import { getItem } from '../utils/storage'
+import { getItem, getAttunement } from '../utils/storage'
 import { selectPhrase } from '../constants/phrases'
 import { PHASES, BASE } from '../constants/palettes'
 
@@ -30,9 +30,20 @@ export default function RoomScreen() {
   const [burnComplete] = useState(false)
   const hourDecimal = hour + minute / 60
 
+  const [sobrietyDays, setSobrietyDays] = useState<number | null>(null)
+
   useEffect(() => {
     getItem<boolean>('has_seen_onboarding').then(seen => {
       if (!seen) router.replace('/onboarding')
+    })
+
+    getAttunement().then(att => {
+      if (att?.sobriety_date) {
+        const start = new Date(att.sobriety_date)
+        const now = new Date()
+        const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+        setSobrietyDays(diff)
+      }
     })
   }, [])
 
@@ -74,14 +85,14 @@ export default function RoomScreen() {
   const handleLongPress = useCallback(() => routerRef.current.push('/terminal'), [])
 
   const accentColor = `rgba(${PHASES[activePhase].rgb}, 0.62)`
-  const hintColor   = `rgba(${palette.rgb}, 0.07)`
+  const hintColor   = `rgba(${palette.rgb}, 0.25)`
 
   // nav items
   const navItems = [
-    { label: 'room',     route: '/',        icon: '○', active: true },
-    { label: 'cocoon',   route: '/cover',   icon: '◐', active: false },
-    { label: 'bridge',   route: '/bridge',  icon: '◑', active: false },
-    { label: 'terminal', route: '/terminal', icon: '◒', active: false },
+    { label: 'room',     route: '/',        active: true },
+    { label: 'cocoon',   route: '/cover',   active: false },
+    { label: 'bridge',   route: '/bridge',  active: false },
+    { label: 'terminal', route: '/terminal', active: false },
   ]
 
   return (
@@ -91,18 +102,17 @@ export default function RoomScreen() {
         {/* ── header ── */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text style={[styles.headerDot, { color: palette.accent }]}>●</Text>
             <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
           </View>
           <Pressable onPress={() => router.push('/terminal')} style={styles.headerRight}>
-            <Text style={[styles.headerTerminal, { color: `${palette.accent}80` }]}>TERMINAL</Text>
+            <Text style={[styles.headerTerminal, { color: `${palette.accent}cc` }]}>TERMINAL</Text>
           </Pressable>
         </View>
 
         {/* ── phase label ── */}
         <View style={styles.phaseRow}>
           <View style={[styles.phaseLine, { backgroundColor: `${palette.accent}33` }]} />
-          <Text style={[styles.phaseLabel, { color: `${palette.accent}99` }]}>
+          <Text style={[styles.phaseLabel, { color: `${palette.accent}cc` }]}>
             CIRCADIAN PHASE: {activePhase.toUpperCase()}
           </Text>
           <View style={[styles.phaseLine, { backgroundColor: `${palette.accent}33` }]} />
@@ -134,16 +144,14 @@ export default function RoomScreen() {
         </View>
 
         {/* ── metrics ── */}
-        <View style={styles.metrics}>
-          <View style={styles.metric}>
-            <Text style={[styles.metricLabel, { color: `${palette.rgb}66` }]}>RESONANCE</Text>
-            <Text style={[styles.metricValue, { color: palette.accent }]}>98%</Text>
+        {sobrietyDays !== null && (
+          <View style={styles.metrics}>
+            <View style={styles.metric}>
+              <Text style={[styles.metricLabel, { color: `${palette.rgb}99` }]}>SOBRIETY</Text>
+              <Text style={[styles.metricValue, { color: palette.accent }]}>{sobrietyDays} DAYS</Text>
+            </View>
           </View>
-          <View style={styles.metric}>
-            <Text style={[styles.metricLabel, { color: `${palette.rgb}66` }]}>ENTROPY</Text>
-            <Text style={[styles.metricValue, { color: palette.accent }]}>0.04</Text>
-          </View>
-        </View>
+        )}
 
         {/* ── bottom nav ── */}
         <View style={styles.navBar}>
@@ -158,10 +166,7 @@ export default function RoomScreen() {
                 item.active && { backgroundColor: `${palette.accent}20`, borderColor: `${palette.accent}4d` },
               ]}
             >
-              <Text style={[styles.navIcon, { color: item.active ? palette.accent : `${palette.rgb}66` }]}>
-                {item.icon}
-              </Text>
-              <Text style={[styles.navLabel, { color: item.active ? palette.accent : `${palette.rgb}66` }]}>
+              <Text style={[styles.navLabel, { color: item.active ? palette.accent : `${palette.rgb}aa` }]}>
                 {item.label}
               </Text>
             </Pressable>
@@ -201,12 +206,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  headerDot: {
-    fontSize: 10,
-  },
   headerTitle: {
     fontFamily: 'Courier Prime',
-    fontSize: 14,
+    fontSize: 15,
     letterSpacing: 4,
   },
   headerRight: {
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
   },
   headerTerminal: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 10,
     letterSpacing: 2,
   },
   phaseRow: {
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
   },
   phaseLabel: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 10,
     letterSpacing: 3,
   },
   ringWrap: {
@@ -245,7 +247,7 @@ const styles = StyleSheet.create({
   },
   phrase: {
     position: 'absolute',
-    top: ORB_TOP + ORB_SIZE + 24,
+    top: ORB_TOP + ORB_SIZE + 32,
     left: 44,
     right: 44,
     alignItems: 'center',
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 10,
     letterSpacing: 2,
   },
   metricValue: {
@@ -285,21 +287,17 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   navItem: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'transparent',
   },
-  navIcon: {
-    fontSize: 10,
-  },
   navLabel: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 10,
     letterSpacing: 2,
     textTransform: 'lowercase',
   },
@@ -312,7 +310,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 9,
     letterSpacing: 1.5,
     textTransform: 'lowercase',
   },
