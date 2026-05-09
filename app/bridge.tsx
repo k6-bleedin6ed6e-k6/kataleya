@@ -57,6 +57,19 @@ export default function BridgeScreen() {
       <Atmosphere phase={phase} />
 
       <View style={styles.content} {...pan.panHandlers}>
+        {/* header */}
+        <View style={styles.header}>
+          <Text style={[styles.headerTitle, { color: rgba(palette.rgb, 0.20) }]}>KATALEYA</Text>
+        </View>
+
+        {/* headline */}
+        <View style={styles.headlineWrap}>
+          <Text style={[styles.headline, { color: rgba(palette.rgb, 0.40) }]}>
+            life rewritten by choice
+          </Text>
+        </View>
+
+        {/* labels */}
         <Text style={[styles.label, { color: rgba(palette.rgb, 0.45) }]}>
           {palette.displayName}
         </Text>
@@ -64,11 +77,11 @@ export default function BridgeScreen() {
           {palette.existential}
         </Text>
 
+        {/* center: ring + orb */}
         <View style={styles.center}>
           <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={260} hour={hourDecimal} variant={VARIANT} />
+            <OuroborosRing phase={phase} size={320} hour={hourDecimal} variant={VARIANT} />
           </View>
-          {/* orb is deliberately small — the ring is the clock, the orb is the tap target */}
           <SphereOrbV2
             phase={phase}
             size={140}
@@ -77,6 +90,7 @@ export default function BridgeScreen() {
           />
         </View>
 
+        {/* phrase */}
         <View style={styles.phraseContainer}>
           <TypewriterText
             text={phrase}
@@ -84,6 +98,18 @@ export default function BridgeScreen() {
             speed={44}
             key={phrase}
           />
+        </View>
+
+        {/* frequency bridge */}
+        <View style={styles.frequencyBridge} pointerEvents="none">
+          <View style={[styles.frequencyLine, { backgroundColor: rgba(palette.rgb, 0.15) }]}>
+            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.35) }]}>..:</Text>
+            <View style={[styles.frequencyGlow, { backgroundColor: rgba(palette.rgb, 0.08) }]} />
+            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.35) }]}>:..</Text>
+          </View>
+          <Text style={[styles.frequencySub, { color: rgba(palette.rgb, 0.12) }]}>
+            Resonance Synchronization: 11.0s
+          </Text>
         </View>
       </View>
 
@@ -94,6 +120,13 @@ export default function BridgeScreen() {
           </Text>
         </View>
       )}
+
+      {/* origin footer */}
+      <View style={styles.footer} pointerEvents="none">
+        <Text style={[styles.footerText, { color: rgba(palette.rgb, 0.08) }]}>
+          // origin: thinkBad-doGood-sa.my
+        </Text>
+      </View>
 
       <MoodCheck
         phase={phase}
@@ -106,10 +139,26 @@ export default function BridgeScreen() {
 
 const styles = StyleSheet.create({
   screen:          { flex: 1, backgroundColor: BASE.bg },
-  content:         { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  center:          { width: 300, height: 300, alignItems: 'center', justifyContent: 'center' },
+  content:         { flex: 1, alignItems: 'center' },
+  header: {
+    position: 'absolute', top: 8, left: 0, right: 0,
+    alignItems: 'center', paddingHorizontal: 24,
+  },
+  headerTitle: {
+    fontFamily: 'Courier Prime', fontSize: 14, letterSpacing: 4,
+  },
+  headlineWrap: {
+    position: 'absolute', top: 56, left: 0, right: 0,
+    alignItems: 'center', paddingHorizontal: 32,
+  },
+  headline: {
+    fontFamily: 'Courier Prime', fontSize: 13,
+    letterSpacing: 3, textAlign: 'center', lineHeight: 22,
+    textTransform: 'lowercase',
+  },
+  center:          { width: 320, height: 320, alignItems: 'center', justifyContent: 'center', marginTop: 120 },
   ringWrap:        { position: 'absolute' },
-  phraseContainer: { marginTop: 56, paddingHorizontal: 48, alignItems: 'center' },
+  phraseContainer: { marginTop: 40, paddingHorizontal: 48, alignItems: 'center' },
   label: {
     position: 'absolute', top: 8, left: 24,
     fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
@@ -118,8 +167,34 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 8, right: 24,
     fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
   },
-  hintRow: { alignItems: 'center', paddingBottom: 24 },
+  frequencyBridge: {
+    position: 'absolute', bottom: 64, left: 0, right: 0,
+    alignItems: 'center', gap: 8, paddingHorizontal: 32,
+  },
+  frequencyLine: {
+    height: 1, width: '80%',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+  },
+  frequencyText: {
+    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 3,
+  },
+  frequencyGlow: {
+    width: 80, height: 2,
+  },
+  frequencySub: {
+    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  hintRow: { alignItems: 'center', paddingBottom: 24, position: 'absolute', bottom: 32, left: 0, right: 0 },
   hint: {
     fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2, textTransform: 'lowercase',
+  },
+  footer: {
+    position: 'absolute', bottom: 16, left: 0, right: 0,
+    alignItems: 'center',
+  },
+  footerText: {
+    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 2,
+    textTransform: 'lowercase',
   },
 })

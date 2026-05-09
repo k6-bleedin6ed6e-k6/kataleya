@@ -1,5 +1,5 @@
 // app/cover.tsx
-// swipe up from room — 2am lung. tap to cycle phrases. swipe down to return.
+// swipe up from room — 2am cocoon. tap to cycle phrases. swipe down to return.
 // hold orb 2.5s → progress arc fills → auto-return. release early → arc resets.
 
 import React, { useRef, useState } from 'react'
@@ -101,10 +101,24 @@ export default function CoverScreen() {
     extrapolate: 'clamp',
   })
 
+  // scars for the ouroboros ring
+  const scars = [15, 105, 195, 285]
+
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <RiverRipples phaseColor={palette.accent} />
       <Atmosphere phase={phase} heavy />
+
+      {/* header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Text style={[styles.headerDot, { color: palette.accent }]}>●</Text>
+          <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
+        </View>
+        <View style={styles.headerRight}>
+          <Text style={[styles.headerTerminal, { color: `${palette.accent}80` }]}>TERMINAL</Text>
+        </View>
+      </View>
 
       <Animated.View style={[styles.phraseWrap, { opacity: phraseOpacity }]} pointerEvents="none">
         <Text style={[styles.phrase, { color: rgba(palette.rgb, 0.75) }]}>
@@ -115,11 +129,11 @@ export default function CoverScreen() {
       <View style={styles.content} {...pan.panHandlers}>
         <View style={styles.center}>
           <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={WIN_W - 24} hour={hourDecimal} variant={VARIANT} />
+            <OuroborosRing phase={phase} size={WIN_W - 24} hour={hourDecimal} variant={VARIANT} scars={scars} />
           </View>
           <SphereOrbV2 phase={phase} size={244} variant={VARIANT} />
 
-          {/* hold-to-return arc — starts at 12 o'clock, fills clockwise on sustained hold */}
+          {/* hold-to-return arc */}
           <Animated.View style={[styles.progressWrap, { opacity: progressOpacity }]} pointerEvents="none">
             <View style={styles.progressRotate}>
               <Svg width={RING_D} height={RING_D}>
@@ -139,12 +153,40 @@ export default function CoverScreen() {
           </Animated.View>
         </View>
       </View>
+
+      {/* stay with me */}
+      <View style={styles.stayWrap} pointerEvents="none">
+        <Text style={[styles.stayText, { color: rgba(palette.rgb, 0.50) }]}>
+          stay with me.
+        </Text>
+      </View>
+
+      {/* bottom nav hints */}
+      <View style={styles.navHints} pointerEvents="none">
+        <View style={styles.navHint}>
+          <Text style={[styles.navHintIcon, { color: rgba(palette.rgb, 0.25) }]}>↑</Text>
+          <Text style={[styles.navHintLabel, { color: rgba(palette.rgb, 0.25) }]}>COCOON</Text>
+        </View>
+        <View style={styles.navHint}>
+          <Text style={[styles.navHintIcon, { color: rgba(palette.rgb, 0.25) }]}>←</Text>
+          <Text style={[styles.navHintLabel, { color: rgba(palette.rgb, 0.25) }]}>BRIDGE</Text>
+        </View>
+      </View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   screen:   { flex: 1, backgroundColor: BASE.bg },
+  header: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingHorizontal: 24, paddingTop: 8, zIndex: 10,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  headerDot: { fontSize: 10 },
+  headerTitle: { fontFamily: 'Courier Prime', fontSize: 14, letterSpacing: 4 },
+  headerRight: { paddingVertical: 4 },
+  headerTerminal: { fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2 },
   content:  { flex: 1, alignItems: 'center', justifyContent: 'center' },
   center:   { alignItems: 'center', justifyContent: 'center' },
   ringWrap: { position: 'absolute' },
@@ -166,4 +208,25 @@ const styles = StyleSheet.create({
   },
   progressWrap:   { position: 'absolute' },
   progressRotate: { transform: [{ rotate: '-90deg' }] },
+  stayWrap: {
+    position: 'absolute', bottom: 96, left: 0, right: 0,
+    alignItems: 'center',
+  },
+  stayText: {
+    fontFamily: 'Courier Prime', fontSize: 12,
+    letterSpacing: 4, textTransform: 'lowercase',
+  },
+  navHints: {
+    position: 'absolute', bottom: 48, left: 24,
+    flexDirection: 'row', gap: 24, zIndex: 10,
+  },
+  navHint: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+  },
+  navHintIcon: {
+    fontFamily: 'Courier Prime', fontSize: 12,
+  },
+  navHintLabel: {
+    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 3,
+  },
 })

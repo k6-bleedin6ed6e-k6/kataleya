@@ -33,6 +33,8 @@ export default function RootLayout() {
         <Stack.Screen name="bridge" />
         <Stack.Screen name="cover" />
         <Stack.Screen name="terminal" />
+        <Stack.Screen name="burn" />
+        <Stack.Screen name="mirror" />
       </Stack>
     </View>
   );
