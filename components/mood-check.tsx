@@ -1,7 +1,6 @@
 // components/mood-check.tsx
 // weather inside — the bridge check-in overlay
 // tap a mood label → immediate save to sanctuary → fade out
-// no text input, no submit button — the tap IS the seal
 
 import React, { useEffect, useRef } from 'react'
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
@@ -71,39 +70,39 @@ export function MoodCheck({ phase, visible, onComplete }: Props) {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: BASE.bg + 'f0',  // 94% opacity near-black
+    backgroundColor: BASE.bg + 'f2',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 10,
+    zIndex: 20,
   },
   prompt: {
     fontFamily: 'Courier Prime',
-    fontSize: 14,
+    fontSize: 16,
     color: BASE.text,
     letterSpacing: 2,
-    opacity: 0.7,
-    marginBottom: 40,
+    opacity: 0.85,
+    marginBottom: 36,
     textTransform: 'lowercase',
   },
   options: {
     alignItems: 'center',
-    gap: 20,
+    gap: 18,
   },
   option: {
     fontFamily: 'Courier Prime',
-    fontSize: 18,
+    fontSize: 20,
     color: BASE.textMuted,
     letterSpacing: 4,
     textTransform: 'lowercase',
-    opacity: 0.55,
+    opacity: 0.7,
   },
   hint: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 11,
     color: BASE.textMuted,
     letterSpacing: 2,
-    opacity: 0.28,
-    marginTop: 44,
+    opacity: 0.4,
+    marginTop: 36,
     textTransform: 'lowercase',
   },
 })
