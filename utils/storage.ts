@@ -30,6 +30,9 @@ const KEYS = {
 
   // season (seed → root → stem → bloom)
   active_season: '@kataleya/active-season',
+
+  // onboarding gate — written on seal completion
+  has_seen_onboarding: '@kataleya/has-seen-onboarding',
 } as const;
 
 type StorageKey = keyof typeof KEYS;

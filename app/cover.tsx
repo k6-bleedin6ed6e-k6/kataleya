@@ -1,11 +1,11 @@
 // app/cover.tsx
 // swipe up from room — 2am lung. tap to cycle phrases. swipe down to return.
+// visual intent: immersive cocoon. strip everything. only breath and phrase remain.
 
 import React, { useRef, useState } from 'react'
-import { Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native'
+import { Animated, Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { MercurySpine } from '../components/mercury-spine'
 import { OuroborosRing } from '../components/ouroboros-ring'
 import { SphereOrbV2, type OrbVariant } from '../components/sphere-orb-v2'
 import { Atmosphere } from '../components/atmosphere'
@@ -21,6 +21,7 @@ export default function CoverScreen() {
   const router = useRouter()
   const { phase, palette, hour, minute } = useCircadian()
   const [phraseIndex, setPhraseIndex] = useState(0)
+  const phraseOpacity = useRef(new Animated.Value(1)).current
   const hourDecimal = hour + minute / 60
 
   const pan = useRef(
@@ -33,7 +34,14 @@ export default function CoverScreen() {
         if (absDy > 60 && absDy > absDx * 1.5 && g.dy > 0) {
           router.back()
         } else if (absDx < 15 && absDy < 15) {
-          setPhraseIndex((i) => (i + 1) % COVER_PHRASES.length)
+          Animated.timing(phraseOpacity, {
+            toValue: 0, duration: 200, useNativeDriver: true,
+          }).start(() => {
+            setPhraseIndex((i) => (i + 1) % COVER_PHRASES.length)
+            Animated.timing(phraseOpacity, {
+              toValue: 1, duration: 400, useNativeDriver: true,
+            }).start()
+          })
         }
       },
     })
@@ -41,56 +49,61 @@ export default function CoverScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <MercurySpine phase={phase} width={WIN_W} height={WIN_H} />
-      <Atmosphere heavy />
-      <View style={styles.content} {...pan.panHandlers}>
-        <Text style={[styles.label, { color: rgba(palette.rgb, 0.4) }]}>
-          {palette.displayName}
-        </Text>
-        <Text style={[styles.task, { color: rgba(palette.rgb, 0.25) }]}>
-          {palette.existential}
-        </Text>
+      {/* heavier atmosphere than room or bridge — this is the cocoon */}
+      <Atmosphere phaseColor={palette.accent} heavy />
 
-        <View style={styles.center}>
-          <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={320} hour={hourDecimal} variant={VARIANT} />
-          </View>
-          <SphereOrbV2 phase={phase} size={200} variant={VARIANT} />
-        </View>
-
-        <Text style={[styles.phrase, { color: rgba(palette.rgb, 0.55) }]} key={phraseIndex}>
+      {/* phrase pins to top — orb owns the center */}
+      <Animated.View style={[styles.phraseWrap, { opacity: phraseOpacity }]} pointerEvents="none">
+        <Text style={[styles.phrase, { color: rgba(palette.rgb, 0.75) }]}>
           {COVER_PHRASES[phraseIndex]}
         </Text>
-      </View>
+      </Animated.View>
 
-      <View style={styles.hintRow} pointerEvents="none">
-        <Text style={[styles.hint, { color: rgba(palette.rgb, 0.18) }]}>
-          swipe down · return · tap · next
-        </Text>
+      <View style={styles.content} {...pan.panHandlers}>
+        <View style={styles.center}>
+          {/* ring spans nearly full width — dwarfs bridge's 300px ring */}
+          <View style={styles.ringWrap}>
+            <OuroborosRing phase={phase} size={WIN_W - 24} hour={hourDecimal} variant={VARIANT} />
+          </View>
+          {/* orb is large and fills the ring — you are inside it */}
+          <SphereOrbV2 phase={phase} size={244} variant={VARIANT} />
+        </View>
       </View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  screen:   { flex: 1, backgroundColor: '#000' },
-  content:  { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  center:   { width: 320, height: 320, alignItems: 'center', justifyContent: 'center' },
-  ringWrap: { position: 'absolute' },
-  label: {
-    position: 'absolute', top: 8, left: 24,
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
+  screen: {
+    flex: 1,
+    backgroundColor: BASE.bg,
   },
-  task: {
-    position: 'absolute', top: 8, right: 24,
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ringWrap: {
+    position: 'absolute',
+  },
+  phraseWrap: {
+    position: 'absolute',
+    top: 72,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 2,
+    paddingHorizontal: 48,
   },
   phrase: {
-    marginTop: 56, fontFamily: 'Courier Prime', fontSize: 13,
-    letterSpacing: 0.5, textAlign: 'center', maxWidth: 280,
-  },
-  hintRow: { alignItems: 'center', paddingBottom: 24 },
-  hint: {
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2, textTransform: 'lowercase',
+    fontFamily: 'Courier Prime',
+    fontSize: 15,
+    letterSpacing: 1,
+    textAlign: 'center',
+    lineHeight: 26,
   },
 })

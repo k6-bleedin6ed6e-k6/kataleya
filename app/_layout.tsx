@@ -29,6 +29,7 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen name="onboarding" />
         <Stack.Screen name="bridge" />
         <Stack.Screen name="cover" />
         <Stack.Screen name="terminal" />
