@@ -82,24 +82,26 @@
 
 ## 5. LIVE SIGN-OFFS
 
-> Write your name and what you're starting on.
-
-**Kimi** (ALL SHIPPED):
+**Kimi** (ALL SHIPPED — 2026-05-09 v2 redo):
 - [x] Asset cleanup — deleted 6.8MB butterfly gif, ezgif, orr.jpeg, potential-orb assets, dead components (`sphere-orb.tsx`, `hud-corners.tsx`)
-- [x] `components/ouroboros-ring.tsx` — Whisper ring (60 micro-dots), tick variation by proximity+major/minor, scar notches (gap + bracket strokes), now-diamond marker with halo, 6-tick comet tail. All SVG.
-- [x] `components/garden-presence.tsx` — Seed rebuilt as SVG membrane with radial gradients (core + rim + inner nucleus). Wings as forewing/hindwing pairs with leading edges + vein paths. Spine expanded to 5 braided strands. Scars as fracture-line pairs.
-- [x] `surface/mercury-caduceus.tsx` — 7 depth-layered strands (2 foreground + 2 mid + 2 ghost + 1 spine), staggered dash/gap/speed per strand, 3 gradient tiers by depth.
-- [x] `surface/river-ripples.tsx` — 6 rings with varying thickness/peak opacity, center source dot with pulse, better scale/opacity curves.
-- [x] `surface/river-columns.tsx` — DELETED (mechanical dashed lines, weakest of the three).
-- [x] Wired `MercuryCaduceus` into `app/index.tsx` (Room background) and `RiverRipples` into `app/cover.tsx` (cocoon background).
+- [x] `components/garden-presence.tsx` — **v2 complete rewrite**. 3 depth layers: ambient wash (back), spine+wings (middle), seed (front). Seed: 5 SVG membrane layers using full palette. Spine: one luminous column. Wings: 2 soft radial fields, no hard paths. Scars: 4 luminous pulse points.
+- [x] `components/ouroboros-ring.tsx` — **v2 complete rewrite**. 12 hour-nodes. Faint thread brightens near now. Now-arc: ±2h bright stroke + rim dot. Scars: dark breaks.
+- [x] `surface/mercury-caduceus.tsx` — **v2 simplified**. 2 slow rivers of light, very faint.
+- [x] `surface/river-ripples.tsx` — **v2 simplified**. 2 soft pulses from center.
+- [x] `surface/river-columns.tsx` — DELETED.
+- [x] Wired `MercuryCaduceus` into Room, `RiverRipples` into Cover.
+- [x] `AGENTS.md` — full rewrite: file tree, deleted files, palette v2, sanctuary schema, graphics direction, session history.
+- [x] `CHECKPOINT-2026-05-09.md` — milestone table, gesture map, palette table, dep table, next steps.
 - [x] Build verified: `npx expo export --platform web` passes, `npx tsc --noEmit` passes.
 
-**Claude** (2026-05-09):
-- [x] `constants/palettes.ts` — palette v2: added shadow/highlight/ambient/rim to all 4 phases. PhasePalette interface expanded, all existing fields kept (backward compat). tsc clean.
-- [x] `components/sphere-orb-v2.tsx` — lung variant rebuilt: 5 SVG gradient layers (haze/body/rim/iris/nucleus). Light source at upper-left. Phase-namespaced SVG IDs (no web collision). etched + iris updated with highlight/rim too. tsc clean.
-- [x] `components/atmosphere.tsx` — phase-bleed vignette: top uses ambient fog + accent tint, bottom pools phase shadow (heavy mode deepens to 55% height), left/right use ambient + accent seep, added vertical bioluminescent light column (16% width center strip). `phase` prop added (full color family); `phaseColor` kept for compat. tsc clean.
-- [x] `app/bridge.tsx` + `app/cover.tsx` — threaded `phase` prop into Atmosphere calls so full color family is used.
-- [x] Asset audit — assets/ clean (Kimi already deleted bloat). Remaining: icon.png, adaptive-icon.png, splash-icon.png, favicon.png. All valid. No action needed.
+**Claude** (2026-05-09 — v3 DIRECTION RESET):
+> User said everything was still trash. New direction: strip all decoration. Room = orb + phrase + darkness.
+
+- [x] `components/sphere-orb-v2.tsx` — **rebuilt from scratch**. 3 SVG gradients (sphere + rim + specular). Real lighting: upper-left source, shadow at lower-right, thin rim back-scatter, specular point. Aura breathes independently at 88% of body rate (organic desync). Body scale 3.8%. Aura scale 45%. No 5-layer system.
+- [x] `app/index.tsx` — **room stripped to void**. GardenPresence removed. MercuryCaduceus removed. Big orb (W×0.80) + TypewriterText phrase. Nothing else. Ghost hint at 7% opacity.
+- [x] `components/atmosphere.tsx` — **two gradients, full stop**. Top dark fade, bottom dark pool. No phase color in atmosphere (the orb IS the phase). No column. No side bleed.
+
+**KIMI NOTE:** The room no longer uses `garden-presence.tsx`. That component is available for bridge/cover if needed, but the room is now orb-only. Don't add decoration back to the room screen.
 
 ---
 

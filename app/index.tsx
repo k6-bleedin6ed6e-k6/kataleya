@@ -1,36 +1,30 @@
 // app/index.tsx
-// the room — integrated presence. swipe left → bridge, swipe up → cover, long-press → terminal.
+// the room. one sphere. one phrase. darkness.
+// swipe left → bridge. swipe up → cover. long-press → terminal.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Easing, PanResponder, StyleSheet, Text, View } from 'react-native'
+import { Animated, Dimensions, Easing, PanResponder, StyleSheet, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
-import { GardenPresence } from '../components/garden-presence'
-import { MercuryCaduceus } from '../surface/mercury-caduceus'
+import { SphereOrbV2 } from '../components/sphere-orb-v2'
+import { TypewriterText } from '../components/typewriter-text'
 import { useCircadian } from '../hooks/use-circadian'
 import { useReEntry } from '../hooks/use-re-entry'
 import { getItem } from '../utils/storage'
 import { selectPhrase } from '../constants/phrases'
-import { BASE } from '../constants/palettes'
-import type { PhaseKey } from '../constants/palettes'
+import { PHASES, BASE } from '../constants/palettes'
 
-// PhaseKey → GardenPresence Phase
-type PresencePhase = 'void' | 'dawn' | 'day' | 'golden'
-function toPresencePhase(phase: PhaseKey): PresencePhase {
-  if (phase === 'night')      return 'void'
-  if (phase === 'goldenHour') return 'golden'
-  return phase as 'dawn' | 'day'
-}
-
-const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
+const { width: W, height: H } = Dimensions.get('window')
+const ORB_SIZE    = Math.round(W * 0.80)
+const ORB_TOP     = Math.round(H * 0.40 - ORB_SIZE / 2)
+const PHRASE_TOP  = Math.round(H * 0.40 + ORB_SIZE / 2 + 40)
 
 export default function RoomScreen() {
-  const router = useRouter()
+  const router  = useRouter()
   const { phase, palette } = useCircadian()
   const { activePhase, isInGrace, isBlending, gracePhrase } = useReEntry(phase)
   const isReEntry = isInGrace || isBlending
   const [burnComplete] = useState(false)
 
-  // redirect to onboarding if first launch
   useEffect(() => {
     getItem<boolean>('has_seen_onboarding').then(seen => {
       if (!seen) router.replace('/onboarding')
@@ -44,7 +38,6 @@ export default function RoomScreen() {
     lastBurnComplete: burnComplete,
   })
 
-  // fade in on re-entry grace
   const entryFade = useRef(new Animated.Value(1)).current
   useEffect(() => {
     if (isInGrace) {
@@ -56,6 +49,9 @@ export default function RoomScreen() {
     }
   }, [isInGrace])
 
+  const routerRef = useRef(router)
+  routerRef.current = router
+
   const pan = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
@@ -63,30 +59,48 @@ export default function RoomScreen() {
       onMoveShouldSetPanResponder: (_, { dx, dy }) => Math.abs(dx) > 12 || Math.abs(dy) > 12,
       onMoveShouldSetPanResponderCapture: () => false,
       onPanResponderRelease: (_, { dx, dy }) => {
-        const absDx = Math.abs(dx)
-        const absDy = Math.abs(dy)
-        if (absDx > 60 && absDx > absDy * 1.5 && dx < 0) router.push('/bridge')
-        else if (absDy > 60 && absDy > absDx * 1.5 && dy < 0) router.push('/cover')
+        const ax = Math.abs(dx), ay = Math.abs(dy)
+        if (ax > 60 && ax > ay * 1.5 && dx < 0) routerRef.current.push('/bridge')
+        else if (ay > 60 && ay > ax * 1.5 && dy < 0) routerRef.current.push('/cover')
       },
     })
   ).current
 
-  const handleLongPress = useCallback(() => router.push('/terminal'), [router])
+  const handleLongPress = useCallback(() => routerRef.current.push('/terminal'), [])
+
+  const accentColor = `rgba(${PHASES[activePhase].rgb}, 0.62)`
+  const hintColor   = `rgba(${palette.rgb}, 0.07)`
 
   return (
     <Animated.View style={[styles.screen, { opacity: entryFade }]} {...pan.panHandlers}>
-      <MercuryCaduceus phaseColor={palette.accent} flowDuration={9000} />
-      <GardenPresence
-        phase={toPresencePhase(activePhase)}
-        phrase={phrase}
-        isGrace={!!gracePhrase}
-        onLongPress={handleLongPress}
-      />
-      <View style={styles.hintRow} pointerEvents="none">
-        <Text style={[styles.hint, { color: rgba(palette.rgb, 0.10) }]}>
+
+      {/* sphere */}
+      <View style={[styles.orb, { top: ORB_TOP, left: (W - ORB_SIZE) / 2 }]}>
+        <SphereOrbV2
+          phase={activePhase}
+          size={ORB_SIZE}
+          variant="lung"
+          onLongPress={handleLongPress}
+        />
+      </View>
+
+      {/* phrase */}
+      <View style={[styles.phrase, { top: PHRASE_TOP }]} pointerEvents="none">
+        <TypewriterText
+          text={phrase}
+          color={accentColor}
+          speed={44}
+          key={phrase}
+        />
+      </View>
+
+      {/* ghost hint */}
+      <View style={styles.hint} pointerEvents="none">
+        <Text style={[styles.hintText, { color: hintColor }]}>
           ← bridge · ↑ cover · hold · engine
         </Text>
       </View>
+
     </Animated.View>
   )
 }
@@ -96,14 +110,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: BASE.bg,
   },
-  hintRow: {
+  orb: {
     position: 'absolute',
-    bottom: 36,
+  },
+  phrase: {
+    position: 'absolute',
+    left: 44,
+    right: 44,
+    alignItems: 'center',
+  },
+  hint: {
+    position: 'absolute',
+    bottom: 32,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  hint: {
+  hintText: {
     fontFamily: 'Courier Prime',
     fontSize: 8,
     letterSpacing: 1.5,
