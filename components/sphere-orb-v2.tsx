@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Animated, Pressable, StyleSheet, View, type ViewStyle } from 'react-native'
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg'
+import * as Haptics from 'expo-haptics'
 import { PHASES, type PhaseKey } from '../constants/palettes'
 
 const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
@@ -77,7 +78,10 @@ export function SphereOrbV2({
   const combined = Animated.multiply(scale, pressScale)
 
   return (
-    <Pressable onPress={onPress} onLongPress={onLongPress}
+    <Pressable
+      onPress={onPress}
+      onPressIn={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+      onLongPress={onLongPress}
       style={[styles.container, { width: size, height: size }, style]}>
       <Animated.View style={{ width: size, height: size, transform: [{ scale: combined }] }}>
         {variant === 'etched' && <EtchedOrb size={size} c={c} rgb={theme.rgb} />}

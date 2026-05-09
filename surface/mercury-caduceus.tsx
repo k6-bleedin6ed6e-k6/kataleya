@@ -80,14 +80,14 @@ export function MercuryCaduceus({ phaseColor, flowDuration = 7000 }: MercuryCadu
           {/* Faint outer threads — depth layer */}
           <AnimatedPath
             d={LEFT_FAINT}
-            stroke="url(#faintGrad)" strokeWidth="1.0" fill="none"
+            stroke="url(#faintGrad)" strokeWidth="0.5" fill="none"
             strokeLinecap="round"
             strokeDasharray={`${DASH} ${GAP}`}
             strokeDashoffset={flow}
           />
           <AnimatedPath
             d={RIGHT_FAINT}
-            stroke="url(#faintGrad)" strokeWidth="1.0" fill="none"
+            stroke="url(#faintGrad)" strokeWidth="0.5" fill="none"
             strokeLinecap="round"
             strokeDasharray={`${DASH} ${GAP}`}
             strokeDashoffset={flow}
@@ -96,14 +96,14 @@ export function MercuryCaduceus({ phaseColor, flowDuration = 7000 }: MercuryCadu
           {/* Primary helixes */}
           <AnimatedPath
             d={LEFT_PATH}
-            stroke="url(#riverGrad)" strokeWidth="1.6" fill="none"
+            stroke="url(#riverGrad)" strokeWidth="0.7" fill="none"
             strokeLinecap="round"
             strokeDasharray={`${DASH} ${GAP}`}
             strokeDashoffset={flow}
           />
           <AnimatedPath
             d={RIGHT_PATH}
-            stroke="url(#riverGrad)" strokeWidth="1.6" fill="none"
+            stroke="url(#riverGrad)" strokeWidth="0.7" fill="none"
             strokeLinecap="round"
             strokeDasharray={`${DASH} ${GAP}`}
             strokeDashoffset={flow}
@@ -112,7 +112,7 @@ export function MercuryCaduceus({ phaseColor, flowDuration = 7000 }: MercuryCadu
           {/* Central spine */}
           <AnimatedPath
             d={SPINE_PATH}
-            stroke="url(#spineGrad)" strokeWidth="0.5" fill="none"
+            stroke="url(#spineGrad)" strokeWidth="0.3" fill="none"
             strokeLinecap="round"
             strokeDasharray={`${DASH} ${GAP}`}
             strokeDashoffset={flow}
