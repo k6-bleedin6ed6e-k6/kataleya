@@ -21,11 +21,13 @@
 kataleya/
 ├── app/                          # expo-router file-based routes
 │   ├── _layout.tsx               # root stack, font load, status bar
-│   ├── index.tsx                 # the room — garden presence, swipe gestures
+│   ├── index.tsx                 # the room — orb, ring, nav, swipe gestures
 │   ├── bridge.tsx                # presence bridge — orb, ring, mood check-in
 │   ├── cover.tsx                 # 2am cocoon — orb, phrase cycle, hold-to-return
-│   ├── terminal.tsx              # phosphor noir engine room
-│   └── onboarding.tsx            # awakening ritual — 3 beats, seal
+│   ├── terminal.tsx              # phosphor noir engine room + sponsor signal
+│   ├── onboarding.tsx            # awakening ritual — 3 beats, seal
+│   ├── burn.tsx                  # burn ritual — text dissolve into mercury river
+│   └── mirror.tsx                # physician mirror — seed/root/bloom, horizon, tide
 ├── components/
 │   ├── garden-presence.tsx       # the organism — seed, spine, wings, scars
 │   ├── sphere-orb-v2.tsx         # phase-reactive orb (lung/iris/etched)
@@ -52,13 +54,18 @@ kataleya/
 │   ├── adaptive-icon.png
 │   ├── splash-icon.png
 │   └── favicon.png
+├── ui-ux/                        # design reference wireframes
+│   ├── README.md                 # wireframe-to-route mapping
+│   ├── *.zip                     # original design archives
+│   └── wireframes/               # extracted HTML + PNG references
 ├── app.json                      # expo config
 ├── babel.config.js               # babel-preset-expo + reanimated/plugin
 ├── tsconfig.json                 # extends expo/tsconfig.base, strict
 ├── package.json
 ├── package-lock.json
 ├── start-light.sh                # low-RAM start script
-└── collab.md                     # live coordination log
+├── collab.md                     # live coordination log
+└── AGENTS.md                     # this file
 ```
 
 ### Deleted files (for context)
@@ -79,6 +86,8 @@ kataleya/
 | `/cover` | 2am Cocoon | swipe up from Room |
 | `/terminal` | Engine Room | long-press seed in Room |
 | `/onboarding` | Awakening Ritual | first launch gate |
+| `/burn` | Burn Ritual | nav from Room / Terminal |
+| `/mirror` | Physician Mirror | nav from Terminal |
 
 ### Gesture Map
 | Screen | Gesture | Target |
@@ -92,6 +101,8 @@ kataleya/
 | Cover | hold 2.5s | back (progress arc) |
 | Terminal | swipe right | back |
 | Terminal | tap `$ exit` | back |
+| Burn | swipe down | back |
+| Mirror | swipe right | back |
 
 ---
 
@@ -154,34 +165,20 @@ Web builds use `sanctuary.web.ts` (no-op). Native builds use `sanctuary.ts` (exp
 
 ---
 
-## 7. SESSION HISTORY — 2026-05-09
+## 7. SESSION HISTORY
 
-### Kimi
-1. **Asset cleanup** — deleted 6.8MB butterfly gif, ezgif, orr.jpeg, potential-orb assets.
-2. **Dead code removal** — `sphere-orb.tsx`, `hud-corners.tsx`, `river-columns.tsx`.
-3. **`garden-presence.tsx` v2** — complete rewrite as cohesive light painting.
-   - 3 depth layers: ambient wash (back), spine+wings (middle), seed (front)
-   - Seed: 5 SVG membrane layers using full palette (haze/body/rim/iris/nucleus)
-   - Spine: one luminous column with gradient
-   - Wings: 2 soft radial fields + 1 inner glow, no hard paths
-   - Scars: 4 luminous pulse points
-4. **`ouroboros-ring.tsx` v2** — sacred timekeeper rewrite.
-   - 12 hour-nodes (major every 3h)
-   - Faint thread, brightens near now
-   - Now-arc: ±2h bright stroke segment + rim dot
-   - Scars: dark breaks in the thread
-5. **`surface/` v2** — radical simplification.
-   - Mercury: 2 slow rivers, very faint
-   - Ripples: 2 soft pulses
-6. **Wiring** — `MercuryCaduceus` into Room, `RiverRipples` into Cover.
-7. **Build** — web export passes, TypeScript strict passes.
+### 2026-05-09 — Screen Build from Stitch Wireframes
+1. **The Room (`index.tsx`)** — header with KATALEYA + terminal button, Ouroboros ring around orb, floating bottom nav (room/cocoon/bridge/terminal), phase label + resonance/entropy metrics.
+2. **The Bridge (`bridge.tsx`)** — "life rewritten by choice" headline, frequency bridge bottom line (`..: :..` + resonance sync), origin footer.
+3. **The Cocoon (`cover.tsx`)** — header with TERMINAL button, void ring with transmutation scars, "stay with me" text, bottom nav hints.
+4. **The Terminal (`terminal.tsx`)** — sponsor signal overlay with pulsing orb + X25519 handshake arc, access to mirror from footer nav.
+5. **Burn Ritual (`burn.tsx`)** — text input → ignite → animated blur/sink dissolve into mercury river. Sacred geometry rings, side nav, phase/resonance footer.
+6. **Physician Mirror (`mirror.tsx`)** — Seed/Root/Bloom markers, horizon line with transmutation scars + luminous nodes, mercury tide with stability bars, integrity index + recalibrate button, scanline animation.
+7. **Design references** — all stitch zip files extracted into `ui-ux/wireframes/` with README mapping wireframes to app routes.
+8. **Build** — web export passes, TypeScript strict passes.
 
-### Claude
-1. **`constants/palettes.ts` v2** — expanded PhasePalette with shadow/highlight/ambient/rim families.
-2. **`sphere-orb-v2.tsx` v2** — 5 SVG gradient layers (lung), 3-layer iris/etched, phase-namespaced IDs.
-3. **`atmosphere.tsx` v2** — phase-bleed vignette, vertical bioluminescent light column, heavy mode shadow pools.
-4. **Bridge + Cover** — threaded `phase` prop into Atmosphere for full color family usage.
-5. **Asset audit** — confirmed assets/ clean.
+### 2026-05-09 — Graphics Overhaul v2 (Kimi + Claude)
+- See prior session history in git log for full details.
 
 ---
 

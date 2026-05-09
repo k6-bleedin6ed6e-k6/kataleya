@@ -1,6 +1,6 @@
 # CHECKPOINT — 2026-05-09
 
-> Graphics overhaul complete (M4). Code solid. Visuals now use palette v2 light-language.
+> All stitch wireframe screens built into app. M5 + M6 complete. Graphics overhaul shipped. Visuals use palette v2 light-language.
 
 ---
 
@@ -13,8 +13,10 @@
 | M2 — Engine Room | ✅ | Terminal screen, storage layer, breath technique |
 | M3 — Bridge Check-in | ✅ | Mood logging to sanctuary, check-in flow |
 | M4 — Cover + Graphics | ✅ | Cover screen, palette v2, orb/spine/ring/seed rewrite |
-| M5 — Vaults | ⏳ | Encrypted storage, urge_logs, journal entries |
-| M6 — Physician Mirror | ⏳ | Export/share data, milestone visualization |
+| M5 — Burn Ritual | ✅ | `burn.tsx` — text dissolve into mercury river with blur/sink animation |
+| M6 — Physician Mirror | ✅ | `mirror.tsx` — Seed/Root/Bloom markers, horizon line, mercury tide, integrity index |
+| M7 — Vaults Encryption | ⏳ | Encrypted storage, fortress vault (hardware-dependent) |
+| M8 — EAS Builds | ⏳ | iOS + Android dev builds, reanimated v3 migration |
 
 ---
 
@@ -26,15 +28,14 @@
 │  ┌─────────────┐  swipe left  ┌─────────────┐          │
 │  │             │ ───────────→ │   BRIDGE    │          │
 │  │   SEED      │              │  (orb+ring) │          │
-│  │  (garden)   │ ←─────────── │             │          │
-│  │             │  swipe right └─────────────┘          │
+│  │  + RING     │ ←─────────── │             │          │
+│  │  + NAV      │  swipe right └─────────────┘          │
 │  │             │                                         │
 │  │             │  swipe up    ┌─────────────┐          │
 │  │             │ ───────────→ │    COVER    │          │
 │  │             │              │   (cocoon)  │          │
 │  │             │ ←─────────── │             │          │
 │  │             │  swipe down  │ hold 2.5s → │ back     │
-│  │             │              │   back       │          │
 │  └─────────────┘              └─────────────┘          │
 │       │                                                 │
 │       │ long-press  ┌─────────────┐                     │
@@ -42,6 +43,14 @@
 │                    │  (phosphor)  │                     │
 │                    │  tap $exit → │ back                │
 │                    └─────────────┘                     │
+│                           │                             │
+│                           │ tap signal/mirror           │
+│                           ↓                             │
+│                    ┌─────────────┐  ┌─────────────┐    │
+│                    │    BURN     │  │   MIRROR    │    │
+│                    │  (dissolve) │  │  (horizon)  │    │
+│                    │ swipe down →│  │ swipe right→│back │
+│                    └─────────────┘  └─────────────┘    │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -57,6 +66,10 @@
 | Cover | hold 2.5s | progress arc fills → auto back |
 | Terminal | swipe right (dx > 60, horizontal) | `router.back()` |
 | Terminal | tap `$ exit` | `router.back()` |
+| Terminal | tap `signal` | show sponsor signal overlay |
+| Terminal | tap `mirror` | push `/mirror` |
+| Burn | swipe down (dy > 60, vertical) | `router.back()` |
+| Mirror | swipe right (dx > 60, horizontal) | `router.back()` |
 
 ---
 
@@ -109,32 +122,62 @@ base        bg=#050508   surface=#0d0d14   text=#e8e6f0   textMuted=#8a8a9e   bo
 
 ---
 
-## 5. NEXT STEPS
+## 5. SCREEN INVENTORY
 
-### Immediate (M5 — Vaults)
-- [ ] `utils/sanctuary.ts` — expand schema:
-  - `urge_logs` table (timestamp, intensity, trigger, resisted: boolean)
-  - `journal_entries` table (timestamp, encrypted text, burn_after_read flag)
+| Route | File | Purpose | Key Features |
+|-------|------|---------|--------------|
+| `/` | `index.tsx` | The Room | Orb + Ouroboros ring, header, bottom nav, phase metrics, swipe gestures |
+| `/bridge` | `bridge.tsx` | Presence Bridge | Mood check-in, frequency bridge line, "life rewritten by choice" |
+| `/cover` | `cover.tsx` | 2am Cocoon | Phrase cycle, hold-to-return arc, void ring with scars |
+| `/terminal` | `terminal.tsx` | Engine Room | Phosphor noir terminal, sponsor signal overlay, breath technique |
+| `/onboarding` | `onboarding.tsx` | Awakening Ritual | 3 beats + seal, name + date attunement |
+| `/burn` | `burn.tsx` | Burn Ritual | Text dissolve animation, mercury river, sacred geometry |
+| `/mirror` | `mirror.tsx` | Physician Mirror | Seed/Root/Bloom, horizon scars, mercury tide, integrity index |
+
+---
+
+## 6. DESIGN REFERENCES
+
+All stitch design system wireframes extracted to `ui-ux/wireframes/`:
+
+```
+ui-ux/wireframes/
+├── awakening-ritual/        # Onboarding flow (beats 1-3 + seal)
+├── burn-ritual/             # Burn ritual screen
+├── design-system/           # DESIGN.md, mission ledger, kataleya.html
+├── physician-mirror/        # Clinical / landscape views
+├── the-bridge/              # Presence bridge
+├── the-room/                # Main room screen
+├── the-terminal/            # Engine room variants
+└── ui-ux-handoff/           # Initial handoff screens
+```
+
+See `ui-ux/README.md` for full mapping to app routes.
+
+---
+
+## 7. NEXT STEPS
+
+### Immediate (M7 — Vaults Encryption)
 - [ ] `utils/encryption.ts` — simple XOR or base64 wrapper for journal text
 - [ ] `app/terminal.tsx` — add vault commands: `$ vault --mood`, `$ vault --urge`, `$ vault --burn`
 - [ ] `components/mood-check.tsx` — visual selectors (5 orb-like light states instead of text labels)
 
-### Medium (M6 — Physician Mirror)
-- [ ] Export mood data as JSON/share sheet
-- [ ] Simple trend visualization (7-day sparkline, no chart library — SVG only)
-- [ ] Milestone progress ring
-
-### Polish
+### Medium (M8 — Native Polish)
+- [ ] EAS dev build — unlocks reanimated v3 migration
 - [ ] Screen transition animations (fade + light bleed + scale)
 - [ ] Onboarding seal animation — more visceral ring closure
 - [ ] Sound design — phase-aware ambient tone (expo-av)
 
 ---
 
-## 6. SESSION NOTES
+## 8. SESSION NOTES
 
-**2026-05-09** — Kimi + Claude graphics overhaul
-- Palette expanded from 1 accent → 5-color families
-- All visual components rewritten to use light as subject
-- Surface effects radically simplified (subliminal, not decorative)
-- Build: web export 1.17MB, TypeScript strict clean
+**2026-05-09** — All stitch wireframe screens built
+- Room: header, ring, nav, metrics
+- Bridge: headline, frequency bridge
+- Cover: header, scars, nav hints
+- Terminal: sponsor signal overlay
+- Burn: dissolve animation
+- Mirror: heatmap, horizon, tide
+- Build: web export 1.18MB, TypeScript strict clean
