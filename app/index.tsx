@@ -14,6 +14,8 @@ import {
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { MercuryCaduceus } from '../surface/mercury-caduceus'
+import { RiverColumns } from '../surface/river-columns'
+import { RiverRipples } from '../surface/river-ripples'
 import { MercurySpine } from '../components/mercury-spine'
 import { SphereOrbV2, type OrbVariant } from '../components/sphere-orb-v2'
 import { Atmosphere } from '../components/atmosphere'
@@ -24,6 +26,8 @@ import { useReEntry } from '../hooks/use-re-entry'
 import { BASE, PHASES } from '../constants/palettes'
 import { selectPhrase } from '../constants/phrases'
 
+// swap to 'columns' | 'ripples' | 'caduceus' for device comparison
+const RIVER_VARIANT: 'caduceus' | 'columns' | 'ripples' = 'caduceus'
 const VARIANT: OrbVariant = 'lung'
 const { width: WIN_W, height: WIN_H } = Dimensions.get('window')
 const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
@@ -75,7 +79,9 @@ export default function RoomScreen() {
 
   return (
     <Animated.View style={[styles.screen, { opacity: entryFade }]}>
-      <MercuryCaduceus phaseColor={palette.accent} />
+      {RIVER_VARIANT === 'caduceus' && <MercuryCaduceus phaseColor={palette.accent} />}
+      {RIVER_VARIANT === 'columns'  && <RiverColumns  phaseColor={palette.accent} />}
+      {RIVER_VARIANT === 'ripples'  && <RiverRipples  phaseColor={palette.accent} />}
       <MercurySpine phase={activePhase} width={WIN_W} height={WIN_H} />
       <Atmosphere phaseColor={palette.accent} />
       <HudCorners color={palette.accent} />
