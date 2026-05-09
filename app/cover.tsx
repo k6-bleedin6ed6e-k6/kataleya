@@ -60,7 +60,7 @@ export default function CoverScreen() {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const { phase } = useCircadian();
 
-  const nightPalette = PHASES.night;
+  const palette = PHASES[phase];
 
   const particles = useRef<Particle[]>(buildParticles()).current;
 
@@ -101,6 +101,7 @@ export default function CoverScreen() {
               left: p.x,
               height: p.length,
               opacity: p.opacity,
+              backgroundColor: palette.accent,
               transform: [{ translateY: p.y }],
             },
           ]}
@@ -114,14 +115,14 @@ export default function CoverScreen() {
         <OuroborosRing
           size={260}
           phase={phase}
-          accent={nightPalette.accent}
+          accent={palette.accent}
         />
       </View>
 
       {/* Orb — absolute full-screen, co-centered with ring */}
       <View style={styles.orbContainer}>
         <SphereOrb
-          accent={nightPalette.accent}
+          accent={palette.accent}
         />
       </View>
 
@@ -133,15 +134,15 @@ export default function CoverScreen() {
       </View>
 
       {/* Existential label */}
-      <Text style={[styles.existential, { color: nightPalette.accent }]}>
-        {nightPalette.existential}
+      <Text style={[styles.existential, { color: palette.accent }]}>
+        {palette.existential}
       </Text>
 
       {/* Hints */}
-      <Text style={[styles.hint, styles.hintBottom, { color: nightPalette.accent }]}>
+      <Text style={[styles.hint, styles.hintBottom, { color: palette.accent }]}>
         ↓ swipe down · return
       </Text>
-      <Text style={[styles.hint, styles.hintAboveBottom, { color: nightPalette.accent }]}>
+      <Text style={[styles.hint, styles.hintAboveBottom, { color: palette.accent }]}>
         tap · next
       </Text>
     </View>
@@ -158,7 +159,6 @@ const styles = StyleSheet.create({
   raindrop: {
     position: 'absolute',
     width: 1,
-    backgroundColor: '#8a5fe0',
     borderRadius: 1,
   },
   ringContainer: {
