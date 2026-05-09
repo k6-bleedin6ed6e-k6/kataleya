@@ -3,7 +3,7 @@
 // tap orb → weather inside check-in → response phrase
 
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native'
+import { PanResponder, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { OuroborosRing } from '../components/ouroboros-ring'
@@ -12,12 +12,11 @@ import { Atmosphere } from '../components/atmosphere'
 import { TypewriterText } from '../components/typewriter-text'
 import { MoodCheck } from '../components/mood-check'
 import { useCircadian } from '../hooks/use-circadian'
-import { BASE, PHASES } from '../constants/palettes'
+import { BASE } from '../constants/palettes'
 import { pickBridgePhrase, pickCheckinResponse } from '../constants/phrases'
 import type { MoodValue } from '../utils/sanctuary'
 
 const VARIANT: OrbVariant = 'lung'
-const { width: WIN_W, height: WIN_H } = Dimensions.get('window')
 const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
 
 export default function BridgeScreen() {
@@ -55,7 +54,7 @@ export default function BridgeScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <Atmosphere phaseColor={palette.accent} />
+      <Atmosphere phase={phase} />
 
       <View style={styles.content} {...pan.panHandlers}>
         <Text style={[styles.label, { color: rgba(palette.rgb, 0.45) }]}>

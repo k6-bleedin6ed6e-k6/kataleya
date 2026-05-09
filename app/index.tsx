@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Animated, Easing, PanResponder, StyleSheet, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { GardenPresence } from '../components/garden-presence'
+import { MercuryCaduceus } from '../surface/mercury-caduceus'
 import { useCircadian } from '../hooks/use-circadian'
 import { useReEntry } from '../hooks/use-re-entry'
 import { getItem } from '../utils/storage'
@@ -74,6 +75,7 @@ export default function RoomScreen() {
 
   return (
     <Animated.View style={[styles.screen, { opacity: entryFade }]} {...pan.panHandlers}>
+      <MercuryCaduceus phaseColor={palette.accent} flowDuration={9000} />
       <GardenPresence
         phase={toPresencePhase(activePhase)}
         phrase={phrase}

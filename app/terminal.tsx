@@ -104,7 +104,7 @@ export default function TerminalScreen() {
         <Text style={styles.out}>  milestone 0 : ✓ seed</Text>
         <Text style={styles.out}>  milestone 1 : ✓ gestures</Text>
         <Text style={styles.out}>  milestone 2 : ✓ engine room</Text>
-        <Text style={styles.out}>  milestone 3 : · bridge check-in</Text>
+        <Text style={styles.out}>  milestone 3 : ✓ bridge check-in</Text>
         <Text style={styles.out}>  milestone 4 : · cover rain</Text>
         <Text style={styles.out}>  milestone 5 : · vaults</Text>
         <Text style={styles.out}>  milestone 6 : · physician mirror</Text>
