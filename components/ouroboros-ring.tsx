@@ -1,166 +1,142 @@
 // components/ouroboros-ring.tsx
-// the serpent ring — bridge + cover screens only
-// layers: outer halo · main arc · scar notches · head glow · counter-rotating inner arc
+// orb halo + 24-hour time-keeper
+// lung: 240 micro-ticks, brightness peaks at "now"
+// etched / iris: hairline ring with rotating gap + optional scars
 
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import { type PhaseKey } from '../constants/palettes';
-
-const PHASE_SPEED: Record<PhaseKey, number> = {
-  dawn:       14000,
-  day:        10000,
-  goldenHour:  8000,
-  night:      22000,
-};
-
-// Irregular angular positions (fraction of 2π) for scar notch marks
-const NOTCH_FRACTIONS = [0.08, 0.23, 0.45, 0.62, 0.79, 0.91];
+import React, { useMemo } from 'react'
+import Svg, { Circle, Defs, G, Line, RadialGradient, Stop } from 'react-native-svg'
+import { PHASES, type PhaseKey } from '../constants/palettes'
 
 interface OuroborosRingProps {
-  size?:         number;
-  phase:         PhaseKey;
-  accent:        string;
-  gapFraction?:  number;
-  opacity?:      number;
+  phase: PhaseKey
+  size?: number
+  hour?: number
+  scars?: number[]
+  breath?: number
+  variant?: 'etched' | 'iris' | 'lung'
 }
 
 export function OuroborosRing({
-  size = 260,
   phase,
-  accent,
-  gapFraction = 0.14,
-  opacity = 0.62,
+  size = 280,
+  hour = new Date().getHours() + new Date().getMinutes() / 60,
+  scars = [],
+  breath = 0.5,
+  variant = 'lung',
 }: OuroborosRingProps) {
-  const rotate        = useRef(new Animated.Value(0)).current;
-  const rotateInner   = useRef(new Animated.Value(0)).current;
+  const c = PHASES[phase].accent
+  const cx = size / 2
+  const cy = size / 2
 
-  const strokeW    = 1.8;
-  const radius     = size / 2 - 14;
-  const circumference = 2 * Math.PI * radius;
-  const gap        = gapFraction * circumference;
-  const dash       = circumference - gap;
+  const nowAngle = (hour / 24) * 360
+  const outerR = size * 0.42
+  const innerR = size * 0.32
 
-  const innerR     = radius - 11;
-  const innerC     = 2 * Math.PI * innerR;
-  const innerDash  = innerC * 0.11;
-  const innerGap   = innerC - innerDash;
+  if (variant === 'lung') {
+    return (
+      <LungRing
+        c={c} cx={cx} cy={cy} size={size}
+        ringR={outerR} nowAngle={nowAngle} scars={scars}
+      />
+    )
+  }
 
-  const speed = PHASE_SPEED[phase];
-
-  useEffect(() => {
-    rotate.setValue(0);
-    rotateInner.setValue(0);
-
-    const anim = Animated.loop(
-      Animated.timing(rotate, {
-        toValue: 1, duration: speed,
-        easing: Easing.linear, useNativeDriver: true,
-      })
-    );
-    const animInner = Animated.loop(
-      Animated.timing(rotateInner, {
-        toValue: 1, duration: speed * 1.85,
-        easing: Easing.linear, useNativeDriver: true,
-      })
-    );
-
-    anim.start();
-    animInner.start();
-    return () => { anim.stop(); animInner.stop(); };
-  }, [phase, speed]);
-
-  const rotateDeg = rotate.interpolate({
-    inputRange: [0, 1], outputRange: ['0deg', '360deg'],
-  });
-  // inner arc counter-rotates
-  const rotateInnerDeg = rotateInner.interpolate({
-    inputRange: [0, 1], outputRange: ['0deg', '-360deg'],
-  });
-
-  const cx = size / 2;
-  const cy = size / 2;
+  const gapDeg  = variant === 'iris' ? 3 : 4
+  const C       = 2 * Math.PI * outerR
+  const gapLen  = (gapDeg / 360) * C
+  const dashOuter  = `${C - gapLen} ${gapLen}`
+  const ringRotation = nowAngle - 90
 
   return (
-    <View style={{ width: size, height: size }}>
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <Defs>
+        <RadialGradient id={`ring-halo-${phase}-${variant}`} cx="50%" cy="50%" r="50%">
+          <Stop offset="55%"  stopColor={c} stopOpacity="0" />
+          <Stop offset="80%"  stopColor={c} stopOpacity={0.04 + breath * 0.04} />
+          <Stop offset="100%" stopColor={c} stopOpacity="0" />
+        </RadialGradient>
+      </Defs>
 
-      {/* Counter-rotating inner arc */}
-      <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ rotate: rotateInnerDeg }] }]}>
-        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-          <Circle
-            cx={cx} cy={cy} r={innerR}
-            stroke={accent}
-            strokeWidth={1.0}
-            fill="none"
-            strokeDasharray={`${innerDash.toFixed(1)} ${innerGap.toFixed(1)}`}
-            strokeLinecap="round"
-            opacity={opacity * 0.48}
-          />
-        </Svg>
-      </Animated.View>
+      <Circle cx={cx} cy={cy} r={size * 0.48} fill={`url(#ring-halo-${phase}-${variant})`} />
 
-      {/* Main ring — outer halo, main arc, scar notches, head glow */}
-      <Animated.View style={[{ width: size, height: size }, { transform: [{ rotate: rotateDeg }] }]}>
-        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-          <Defs>
-            <RadialGradient
-              id="headGlow"
-              gradientUnits="userSpaceOnUse"
-              cx={cx + radius} cy={cy} r={radius * 0.18}
-            >
-              <Stop offset="0%"   stopColor={accent} stopOpacity="0.9"  />
-              <Stop offset="100%" stopColor={accent} stopOpacity="0"    />
-            </RadialGradient>
-          </Defs>
+      <G origin={`${cx}, ${cy}`} rotation={ringRotation}>
+        <Circle
+          cx={cx} cy={cy} r={outerR}
+          fill="none" stroke={c}
+          strokeOpacity={variant === 'iris' ? 0.4 : 0.55}
+          strokeWidth={variant === 'iris' ? 0.75 : 1}
+          strokeDasharray={dashOuter}
+        />
+      </G>
 
-          {/* Outer halo */}
-          <Circle
-            cx={cx} cy={cy} r={radius + 7}
-            stroke={accent} strokeWidth={0.4} fill="none"
-            opacity={opacity * 0.12}
-          />
-          {/* Main arc */}
-          <Circle
-            cx={cx} cy={cy} r={radius}
-            stroke={accent} strokeWidth={strokeW} fill="none"
-            strokeDasharray={`${dash.toFixed(1)} ${gap.toFixed(1)}`}
-            strokeLinecap="round"
-            opacity={opacity}
-          />
-          {/* Inner echo */}
-          <Circle
-            cx={cx} cy={cy} r={radius - 6}
-            stroke={accent} strokeWidth={0.3} fill="none"
-            opacity={opacity * 0.22}
-          />
+      {variant === 'iris' && (
+        <Circle cx={cx} cy={cy} r={innerR} fill="none"
+          stroke={c} strokeOpacity={0.6} strokeWidth={0.75} />
+      )}
 
-          {/* Scar notch marks — abstract irregular ticks on the ring body */}
-          {NOTCH_FRACTIONS.map((f, i) => {
-            const angle = f * 2 * Math.PI;
-            return (
-              <Circle
-                key={i}
-                cx={cx + radius * Math.cos(angle)}
-                cy={cy + radius * Math.sin(angle)}
-                r={1.3}
-                fill={accent}
-                fillOpacity={opacity * 0.65}
-              />
-            );
-          })}
+      {scars.map((angle, i) => {
+        const rad = ((angle - 90) * Math.PI) / 180
+        if (variant === 'iris') {
+          const r = (innerR + outerR) / 2
+          return (
+            <Circle key={i}
+              cx={cx + Math.cos(rad) * r} cy={cy + Math.sin(rad) * r}
+              r={1} fill={c} fillOpacity={0.7}
+            />
+          )
+        }
+        const x1 = cx + Math.cos(rad) * (outerR - 1)
+        const y1 = cy + Math.sin(rad) * (outerR - 1)
+        const x2 = cx + Math.cos(rad) * (outerR - 8)
+        const y2 = cy + Math.sin(rad) * (outerR - 8)
+        return (
+          <Line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke={c} strokeOpacity={0.5} strokeWidth={0.75} />
+        )
+      })}
+    </Svg>
+  )
+}
 
-          {/* Head glow — bright dot at stroke start (gap end / snake's head) */}
-          <Circle
-            cx={cx + radius} cy={cy} r={radius * 0.16}
-            fill="url(#headGlow)"
-          />
-          <Circle
-            cx={cx + radius} cy={cy} r={2.2}
-            fill={accent} fillOpacity={opacity * 0.95}
-          />
-        </Svg>
-      </Animated.View>
+function LungRing({
+  c, cx, cy, size, ringR, nowAngle, scars,
+}: {
+  c: string; cx: number; cy: number; size: number; ringR: number;
+  nowAngle: number; scars: number[];
+}) {
+  const TICK_COUNT = 240
 
-    </View>
-  );
+  const elements = useMemo(() => {
+    const nowIdx  = Math.round((nowAngle / 360) * TICK_COUNT) % TICK_COUNT
+    const scarSet = new Set(
+      scars.map((a) => Math.round((a / 360) * TICK_COUNT) % TICK_COUNT)
+    )
+    const out: React.ReactElement[] = []
+    for (let i = 0; i < TICK_COUNT; i++) {
+      const angleDeg = (i / TICK_COUNT) * 360 - 90
+      const rad      = (angleDeg * Math.PI) / 180
+      const d        = Math.min(Math.abs(i - nowIdx), TICK_COUNT - Math.abs(i - nowIdx))
+      const falloff  = Math.max(0, 1 - d / 18)
+      const isScar   = scarSet.has(i)
+      const opacity  = 0.06 + falloff * 0.55
+      const len      = isScar ? 8 : 2.5
+      const x1 = cx + Math.cos(rad) * ringR
+      const y1 = cy + Math.sin(rad) * ringR
+      const x2 = cx + Math.cos(rad) * (ringR + len)
+      const y2 = cy + Math.sin(rad) * (ringR + len)
+      out.push(
+        <Line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+          stroke={c} strokeOpacity={opacity}
+          strokeWidth={isScar ? 0.9 : 0.5}
+        />
+      )
+    }
+    return out
+  }, [c, cx, cy, ringR, nowAngle, scars])
+
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {elements}
+    </Svg>
+  )
 }

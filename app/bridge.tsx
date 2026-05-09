@@ -1,113 +1,96 @@
 // app/bridge.tsx
-// swipe left from room — check-in / mood (milestone 3)
-// swipe right to return
+// swipe left from room — presence bridge. swipe right to return.
 
-import React, { useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, PanResponder } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useRef, useMemo } from 'react'
+import { Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
+import { MercurySpine } from '../components/mercury-spine'
+import { OuroborosRing } from '../components/ouroboros-ring'
+import { SphereOrbV2, type OrbVariant } from '../components/sphere-orb-v2'
+import { Atmosphere } from '../components/atmosphere'
+import { HudCorners } from '../components/hud-corners'
+import { TypewriterText } from '../components/typewriter-text'
+import { useCircadian } from '../hooks/use-circadian'
+import { BASE } from '../constants/palettes'
+import { pickBridgePhrase } from '../constants/phrases'
 
-import { useCircadian } from '../hooks/use-circadian';
-import { pickBridgePhrase } from '../constants/phrases';
-import { BASE } from '../constants/palettes';
-import { Atmosphere } from '../components/atmosphere';
-import { HudCorners } from '../components/hud-corners';
-import { OuroborosRing } from '../components/ouroboros-ring';
-import { TypewriterText } from '../components/typewriter-text';
+const VARIANT: OrbVariant = 'lung'
+const { width: WIN_W, height: WIN_H } = Dimensions.get('window')
+const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
 
 export default function BridgeScreen() {
-  const router = useRouter();
-  const { phase, palette } = useCircadian();
+  const router = useRouter()
+  const { phase, palette, hour, minute } = useCircadian()
+  const hourDecimal = hour + minute / 60
+  const phrase = useMemo(() => pickBridgePhrase(phase), [phase])
 
-  // Pick phrase once on mount
-  const phrase = useMemo(() => pickBridgePhrase(phase), [phase]);
-
-  const panResponder = useRef(
+  const pan = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
-        Math.abs(dx) > 12 || Math.abs(dy) > 12,
-      onPanResponderRelease: (_, { dx, dy }) => {
-        const absDx = Math.abs(dx);
-        const absDy = Math.abs(dy);
-        if (absDx > 60 && absDx > absDy * 1.5 && dx > 0) {
-          router.back(); // swipe right → room
-        }
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 10 || Math.abs(g.dy) > 10,
+      onPanResponderRelease: (_, g) => {
+        const isHorizontal = Math.abs(g.dx) > Math.abs(g.dy)
+        if (isHorizontal && g.dx > 60) router.back()
       },
     })
-  ).current;
+  ).current
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <MercurySpine phase={phase} width={WIN_W} height={WIN_H} />
       <Atmosphere phaseColor={palette.accent} />
       <HudCorners color={palette.accent} />
+      <View style={styles.content} {...pan.panHandlers}>
+        <Text style={[styles.label, { color: rgba(palette.rgb, 0.45) }]}>
+          {palette.displayName}
+        </Text>
+        <Text style={[styles.task, { color: rgba(palette.rgb, 0.30) }]}>
+          {palette.existential}
+        </Text>
 
-      {/* Existential label — top center */}
-      <Text style={[styles.existential, { color: palette.accent }]}>
-        ◈ {palette.existential}
-      </Text>
+        <View style={styles.center}>
+          <View style={styles.ringWrap}>
+            <OuroborosRing phase={phase} size={280} hour={hourDecimal} variant={VARIANT} />
+          </View>
+          <SphereOrbV2 phase={phase} size={280} variant={VARIANT} />
+        </View>
 
-      {/* Ouroboros ring */}
-      <View style={styles.ringContainer}>
-        <OuroborosRing
-          size={260}
-          phase={phase}
-          accent={palette.accent}
-        />
+        <View style={styles.phraseContainer}>
+          <TypewriterText
+            text={phrase}
+            color={rgba(palette.rgb, 0.65)}
+            speed={44}
+            key={phrase}
+          />
+        </View>
       </View>
 
-      {/* Arrival phrase */}
-      <View style={styles.phraseContainer}>
-        <TypewriterText
-          text={phrase}
-          color={BASE.text}
-          speed={44}
-          key={phrase}
-        />
+      <View style={styles.hintRow} pointerEvents="none">
+        <Text style={[styles.hint, { color: rgba(palette.rgb, 0.18) }]}>
+          swipe right · return
+        </Text>
       </View>
-
-      {/* Back hint */}
-      <Text style={[styles.backHint, { color: palette.accent }]}>
-        ▷ swipe right · return
-      </Text>
-    </View>
-  );
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: BASE.bg,
-    alignItems: 'center',
-    justifyContent: 'center',
+  screen:          { flex: 1, backgroundColor: BASE.bg },
+  content:         { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  center:          { width: 280, height: 280, alignItems: 'center', justifyContent: 'center' },
+  ringWrap:        { position: 'absolute' },
+  phraseContainer: { marginTop: 56, paddingHorizontal: 48, alignItems: 'center' },
+  label: {
+    position: 'absolute', top: 8, left: 24,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
   },
-  existential: {
-    fontFamily: 'Courier Prime',
-    fontSize: 10,
-    letterSpacing: 4,
-    textTransform: 'lowercase',
-    opacity: 0.65,
-    position: 'absolute',
-    top: 56,
-    left: 0,
-    right: 0,
-    textAlign: 'center',
+  task: {
+    position: 'absolute', top: 8, right: 24,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 3, textTransform: 'lowercase',
   },
-  ringContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 40,
+  hintRow: { alignItems: 'center', paddingBottom: 24 },
+  hint: {
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2, textTransform: 'lowercase',
   },
-  phraseContainer: {
-    paddingHorizontal: 48,
-    alignItems: 'center',
-  },
-  backHint: {
-    position: 'absolute',
-    bottom: 40,
-    fontFamily: 'Courier Prime',
-    fontSize: 8,
-    letterSpacing: 2,
-    textTransform: 'lowercase',
-    opacity: 0.15,
-  },
-});
+})

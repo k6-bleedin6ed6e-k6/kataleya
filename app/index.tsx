@@ -2,195 +2,137 @@
 // the room — surface layer. one orb. one phrase. the colour of the hour.
 // gestures: swipe left → bridge, swipe up → cover, long-press orb → terminal
 
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  PanResponder,
   Animated,
+  Dimensions,
   Easing,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+  PanResponder,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
+import { useRouter } from 'expo-router'
+import { MercuryCaduceus } from '../surface/mercury-caduceus'
+import { MercurySpine } from '../components/mercury-spine'
+import { SphereOrbV2, type OrbVariant } from '../components/sphere-orb-v2'
+import { Atmosphere } from '../components/atmosphere'
+import { HudCorners } from '../components/hud-corners'
+import { TypewriterText } from '../components/typewriter-text'
+import { useCircadian } from '../hooks/use-circadian'
+import { useReEntry } from '../hooks/use-re-entry'
+import { BASE, PHASES } from '../constants/palettes'
+import { selectPhrase } from '../constants/phrases'
 
-import { useCircadian } from '../hooks/use-circadian';
-import { useReEntry } from '../hooks/use-re-entry';
-import { selectPhrase } from '../constants/phrases';
-import { BASE, PHASES } from '../constants/palettes';
-import { SphereOrb } from '../components/sphere-orb';
-import { TypewriterText } from '../components/typewriter-text';
-import { Atmosphere } from '../components/atmosphere';
-import { HudCorners } from '../components/hud-corners';
-import { MercuryCaduceus } from '../surface/mercury-caduceus';
-
-const { height } = Dimensions.get('window');
+const VARIANT: OrbVariant = 'lung'
+const { width: WIN_W, height: WIN_H } = Dimensions.get('window')
+const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
 
 export default function RoomScreen() {
-  const router = useRouter();
-  const { phase, hour, minute } = useCircadian();
-  const { activePhase, isInGrace, isBlending, gracePhrase } = useReEntry(phase);
-  const palette = PHASES[activePhase];
-  const [burnComplete] = useState(false);
-
-  const isReEntry = isInGrace || isBlending;
+  const router = useRouter()
+  const { phase, hour, minute } = useCircadian()
+  const { activePhase, isInGrace, isBlending, gracePhrase } = useReEntry(phase)
+  const palette = PHASES[activePhase]
+  const hourDecimal = hour + minute / 60
+  const isReEntry = isInGrace || isBlending
+  const [burnComplete] = useState(false)
 
   const phrase = gracePhrase ?? selectPhrase({
     phase: activePhase,
     restlessness: 0.3,
     isReEntry,
     lastBurnComplete: burnComplete,
-  });
+  })
 
-  // Re-entry fade-in — triggers when grace is first detected after async init
-  const entryFade = useRef(new Animated.Value(1)).current;
+  // fade in on re-entry grace
+  const entryFade = useRef(new Animated.Value(1)).current
   useEffect(() => {
     if (isInGrace) {
-      entryFade.setValue(0);
+      entryFade.setValue(0)
       Animated.timing(entryFade, {
-        toValue: 1,
-        duration: 3000,
-        delay: 200,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }).start();
+        toValue: 1, duration: 3000, delay: 200,
+        easing: Easing.out(Easing.quad), useNativeDriver: true,
+      }).start()
     }
-  }, [isInGrace]);
+  }, [isInGrace])
 
-  // Gesture navigation — PanResponder, no gesture-handler dependency
-  const panResponder = useRef(
+  const pan = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onStartShouldSetPanResponderCapture: () => false,
-      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
-        Math.abs(dx) > 12 || Math.abs(dy) > 12,
+      onMoveShouldSetPanResponder: (_, { dx, dy }) => Math.abs(dx) > 12 || Math.abs(dy) > 12,
       onMoveShouldSetPanResponderCapture: () => false,
       onPanResponderRelease: (_, { dx, dy }) => {
-        const absDx = Math.abs(dx);
-        const absDy = Math.abs(dy);
-        if (absDx > 60 && absDx > absDy * 1.5 && dx < 0) {
-          router.push('/bridge');
-        } else if (absDy > 60 && absDy > absDx * 1.5 && dy < 0) {
-          router.push('/cover');
-        }
+        const absDx = Math.abs(dx)
+        const absDy = Math.abs(dy)
+        if (absDx > 60 && absDx > absDy * 1.5 && dx < 0) router.push('/bridge')
+        else if (absDy > 60 && absDy > absDx * 1.5 && dy < 0) router.push('/cover')
       },
     })
-  ).current;
+  ).current
 
-  const handleLongPress = useCallback(() => {
-    router.push('/terminal');
-  }, [router]);
-
-  const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  const handleLongPress = useCallback(() => router.push('/terminal'), [router])
 
   return (
-    <Animated.View
-      style={[styles.container, { opacity: entryFade }]}
-      {...panResponder.panHandlers}
-    >
-      {/* Mercury River Background */}
+    <Animated.View style={[styles.screen, { opacity: entryFade }]}>
       <MercuryCaduceus phaseColor={palette.accent} />
-
-      {/* Phase vignette */}
+      <MercurySpine phase={activePhase} width={WIN_W} height={WIN_H} />
       <Atmosphere phaseColor={palette.accent} />
-
-      {/* Corner brackets */}
       <HudCorners color={palette.accent} />
 
-      {/* HUD — phase name top-left, time top-right */}
-      <View style={styles.hudTopLeft}>
-        <Text style={[styles.hudText, { color: palette.accent }]}>
+      <View style={styles.content} {...pan.panHandlers}>
+        <Text style={[styles.label, { color: rgba(palette.rgb, 0.55) }]}>
           {palette.displayName}
         </Text>
-      </View>
-      <View style={styles.hudTopRight}>
-        <Text style={[styles.hudText, { color: palette.accent }]}>
-          {timeString}
-        </Text>
-      </View>
-
-      {/* Center Orb */}
-      <View style={styles.orbContainer}>
-        <SphereOrb
-          accent={palette.accent}
-          onLongPress={handleLongPress}
-        />
-        <Text style={[styles.existentialLabel, { color: palette.accent }]}>
+        <Text style={[styles.task, { color: rgba(palette.rgb, 0.30) }]}>
           {palette.existential}
         </Text>
+
+        <View style={styles.center}>
+          <SphereOrbV2
+            phase={activePhase}
+            size={300}
+            variant={VARIANT}
+            onLongPress={handleLongPress}
+          />
+        </View>
+
+        <View style={styles.phraseContainer}>
+          <TypewriterText
+            text={phrase}
+            color={rgba(palette.rgb, 0.65)}
+            speed={38}
+            key={phrase}
+          />
+        </View>
       </View>
 
-      {/* Phrase */}
-      <View style={styles.phraseContainer}>
-        <TypewriterText
-          text={phrase}
-          color={BASE.text}
-          speed={38}
-          key={phrase}
-        />
-      </View>
-
-      {/* Gesture hints — barely visible */}
-      <View style={styles.gestureHints}>
-        <Text style={[styles.gestureHint, { color: palette.accent }]}>
+      <View style={styles.hintRow} pointerEvents="none">
+        <Text style={[styles.hint, { color: rgba(palette.rgb, 0.12) }]}>
           ← bridge · ↑ cover · hold · engine
         </Text>
       </View>
     </Animated.View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: BASE.bg,
-    alignItems: 'center',
-    justifyContent: 'center',
+  screen:          { flex: 1, backgroundColor: BASE.bg },
+  content:         { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  center:          { width: 300, height: 300, alignItems: 'center', justifyContent: 'center' },
+  phraseContainer: { marginTop: 56, paddingHorizontal: 40, alignItems: 'center' },
+  label: {
+    position: 'absolute', top: 52, left: 44,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2.5, textTransform: 'lowercase',
   },
-  orbContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  task: {
+    position: 'absolute', top: 52, right: 44,
+    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2.5, textTransform: 'lowercase',
   },
-  phraseContainer: {
-    position: 'absolute',
-    bottom: height * 0.18,
-    paddingHorizontal: 40,
+  hintRow: {
+    position: 'absolute', bottom: 36, left: 0, right: 0, alignItems: 'center',
   },
-  hudTopLeft: {
-    position: 'absolute',
-    top: 52,
-    left: 44,
+  hint: {
+    fontFamily: 'Courier Prime', fontSize: 8, letterSpacing: 1.5, textTransform: 'lowercase',
   },
-  hudTopRight: {
-    position: 'absolute',
-    top: 52,
-    right: 44,
-  },
-  hudText: {
-    fontFamily: 'Courier Prime',
-    fontSize: 9,
-    letterSpacing: 2.5,
-    textTransform: 'lowercase',
-    opacity: 0.6,
-  },
-  gestureHints: {
-    position: 'absolute',
-    bottom: 36,
-  },
-  gestureHint: {
-    fontFamily: 'Courier Prime',
-    fontSize: 8,
-    letterSpacing: 1.5,
-    textTransform: 'lowercase',
-    opacity: 0.12,
-  },
-  existentialLabel: {
-    fontFamily: 'Courier Prime',
-    fontSize: 9,
-    letterSpacing: 4,
-    textTransform: 'lowercase',
-    opacity: 0.18,
-    marginTop: 18,
-  },
-});
+})
