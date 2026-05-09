@@ -117,8 +117,8 @@ export default function CoverScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.content} {...pan.panHandlers}>
-        <View style={styles.center}>
+      <View style={styles.content}>
+        <View style={styles.center} {...pan.panHandlers}>
           <View style={styles.ringWrap}>
             <OuroborosRing phase={phase} size={WIN_W - 40} hour={hourDecimal} variant={VARIANT} scars={scars} />
           </View>

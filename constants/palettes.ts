@@ -37,7 +37,7 @@ export const PHASES: Record<PhaseKey, PhasePalette> = {
     key: 'day',
     accent:      '#8fb8a8',
     rgb:         '143,184,168',
-    displayName: 'afternoon',
+    displayName: 'day',
     existential: 'action',
     breathMs:    2500,
     glowHex:     '8fb8a828',
@@ -85,8 +85,8 @@ export const BASE = {
 };
 
 export function getPhaseKey(hour: number): PhaseKey {
-  if (hour >= 5 && hour < 8)  return 'dawn';
-  if (hour >= 8 && hour < 17) return 'day';
+  if (hour >= 5 && hour < 11)  return 'dawn';
+  if (hour >= 11 && hour < 17) return 'day';
   if (hour >= 17 && hour < 20) return 'goldenHour';
   return 'night';
 }

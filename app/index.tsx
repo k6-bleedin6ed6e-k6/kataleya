@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   phrase: {
     position: 'absolute',
-    top: ORB_TOP + ORB_SIZE + 32,
+    top: ORB_TOP + ORB_SIZE + 52,
     left: 44,
     right: 44,
     alignItems: 'center',
