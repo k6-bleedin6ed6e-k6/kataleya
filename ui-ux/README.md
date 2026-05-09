@@ -61,4 +61,6 @@ wireframes/
 | The Bridge | `/bridge` | `app/bridge.tsx` |
 | The Cocoon (night void) | `/cover` | `app/cover.tsx` |
 | The Terminal (phosphor noir) | `/terminal` | `app/terminal.tsx` |
+| Burn Ritual | `/burn` | `app/burn.tsx` |
+| Physician Mirror | `/mirror` | `app/mirror.tsx` |
 | Awakening Ritual (beats 1-3 + seal) | `/onboarding` | `app/onboarding.tsx` |

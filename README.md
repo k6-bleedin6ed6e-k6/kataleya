@@ -19,13 +19,13 @@ The app has no tab bar, no dashboard, no analytics. Navigation is entirely gestu
 
 | Screen | Route | What it does |
 |--------|-------|--------------|
-| **The Room** | `/` | The home screen. A breathing orb inside a sacred timekeeper ring. Phase-aware color. Bottom nav to all screens. |
-| **The Bridge** | `/bridge` | Mood check-in. Tap the orb, report your "weather inside," get a response phrase calibrated to your phase + mood. |
-| **The Cocoon** | `/cover` | 2am grounding. Tap to cycle phrases. Hold the orb for 2.5s to dissolve back to the Room. |
-| **The Terminal** | `/terminal` | Engine room. Live circadian data, breath technique selector, build milestones. Tap "signal" for the Sponsor Signal overlay, "mirror" for the Physician Mirror. |
-| **Burn Ritual** | `/burn` | Write what weighs on you, ignite it, and watch the words blur and sink into the mercury river. |
-| **Physician Mirror** | `/mirror` | Clinical reflection view. Seed/Root/Bloom presence markers, horizon line with transmutation scars, mercury tide, integrity index. |
-| **Awakening Ritual** | `/onboarding` | First-launch only. Three beats: sleeping → naming → sealing. Sets your attunement. |
+| **The Room** | `/` | The home screen. A breathing orb inside a sacred timekeeper ring. Phase-aware color. Bottom nav to all screens. Shows real sobriety days (from onboarding date). |
+| **The Bridge** | `/bridge` | Mood check-in. Tap the orb, report your "weather inside," get a response phrase calibrated to your phase + mood. Frequency bridge at bottom shows your breath technique sync. |
+| **The Cocoon** | `/cover` | 2am grounding. Tap the orb to cycle phrases. Hold the orb for 2.5s to dissolve back to the Room. |
+| **The Terminal** | `/terminal` | Engine room. Live circadian data, breath technique selector, build milestones. Tap "signal" for the Sponsor Signal overlay, "mirror" for the Physician Mirror. Type `/reset` to clear all data and restart onboarding. |
+| **Burn Ritual** | `/burn` | Tap a thought to release it — watch the words blur and sink into the mercury river. No typing required. |
+| **Physician Mirror** | `/mirror` | Clinical reflection view. Seed/Root/Bloom presence markers, horizon line with transmutation scars, mercury tide. Shows real days sober. Swipe right to return. |
+| **Awakening Ritual** | `/onboarding` | First-launch only. Three beats: sleeping → naming → sealing. Sets your name and sobriety date. |
 
 ---
 
@@ -37,7 +37,7 @@ The app has no tab bar, no dashboard, no analytics. Navigation is entirely gestu
 - **react-native-svg** — all graphics are vectors (no raster art in the app)
 - **RN Animated API** — all animations (Reanimated is installed but unused until a dev build is confirmed)
 - **expo-sqlite** — sanctuary vault (mood logs, urge logs, journal entries)
-- **AsyncStorage** — surface vault (preferences, attunement)
+- **AsyncStorage** — surface vault (preferences, attunement, sobriety date)
 
 ---
 
@@ -51,6 +51,15 @@ The visual language is *bioluminescent organism at 2am* — deep ocean meets sta
 - **No flat fills.** Every surface is gradient, glow, or shadow.
 
 The orb alone has 5 SVG membrane layers: haze → body → rim → iris → nucleus. Directional light from upper-left. Off-center specular. It breathes independently of the aura — two rhythms drifting and recombining.
+
+### Circadian phases
+
+| Phase | Time | Color family |
+|-------|------|-------------|
+| Dawn | 05:00 – 10:59 | Warm amber `#d4a574` |
+| Day | 11:00 – 16:59 | Cool mint `#8fb8a8` |
+| Golden Hour | 17:00 – 19:59 | Rich gold `#c9a959` |
+| Night | 20:00 – 04:59 | Deep slate `#8090b0` |
 
 ---
 
@@ -78,8 +87,8 @@ npx expo start
 ## Project Structure
 
 ```
-app/              # expo-router screens
-components/       # reusable visual components (orb, ring, atmosphere, etc.)
+app/              # expo-router screens (7 routes)
+components/       # reusable visual components (orb, ring, atmosphere, mood-check, etc.)
 surface/          # background ambience (subliminal)
 constants/        # palette v2, phrases
 hooks/            # circadian phase detector, re-entry grace
@@ -95,6 +104,7 @@ ui-ux/            # design reference wireframes (HTML + PNG)
 - **The Anchor.** High-restlessness triggers the "stay with me" grounding protocol.
 - **Dignity by Design.** Clinical views use semantic blurring to protect the user's narrative.
 - **No-Spying.** Zero analytics, zero accounts, zero cloud.
+- **Real data only.** No fake metrics. Sobriety days, breath technique, mood logs — all real.
 
 ---
 

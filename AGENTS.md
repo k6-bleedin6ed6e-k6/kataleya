@@ -12,6 +12,7 @@
 - **Animations**: React Native Animated API only. No Reanimated, no Skia.
 - **Vectors**: react-native-svg. No raster art in the app (assets/ is only app icons).
 - **Persistence**: AsyncStorage (surface vault) + expo-sqlite (sanctuary vault). Web shim for SQLite exists.
+- **Fonts**: Courier Prime only (via `@expo-google-fonts/courier-prime`). Wireframes specify Space Grotesk / JetBrains Mono / Inter — not yet loaded.
 
 ---
 
@@ -21,19 +22,19 @@
 kataleya/
 ├── app/                          # expo-router file-based routes
 │   ├── _layout.tsx               # root stack, font load, status bar
-│   ├── index.tsx                 # the room — orb, ring, nav, swipe gestures
-│   ├── bridge.tsx                # presence bridge — orb, ring, mood check-in
+│   ├── index.tsx                 # the room — orb, ring, nav, swipe gestures, sobriety counter
+│   ├── bridge.tsx                # presence bridge — orb, ring, mood check-in, frequency bridge
 │   ├── cover.tsx                 # 2am cocoon — orb, phrase cycle, hold-to-return
-│   ├── terminal.tsx              # phosphor noir engine room + sponsor signal
-│   ├── onboarding.tsx            # awakening ritual — 3 beats, seal
-│   ├── burn.tsx                  # burn ritual — text dissolve into mercury river
-│   └── mirror.tsx                # physician mirror — seed/root/bloom, horizon, tide
+│   ├── terminal.tsx              # phosphor noir engine room + sponsor signal + /reset
+│   ├── onboarding.tsx            # awakening ritual — 3 beats, seal, centered orb
+│   ├── burn.tsx                  # burn ritual — ambient text dissolve into mercury river
+│   └── mirror.tsx                # physician mirror — real days sober, horizon, tide
 ├── components/
 │   ├── garden-presence.tsx       # the organism — seed, spine, wings, scars
 │   ├── sphere-orb-v2.tsx         # phase-reactive orb (lung/iris/etched)
 │   ├── ouroboros-ring.tsx        # sacred timekeeper — 12 nodes, now-arc
 │   ├── atmosphere.tsx            # phase-bleed vignette + light column
-│   ├── mood-check.tsx            # weather inside overlay
+│   ├── mood-check.tsx            # weather inside overlay (text labels, needs visual rebuild)
 │   ├── typewriter-text.tsx       # character reveal with jitter
 │   └── mercury-spine.tsx         # vertical hairline (unused, kept for reference)
 ├── surface/                      # background ambience (subliminal)
@@ -65,6 +66,7 @@ kataleya/
 ├── package-lock.json
 ├── start-light.sh                # low-RAM start script
 ├── collab.md                     # live coordination log
+├── CHECKPOINT-2026-05-09.md      # milestone tracker
 └── AGENTS.md                     # this file
 ```
 
@@ -94,13 +96,16 @@ kataleya/
 |--------|---------|--------|
 | Room | swipe left | `/bridge` |
 | Room | swipe up | `/cover` |
-| Room | long-press seed | `/terminal` |
+| Room | long-press seed (800ms) | `/terminal` |
 | Bridge | swipe right | back |
+| Bridge | tap orb | show MoodCheck overlay |
 | Cover | swipe down | back |
-| Cover | tap | cycle phrase |
-| Cover | hold 2.5s | back (progress arc) |
+| Cover | tap orb | cycle phrase |
+| Cover | hold orb 2.5s | back (progress arc) |
 | Terminal | swipe right | back |
 | Terminal | tap `$ exit` | back |
+| Terminal | tap `/signal` | toggle sponsor overlay |
+| Terminal | tap `/reset` | clear vault → onboarding |
 | Burn | swipe down | back |
 | Mirror | swipe right | back |
 
@@ -118,6 +123,12 @@ Each phase is a **family**, not one hex code. All components use the full family
 | night | `#8090b0` | `#2e3852` | `#a8bcd4` | `#060810` | `#d8e4f8` |
 
 **Base**: `bg: #050508`, `surface: #0d0d14`, `text: #e8e6f0`
+
+**Circadian boundaries** (in `constants/palettes.ts`):
+- `dawn` — 05:00 to 10:59
+- `day` — 11:00 to 16:59
+- `goldenHour` — 17:00 to 19:59
+- `night` — 20:00 to 04:59
 
 **Usage rules**:
 - `accent` — primary light, thread, node fill
@@ -167,18 +178,41 @@ Web builds use `sanctuary.web.ts` (no-op). Native builds use `sanctuary.ts` (exp
 
 ## 7. SESSION HISTORY
 
-### 2026-05-09 — Screen Build from Stitch Wireframes
-1. **The Room (`index.tsx`)** — header with KATALEYA + terminal button, Ouroboros ring around orb, floating bottom nav (room/cocoon/bridge/terminal), phase label + resonance/entropy metrics.
-2. **The Bridge (`bridge.tsx`)** — "life rewritten by choice" headline, frequency bridge bottom line (`..: :..` + resonance sync), origin footer.
-3. **The Cocoon (`cover.tsx`)** — header with TERMINAL button, void ring with transmutation scars, "stay with me" text, bottom nav hints.
-4. **The Terminal (`terminal.tsx`)** — sponsor signal overlay with pulsing orb + X25519 handshake arc, access to mirror from footer nav.
-5. **Burn Ritual (`burn.tsx`)** — text input → ignite → animated blur/sink dissolve into mercury river. Sacred geometry rings, side nav, phase/resonance footer.
-6. **Physician Mirror (`mirror.tsx`)** — Seed/Root/Bloom markers, horizon line with transmutation scars + luminous nodes, mercury tide with stability bars, integrity index + recalibrate button, scanline animation.
-7. **Design references** — all stitch zip files extracted into `ui-ux/wireframes/` with README mapping wireframes to app routes.
-8. **Build** — web export passes, TypeScript strict passes.
+### 2026-05-09 — Fidelity Rebuild Pass (All Screens)
+All six main screens rebuilt to match stitch wireframes after user feedback that initial builds had unreadable micro-text, off-screen elements, meaningless metrics, and confusing UX.
+
+**Systemic fixes across all screens**:
+- Removed all fake metrics (`RESONANCE 98%`, `ENTROPY 0.04%`, `INTEGRITY 98.4%`)
+- Replaced with real data: sobriety-days counter from AsyncStorage, breath technique duration from storage
+- Increased minimum text sizes (9–10px for labels, 12–18px for body, 22–24px for values)
+- Removed unicode glyphs (`●`, `○`, `◉`, `◎`, `↑`, `←`) — replaced with styled Views or removed
+- All layouts verified against wireframe proportions
+
+**Per-screen rebuilds**:
+1. **`index.tsx` (Room)** — Real sobriety counter. Readable nav labels. Phrase positioned with breathing room below orb.
+2. **`bridge.tsx` (Bridge)** — Removed overlapping label/task elements. Headline at `top: 18%`. Ring expanded to `115vw`. Real breath sync duration. Atmospheric vignettes.
+3. **`cover.tsx` (Cocoon)** — Phrase below orb. Hold-to-return arc on orb only (not whole screen). Readable text.
+4. **`terminal.tsx` (Terminal)** — Phosphor noir `#33ff33` on black. Blinking cursor. `/reset` command clears vault → onboarding. Sponsor signal is absolute overlay.
+5. **`burn.tsx` (Burn)** — Ambient dissolving text (tap to release). No forced input field. No fake metrics.
+6. **`mirror.tsx` (Physician)** — Real `DAYS SOBER` from storage. Sky:flex 5 / tide:flex 3 proportions. Absolute footer overlay. Readable text.
+
+**Bug fixes**:
+- `onboarding.tsx` — Orb centered (was stuck at top-left due to missing flex alignment on absolute fill container)
+- `constants/palettes.ts` — Dawn extended to 11am (was 8am). Day displayName changed from "afternoon" to "day".
+
+### 2026-05-09 — Screen Build from Stitch Wireframes (Initial)
+1. **The Room (`index.tsx`)** — header with KATALEYA + terminal button, Ouroboros ring around orb, floating bottom nav.
+2. **The Bridge (`bridge.tsx`)** — "life rewritten by choice" headline, frequency bridge bottom line.
+3. **The Cocoon (`cover.tsx`)** — header with TERMINAL button, void ring with transmutation scars.
+4. **The Terminal (`terminal.tsx`)** — sponsor signal overlay with pulsing orb.
+5. **Burn Ritual (`burn.tsx`)** — text input → ignite → animated blur/sink dissolve.
+6. **Physician Mirror (`mirror.tsx`)** — Seed/Root/Bloom markers, horizon line, mercury tide.
+7. **Design references** — all stitch zips extracted into `ui-ux/wireframes/`.
 
 ### 2026-05-09 — Graphics Overhaul v2 (Kimi + Claude)
-- See prior session history in git log for full details.
+- `components/sphere-orb-v2.tsx` — 3 SVG gradients (sphere + rim + specular). Real lighting.
+- `app/index.tsx` — room stripped to void. Big orb + TypewriterText phrase.
+- `components/atmosphere.tsx` — two gradients, full stop.
 
 ---
 
@@ -206,3 +240,17 @@ npx expo export --platform web
 - **Colors**: use palette v2 families. Avoid raw hex strings in components.
 - **Platform**: web shim pattern (`.web.ts`) for native-only modules.
 - **Imports**: prefer `import type` for type-only imports.
+
+---
+
+## 10. KNOWN GAPS (Do Not Forget)
+
+| Gap | Impact | Priority |
+|-----|--------|----------|
+| **Font mismatch** | App uses Courier Prime. Wireframes specify Space Grotesk (headlines), JetBrains Mono (body/terminal), Inter (labels) | High |
+| **Missing Material icons** | Using styled Views / text instead of Material Symbols (`blur_on`, `terminal`, `spa`, `psychology`, `brightness_low`) | High |
+| **Atmospheric backgrounds** | No CSS grain, scanlines, CRT vignettes, backdrop-blur (RN limitations vs HTML wireframes) | Medium |
+| **Orb rendering** | App uses simple SVG gradient sphere. Wireframe shows 5-layer glassmorphic orb (haze/body/iris/nucleus/rim) | Medium |
+| **Mood check visual** | Text labels (storm/rain/grey/clear/sun). Needs 5 orb-like light states per wireframe | Medium |
+| **M7 Vault encryption** | Not started. Needs encrypted journal, terminal vault commands | Low (blocked on dev account) |
+| **M8 EAS builds** | Not started. Needs Apple/Google dev accounts | Low (blocked on dev account) |

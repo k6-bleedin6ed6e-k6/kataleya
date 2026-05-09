@@ -1,6 +1,6 @@
 # CHECKPOINT — 2026-05-09
 
-> All stitch wireframe screens built into app. M5 + M6 complete. Graphics overhaul shipped. Visuals use palette v2 light-language.
+> All stitch wireframe screens rebuilt for fidelity. M0–M6 complete. Fake metrics removed. Real data wired. Build gates pass.
 
 ---
 
@@ -8,15 +8,15 @@
 
 | Milestone | Status | Notes |
 |-----------|--------|-------|
-| M0 — Seed | ✅ | Core circadian system, palette v1 |
+| M0 — Seed | ✅ | Core circadian system, palette v1/v2 |
 | M1 — Gestures | ✅ | Swipe navigation, pan responders, haptics |
-| M2 — Engine Room | ✅ | Terminal screen, storage layer, breath technique |
+| M2 — Engine Room | ✅ | Terminal screen, storage layer, breath technique, `/reset` command |
 | M3 — Bridge Check-in | ✅ | Mood logging to sanctuary, check-in flow |
 | M4 — Cover + Graphics | ✅ | Cover screen, palette v2, orb/spine/ring/seed rewrite |
-| M5 — Burn Ritual | ✅ | `burn.tsx` — text dissolve into mercury river with blur/sink animation |
-| M6 — Physician Mirror | ✅ | `mirror.tsx` — Seed/Root/Bloom markers, horizon line, mercury tide, integrity index |
-| M7 — Vaults Encryption | ⏳ | Encrypted storage, fortress vault (hardware-dependent) |
-| M8 — EAS Builds | ⏳ | iOS + Android dev builds, reanimated v3 migration |
+| M5 — Burn Ritual | ✅ | `burn.tsx` — ambient text dissolve, no forced input |
+| M6 — Physician Mirror | ✅ | `mirror.tsx` — real days sober, horizon, tide, readable text |
+| M7 — Vaults Encryption | ⏳ | Encrypted storage, fortress vault (pending dev account) |
+| M8 — EAS Builds | ⏳ | iOS + Android dev builds, reanimated v3 migration (pending dev account) |
 
 ---
 
@@ -42,6 +42,7 @@
 │       └──────────→ │   TERMINAL   │                     │
 │                    │  (phosphor)  │                     │
 │                    │  tap $exit → │ back                │
+│                    │  /reset     →│ onboarding          │
 │                    └─────────────┘                     │
 │                           │                             │
 │                           │ tap signal/mirror           │
@@ -62,12 +63,12 @@
 | Bridge | swipe right (dx > 60, horizontal) | `router.back()` |
 | Bridge | tap orb | show MoodCheck overlay |
 | Cover | swipe down (dy > 60, vertical) | `router.back()` |
-| Cover | tap (no drag) | cycle phrase with fade |
-| Cover | hold 2.5s | progress arc fills → auto back |
+| Cover | tap orb | cycle phrase with fade |
+| Cover | hold orb 2.5s | progress arc fills → auto back |
 | Terminal | swipe right (dx > 60, horizontal) | `router.back()` |
 | Terminal | tap `$ exit` | `router.back()` |
-| Terminal | tap `signal` | show sponsor signal overlay |
-| Terminal | tap `mirror` | push `/mirror` |
+| Terminal | tap `/signal` | toggle sponsor signal overlay |
+| Terminal | tap `/reset` | `clearSurfaceVault()` → `/onboarding` |
 | Burn | swipe down (dy > 60, vertical) | `router.back()` |
 | Mirror | swipe right (dx > 60, horizontal) | `router.back()` |
 
@@ -126,13 +127,15 @@ base        bg=#050508   surface=#0d0d14   text=#e8e6f0   textMuted=#8a8a9e   bo
 
 | Route | File | Purpose | Key Features |
 |-------|------|---------|--------------|
-| `/` | `index.tsx` | The Room | Orb + Ouroboros ring, header, bottom nav, phase metrics, swipe gestures |
-| `/bridge` | `bridge.tsx` | Presence Bridge | Mood check-in, frequency bridge line, "life rewritten by choice" |
-| `/cover` | `cover.tsx` | 2am Cocoon | Phrase cycle, hold-to-return arc, void ring with scars |
-| `/terminal` | `terminal.tsx` | Engine Room | Phosphor noir terminal, sponsor signal overlay, breath technique |
-| `/onboarding` | `onboarding.tsx` | Awakening Ritual | 3 beats + seal, name + date attunement |
-| `/burn` | `burn.tsx` | Burn Ritual | Text dissolve animation, mercury river, sacred geometry |
-| `/mirror` | `mirror.tsx` | Physician Mirror | Seed/Root/Bloom, horizon scars, mercury tide, integrity index |
+| `/` | `index.tsx` | The Room | Orb + Ouroboros ring, header, bottom nav, **real sobriety-days counter**, swipe gestures |
+| `/bridge` | `bridge.tsx` | Presence Bridge | Mood check-in, **115vw expanding gateway ring**, frequency bridge line, **real breath sync duration** |
+| `/cover` | `cover.tsx` | 2am Cocoon | Phrase cycle (tap orb), hold-to-return arc, void ring with scars |
+| `/terminal` | `terminal.tsx` | Engine Room | **Phosphor noir terminal**, sponsor signal overlay, **`/reset` → onboarding**, breath technique |
+| `/onboarding` | `onboarding.tsx` | Awakening Ritual | 3 beats + seal, name + date attunement, **centered orb** |
+| `/burn` | `burn.tsx` | Burn Ritual | **Ambient text dissolve** (tap to release), mercury river, sacred geometry |
+| `/mirror` | `mirror.tsx` | Physician Mirror | Seed/Root/Bloom, horizon scars, mercury tide, **real days sober** |
+
+**Bold** = changed in fidelity rebuild pass.
 
 ---
 
@@ -158,12 +161,18 @@ See `ui-ux/README.md` for full mapping to app routes.
 
 ## 7. NEXT STEPS
 
-### Immediate (M7 — Vaults Encryption)
+### Immediate (Systemic Polish)
+- [ ] **Font load** — Space Grotesk (headlines), JetBrains Mono (body/terminal), Inter (labels)
+- [ ] **Material icons** — Replace unicode/styled-View glyphs with Material Symbols
+- [ ] **Atmospheric effects** — RN-safe grain, scanlines, CRT vignettes, phase-bleed
+- [ ] **Mood check visual** — 5 orb-like light states instead of text labels
+
+### Medium (M7 — Vaults Encryption)
 - [ ] `utils/encryption.ts` — simple XOR or base64 wrapper for journal text
 - [ ] `app/terminal.tsx` — add vault commands: `$ vault --mood`, `$ vault --urge`, `$ vault --burn`
-- [ ] `components/mood-check.tsx` — visual selectors (5 orb-like light states instead of text labels)
+- [ ] Fortress vault with hardware-backed encryption (native only)
 
-### Medium (M8 — Native Polish)
+### Long (M8 — Native Polish)
 - [ ] EAS dev build — unlocks reanimated v3 migration
 - [ ] Screen transition animations (fade + light bleed + scale)
 - [ ] Onboarding seal animation — more visceral ring closure
@@ -173,11 +182,16 @@ See `ui-ux/README.md` for full mapping to app routes.
 
 ## 8. SESSION NOTES
 
-**2026-05-09** — All stitch wireframe screens built
-- Room: header, ring, nav, metrics
-- Bridge: headline, frequency bridge
-- Cover: header, scars, nav hints
-- Terminal: sponsor signal overlay
-- Burn: dissolve animation
-- Mirror: heatmap, horizon, tide
+**2026-05-09 — Fidelity Rebuild Pass**
+- All 6 main screens rebuilt to match wireframe layouts, proportions, and readable text sizes
+- Fake metrics removed (RESONANCE 98%, ENTROPY 0.04%, INTEGRITY 98.4%)
+- Real data wired: sobriety-days counter, breath technique duration, user name
+- Terminal `/reset` command added (clear vault → onboarding)
+- Onboarding orb centering fixed
+- Circadian timing fixed (dawn 5am–11am, day displayName "day")
+- Cover orb made the touch target (not whole screen)
 - Build: web export 1.18MB, TypeScript strict clean
+
+**2026-05-09 — Initial Screen Build**
+- Room, Bridge, Cover, Terminal, Burn, Mirror screens built from stitch wireframes
+- All stitch zip files extracted into `ui-ux/wireframes/`
