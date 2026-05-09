@@ -11,8 +11,6 @@ import {
   Dimensions,
   Easing,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -138,16 +136,17 @@ export default function OnboardingScreen() {
 
   // ----------------------------------------------------------------
   // beat 2a → 2b: name submitted
+  // keyboard must fully settle before we swap beats, otherwise the
+  // next TextInput's focus re-opens it before dismiss completes
   // ----------------------------------------------------------------
   function submitName() {
     if (!name.trim()) return
     Keyboard.dismiss()
-    // cross-fade to date question
-    Animated.sequence([
-      Animated.timing(contentFade, { toValue: 0, duration: 400, useNativeDriver: true }),
-    ]).start(() => {
-      setBeat('naming-date')
-      Animated.timing(contentFade, { toValue: 1, duration: 700, useNativeDriver: true }).start()
+    Animated.timing(contentFade, { toValue: 0, duration: 350, useNativeDriver: true }).start(() => {
+      setTimeout(() => {
+        setBeat('naming-date')
+        Animated.timing(contentFade, { toValue: 1, duration: 700, useNativeDriver: true }).start()
+      }, 350)  // 350ms after dismiss — keyboard is gone before new beat renders
     })
   }
 
@@ -223,10 +222,8 @@ export default function OnboardingScreen() {
   const showNaming = beat === 'naming-name' || beat === 'naming-date'
 
   return (
-    <KeyboardAvoidingView
-      style={styles.screen}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <Pressable style={styles.screen} onPress={Keyboard.dismiss}>
+      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
 
       {/* === orb area (beats 1, 3) === */}
       {showOrb && (
@@ -272,7 +269,7 @@ export default function OnboardingScreen() {
                   shadowOpacity: beat === 'sleeping' ? 0 : 0.6,
                   shadowRadius: 32,
                   shadowOffset: { width: 0, height: 0 },
-                  backgroundColor: beat === 'complete' ? '#00d4aa' : ORB_COLOR,
+                  backgroundColor: beat === 'complete' ? '#d4a574' : ORB_COLOR,
                 },
               ]}
             />
@@ -331,7 +328,6 @@ export default function OnboardingScreen() {
                     setDateError('')
                   }}
                   onSubmitEditing={submitDate}
-                  autoFocus
                   keyboardType="number-pad"
                   returnKeyType="done"
                   placeholder="YYYY · MM · DD"
@@ -342,7 +338,7 @@ export default function OnboardingScreen() {
               </View>
               {dateError
                 ? <Text style={styles.error}>{dateError}</Text>
-                : <Text style={styles.microHint}>press return when ready</Text>
+                : <Text style={styles.microHint}>tap the field · press return when ready</Text>
               }
             </>
           )}
@@ -364,7 +360,8 @@ export default function OnboardingScreen() {
         </Animated.View>
       )}
 
-    </KeyboardAvoidingView>
+      </View>
+    </Pressable>
   )
 }
 
@@ -423,13 +420,10 @@ const styles = StyleSheet.create({
   },
   namingWrap: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    top: H * 0.28,   // pinned to upper third — keyboard slides up beneath this
+    left: 44,
+    right: 44,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 44,
   },
   question: {
     fontFamily: 'Courier Prime',
