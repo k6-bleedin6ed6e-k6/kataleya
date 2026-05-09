@@ -1,6 +1,6 @@
 // app/mirror.tsx
 // physician mirror — temporal entity for shared clinical reflection.
-// rebuilt to match wireframe: clinical, measured, atmospheric.
+// rebuilt to match wireframe proportions and readable text.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -17,22 +17,45 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useCircadian } from '../hooks/use-circadian'
+import { getAttunement } from '../utils/storage'
 import { BASE } from '../constants/palettes'
 
 const { height: H } = Dimensions.get('window')
 
 const SCARS = [
-  { text: '0XFF_STABLE', left: '12%', top: -4 },
-  { text: '::RESONANCE_SCAN::', left: '38%', bottom: -16, opacity: 0.2 },
-  { text: 'V_0.9.4_AURORA', right: '25%', top: -4 },
-  { text: 'PHASE_DAWN', right: '5%', bottom: -16, opacity: 0.2 },
+  { text: 'STABLE', left: '12%', top: -14 },
+  { text: 'RESONANCE', left: '38%', bottom: -18, opacity: 0.25 },
+  { text: 'AURORA', right: '25%', top: -14 },
+  { text: 'DAWN', right: '5%', bottom: -18, opacity: 0.25 },
 ]
+
+function daysSince(iso: string): number {
+  const start = new Date(iso)
+  const now = new Date()
+  const ms = now.getTime() - start.getTime()
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)))
+}
 
 export default function MirrorScreen() {
   const router = useRouter()
-  const { palette } = useCircadian()
-  const [integrity, setIntegrity] = useState(98.4)
+  const { phase, palette } = useCircadian()
+  const [sobrietyDays, setSobrietyDays] = useState<number | null>(null)
+  const [userName, setUserName] = useState<string>('')
   const scanY = useRef(new Animated.Value(-120)).current
+
+  const loadData = useCallback(async () => {
+    const attunement = await getAttunement()
+    if (attunement?.sobriety_date) {
+      setSobrietyDays(daysSince(attunement.sobriety_date))
+    }
+    if (attunement?.name) {
+      setUserName(attunement.name)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   useEffect(() => {
     const anim = Animated.loop(
@@ -46,10 +69,6 @@ export default function MirrorScreen() {
     anim.start()
     return () => anim.stop()
   }, [H])
-
-  const recalibrate = useCallback(() => {
-    setIntegrity(prev => Math.min(100, +(prev + Math.random() * 1.5).toFixed(1)))
-  }, [])
 
   const pan = useRef(
     PanResponder.create({
@@ -71,10 +90,7 @@ export default function MirrorScreen() {
 
         {/* subtle scanline sweep */}
         <Animated.View
-          style={[
-            styles.scanline,
-            { transform: [{ translateY: scanY }] },
-          ]}
+          style={[styles.scanline, { transform: [{ translateY: scanY }] }]}
           pointerEvents="none"
         >
           <LinearGradient
@@ -87,44 +103,40 @@ export default function MirrorScreen() {
         {/* header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text style={[styles.headerDot, { color: palette.accent }]}>●</Text>
+            <View style={[styles.headerDot, { backgroundColor: palette.accent }]} />
             <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
           </View>
         </View>
 
-        {/* ── SKY: above the horizon (~40%) ── */}
+        {/* ── SKY: above the horizon (~55%) ── */}
         <View style={styles.sky}>
           <View style={styles.markersRow}>
             {/* Seed */}
             <View style={styles.marker}>
-              <Text style={[styles.markerIcon, { color: `${palette.accent}66`, fontSize: 28 }]}>
-                ○
-              </Text>
-              <View style={[styles.markerLine, { backgroundColor: `${palette.accent}66` }]} />
-              <Text style={[styles.markerLabel, { color: `${palette.accent}66` }]}>
+              <View style={[styles.markerIconCircle, { borderColor: `${palette.accent}55` }]} />
+              <View style={[styles.markerLine, { backgroundColor: `${palette.accent}55` }]} />
+              <Text style={[styles.markerLabel, { color: `${palette.accent}99` }]}>
                 Seed
               </Text>
             </View>
 
             {/* Root — active, dominant */}
             <View style={styles.marker}>
-              <View style={[styles.markerGlow, { backgroundColor: `${palette.accent}25` }]} />
-              <Text style={[styles.markerIcon, { color: palette.accent, fontSize: 44 }]}>
-                ◉
-              </Text>
-              <View style={[styles.markerLine, { backgroundColor: `${palette.accent}99`, height: 40 }]} />
-              <Text style={[styles.markerLabel, { color: palette.accent, letterSpacing: 4 }]}>
+              <View style={[styles.markerGlow, { backgroundColor: `${palette.accent}20` }]} />
+              <View style={[styles.markerIconCircleActive, { borderColor: palette.accent }]}>
+                <View style={[styles.markerIconInner, { backgroundColor: palette.accent }]} />
+              </View>
+              <View style={[styles.markerLine, { backgroundColor: `${palette.accent}cc`, height: 48 }]} />
+              <Text style={[styles.markerLabelActive, { color: palette.accent }]}>
                 Root
               </Text>
             </View>
 
             {/* Bloom */}
             <View style={styles.marker}>
-              <Text style={[styles.markerIcon, { color: `${palette.highlight}66`, fontSize: 28 }]}>
-                ◎
-              </Text>
-              <View style={[styles.markerLine, { backgroundColor: `${palette.highlight}66` }]} />
-              <Text style={[styles.markerLabel, { color: `${palette.highlight}66` }]}>
+              <View style={[styles.markerIconCircle, { borderColor: `${palette.highlight}55` }]} />
+              <View style={[styles.markerLine, { backgroundColor: `${palette.highlight}55` }]} />
+              <Text style={[styles.markerLabel, { color: `${palette.highlight}99` }]}>
                 Bloom
               </Text>
             </View>
@@ -162,7 +174,7 @@ export default function MirrorScreen() {
                     right: scar.right ? scar.right : undefined,
                     top: scar.top,
                     bottom: scar.bottom,
-                    opacity: scar.opacity ?? 0.35,
+                    opacity: scar.opacity ?? 0.4,
                   } as any,
                 ]}
               >
@@ -176,15 +188,15 @@ export default function MirrorScreen() {
           </View>
         </View>
 
-        {/* ── TIDE: mercury river below (~40%) ── */}
+        {/* ── TIDE: mercury river below (~35%) ── */}
         <View style={styles.tide}>
           {/* mercury gradient wash */}
           <LinearGradient
             colors={[
               `${palette.shadow}cc`,
               `${BASE.bg}99`,
-              `${palette.accent}66`,
-              `${palette.highlight}99`,
+              `${palette.accent}55`,
+              `${palette.highlight}88`,
             ]}
             locations={[0, 0.25, 0.6, 1]}
             style={StyleSheet.absoluteFill}
@@ -198,21 +210,21 @@ export default function MirrorScreen() {
 
           <View style={styles.tideMarkers}>
             {/* Void — dim */}
-            <View style={[styles.tideMarker, { opacity: 0.3 }]}>
-              <View style={[styles.tideBar, { width: 80, backgroundColor: `${BASE.text}33` }]} />
-              <Text style={[styles.tideLabel, { color: `${BASE.text}88` }]}>
-                (..: :..) Void
+            <View style={[styles.tideMarker, { opacity: 0.35 }]}>
+              <View style={[styles.tideBar, { width: 72, backgroundColor: `${BASE.text}33` }]} />
+              <Text style={[styles.tideLabel, { color: `${BASE.text}77` }]}>
+                Void
               </Text>
             </View>
 
             {/* Stable — highlighted */}
-            <View style={[styles.tideMarker, { transform: [{ translateY: 4 }] }]}>
+            <View style={styles.tideMarker}>
               <View
                 style={[
                   styles.tideBar,
                   styles.tideBarActive,
                   {
-                    width: 120,
+                    width: 112,
                     backgroundColor: `${palette.accent}44`,
                     shadowColor: palette.accent,
                   },
@@ -225,45 +237,45 @@ export default function MirrorScreen() {
 
             {/* Renewal — dim */}
             <View style={[styles.tideMarker, { opacity: 0.4 }]}>
-              <View style={[styles.tideBar, { width: 80, backgroundColor: `${BASE.text}33` }]} />
-              <Text style={[styles.tideLabel, { color: `${BASE.text}88` }]}>
+              <View style={[styles.tideBar, { width: 72, backgroundColor: `${BASE.text}33` }]} />
+              <Text style={[styles.tideLabel, { color: `${BASE.text}77` }]}>
                 Renewal
               </Text>
             </View>
           </View>
         </View>
 
-        {/* ── FOOTER: integrity, recalibrate, origin (~20%) ── */}
-        <View style={styles.footer}>
-          <View style={styles.footerCol}>
-            <Text style={[styles.footerLabel, { color: `${BASE.text}66` }]}>
-              INTEGRITY_INDEX
+        {/* ── FOOTER: absolute overlay at bottom ── */}
+        <View style={styles.footer} pointerEvents="box-none">
+          <View style={styles.footerCol} pointerEvents="auto">
+            <Text style={[styles.footerLabel, { color: `${BASE.text}55` }]}>
+              DAYS SOBER
             </Text>
             <Text style={[styles.footerValue, { color: `${palette.accent}cc` }]}>
-              {integrity}%
+              {sobrietyDays !== null ? sobrietyDays : '—'}
             </Text>
           </View>
 
           <Pressable
-            onPress={recalibrate}
+            onPress={loadData}
             style={[styles.recalibrateBtn, { borderColor: `${palette.accent}33` }]}
           >
             <Text style={[styles.recalibrateText, { color: `${palette.accent}b3` }]}>
-              RECALIBRATE_MIRROR
+              REFRESH
             </Text>
           </Pressable>
 
-          <View style={styles.footerColRight}>
+          <View style={styles.footerColRight} pointerEvents="auto">
             <Text style={[styles.footerOrigin, { color: `${BASE.text}33` }]}>
-              // origin: thinkBad-doGood-sa.my
+              {userName || '// awaiting attunement'}
             </Text>
           </View>
         </View>
 
         {/* swipe hint */}
         <View style={styles.hint} pointerEvents="none">
-          <Text style={[styles.hintText, { color: `${palette.rgb}12` }]}>
-            → swipe right to return
+          <Text style={[styles.hintText, { color: `${palette.rgb}18` }]}>
+            swipe right to return
           </Text>
         </View>
       </View>
@@ -293,24 +305,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 12,
     paddingBottom: 4,
-    opacity: 0.4,
+    opacity: 0.55,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   headerDot: {
-    fontSize: 10,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
   },
   headerTitle: {
     fontFamily: 'Courier Prime',
-    fontSize: 12,
-    letterSpacing: 6,
+    fontSize: 13,
+    letterSpacing: 5,
   },
   // sky
   sky: {
-    flex: 4,
+    flex: 5,
     justifyContent: 'center',
     paddingHorizontal: 32,
   },
@@ -321,26 +335,50 @@ const styles = StyleSheet.create({
   },
   marker: {
     alignItems: 'center',
-    gap: 10,
   },
   markerGlow: {
     position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    top: -18,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    top: -22,
   },
-  markerIcon: {
-    fontFamily: 'Courier Prime',
+  markerIconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    marginBottom: 10,
+  },
+  markerIconCircleActive: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  markerIconInner: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
   },
   markerLine: {
     width: 1,
-    height: 28,
+    height: 32,
+    marginBottom: 10,
   },
   markerLabel: {
     fontFamily: 'Courier Prime',
-    fontSize: 10,
+    fontSize: 11,
     letterSpacing: 3,
+    textTransform: 'uppercase',
+  },
+  markerLabelActive: {
+    fontFamily: 'Courier Prime',
+    fontSize: 12,
+    letterSpacing: 4,
     textTransform: 'uppercase',
   },
   // horizon
@@ -349,15 +387,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 16,
-    paddingBottom: 12,
+    paddingBottom: 16,
   },
   horizonPhrase: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   horizonPhraseText: {
     fontFamily: 'Courier Prime',
-    fontSize: 11,
-    letterSpacing: 6,
+    fontSize: 12,
+    letterSpacing: 5,
     textTransform: 'uppercase',
   },
   horizonLine: {
@@ -371,8 +409,8 @@ const styles = StyleSheet.create({
   scar: {
     position: 'absolute',
     fontFamily: 'Courier Prime',
-    fontSize: 8,
-    letterSpacing: -0.5,
+    fontSize: 9,
+    letterSpacing: 0.5,
   },
   horizonNode: {
     position: 'absolute',
@@ -386,7 +424,7 @@ const styles = StyleSheet.create({
   },
   // tide
   tide: {
-    flex: 4,
+    flex: 3,
     justifyContent: 'center',
     paddingHorizontal: 32,
     overflow: 'hidden',
@@ -399,11 +437,11 @@ const styles = StyleSheet.create({
   },
   tideMarker: {
     alignItems: 'center',
-    gap: 10,
   },
   tideBar: {
     height: 3,
     borderRadius: 2,
+    marginBottom: 12,
   },
   tideBarActive: {
     height: 4,
@@ -414,35 +452,37 @@ const styles = StyleSheet.create({
   },
   tideLabel: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
-    letterSpacing: 2,
+    fontSize: 10,
+    letterSpacing: 2.5,
     textTransform: 'uppercase',
   },
-  // footer
+  // footer — absolute overlay
   footer: {
-    flex: 2,
+    position: 'absolute',
+    bottom: 24,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     paddingHorizontal: 24,
-    paddingBottom: 20,
-    gap: 12,
+    zIndex: 20,
   },
   footerCol: {
-    gap: 4,
+    gap: 6,
   },
   footerColRight: {
     alignItems: 'flex-end',
-    maxWidth: 120,
+    maxWidth: 140,
   },
   footerLabel: {
     fontFamily: 'Courier Prime',
-    fontSize: 9,
+    fontSize: 10,
     letterSpacing: 3,
   },
   footerValue: {
     fontFamily: 'Courier Prime',
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '700',
   },
   recalibrateBtn: {
@@ -453,25 +493,26 @@ const styles = StyleSheet.create({
   },
   recalibrateText: {
     fontFamily: 'Courier Prime',
-    fontSize: 10,
+    fontSize: 11,
     letterSpacing: 2,
   },
   footerOrigin: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 10,
     letterSpacing: 1,
     textAlign: 'right',
   },
   hint: {
     position: 'absolute',
-    bottom: 4,
+    bottom: 6,
     left: 0,
     right: 0,
     alignItems: 'center',
+    zIndex: 20,
   },
   hintText: {
     fontFamily: 'Courier Prime',
-    fontSize: 8,
+    fontSize: 9,
     letterSpacing: 1.5,
   },
 })

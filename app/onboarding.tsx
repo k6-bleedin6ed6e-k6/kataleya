@@ -223,7 +223,7 @@ export default function OnboardingScreen() {
 
   return (
     <Pressable style={styles.screen} onPress={Keyboard.dismiss}>
-      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+      <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]} pointerEvents="box-none">
 
       {/* === orb area (beats 1, 3) === */}
       {showOrb && (
