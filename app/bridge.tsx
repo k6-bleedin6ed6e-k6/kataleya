@@ -1,34 +1,55 @@
 // app/bridge.tsx
-// swipe left from room — presence bridge. swipe right to return.
-// tap orb → weather inside check-in → response phrase
+// the bridge — presence gateway. swipe left from room, swipe right to return.
+// tap orb → mood check-in → response whisper. rebuilt to match wireframe.
 
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { PanResponder, StyleSheet, Text, View } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Animated, Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { OuroborosRing } from '../components/ouroboros-ring'
-import { SphereOrbV2, type OrbVariant } from '../components/sphere-orb-v2'
-import { Atmosphere } from '../components/atmosphere'
-import { TypewriterText } from '../components/typewriter-text'
+import { SphereOrbV2 } from '../components/sphere-orb-v2'
 import { MoodCheck } from '../components/mood-check'
 import { useCircadian } from '../hooks/use-circadian'
-import { BASE } from '../constants/palettes'
+import { getBreathTechnique } from '../utils/storage'
 import { pickBridgePhrase, pickCheckinResponse } from '../constants/phrases'
+import { BASE } from '../constants/palettes'
 import type { MoodValue } from '../utils/sanctuary'
 
-const VARIANT: OrbVariant = 'lung'
-const rgba = (rgb: string, a: number) => `rgba(${rgb}, ${a})`
+const { width: W, height: H } = Dimensions.get('window')
 
 export default function BridgeScreen() {
   const router = useRouter()
   const { phase, palette, hour, minute } = useCircadian()
   const hourDecimal = hour + minute / 60
+
   const [showCheckIn, setShowCheckIn] = useState(false)
   const [checkedIn, setCheckedIn] = useState(false)
   const [mood, setMood] = useState<MoodValue | null>(null)
+  const [breathDuration, setBreathDuration] = useState(11)
+  const [responseOpacity] = useState(new Animated.Value(0))
 
   const ambientPhrase = useMemo(() => pickBridgePhrase(phase), [phase])
-  const phrase = mood !== null ? pickCheckinResponse(phase, mood) : ambientPhrase
+  const responsePhrase = mood !== null ? pickCheckinResponse(phase, mood) : ambientPhrase
+
+  // load real breath technique duration
+  useEffect(() => {
+    getBreathTechnique().then(tech => {
+      if (tech === '4-7-8') setBreathDuration(19)
+      else if (tech === 'box') setBreathDuration(16)
+      else setBreathDuration(11) // resonant default
+    })
+  }, [])
+
+  // fade response phrase after check-in
+  useEffect(() => {
+    if (checkedIn) {
+      Animated.sequence([
+        Animated.timing(responseOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.delay(4000),
+        Animated.timing(responseOpacity, { toValue: 0, duration: 1200, useNativeDriver: true }),
+      ]).start(() => setCheckedIn(false))
+    }
+  }, [checkedIn])
 
   const pan = useRef(
     PanResponder.create({
@@ -54,78 +75,90 @@ export default function BridgeScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <Atmosphere phase={phase} />
-
       <View style={styles.content} {...pan.panHandlers}>
-        {/* header */}
-        <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: rgba(palette.rgb, 0.50) }]}>KATALEYA</Text>
+
+        {/* ── atmospheric vignettes ── */}
+        <View
+          style={[
+            styles.vignetteTop,
+            { backgroundColor: `${palette.highlight}10` },
+          ]}
+          pointerEvents="none"
+        />
+        <View
+          style={[
+            styles.vignetteBottom,
+            { backgroundColor: `${palette.shadow}14` },
+          ]}
+          pointerEvents="none"
+        />
+
+        {/* ── header ── */}
+        <View style={styles.header} pointerEvents="none">
+          <Text style={[styles.headerTitle, { color: `${palette.accent}33` }]}>
+            KATALEYA
+          </Text>
         </View>
 
-        {/* labels */}
-        <Text style={[styles.label, { color: rgba(palette.rgb, 0.80) }]}>
-          {palette.displayName}
-        </Text>
-        <Text style={[styles.task, { color: rgba(palette.rgb, 0.60) }]}>
-          {palette.existential}
-        </Text>
-
-        {/* headline */}
+        {/* ── headline ── */}
         <View style={styles.headlineWrap}>
-          <Text style={[styles.headline, { color: rgba(palette.rgb, 0.85) }]}>
+          <Text style={[styles.headline, { color: `${palette.highlight}66` }]}>
             life rewritten by choice
           </Text>
         </View>
 
-        {/* center: ring + orb */}
-        <View style={styles.center}>
-          <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={320} hour={hourDecimal} variant={VARIANT} />
-          </View>
+        {/* ── expanding ouroboros ring ── */}
+        <View style={styles.ringWrap} pointerEvents="none">
+          <OuroborosRing
+            phase={phase}
+            size={Math.round(W * 1.15)}
+            hour={hourDecimal}
+            variant="lung"
+          />
+        </View>
+
+        {/* ── center: orb + whisper ── */}
+        <View style={styles.orbWrap}>
+          {/* whisper above */}
+          <Text style={[styles.whisper, { color: `${palette.rgb}40` }]}>
+            {checkedIn ? responsePhrase : 'stay with me'}
+          </Text>
+
+          {/* response phrase (fades in after check-in) */}
+          {checkedIn && (
+            <Animated.View style={{ opacity: responseOpacity, position: 'absolute', top: -40 }}>
+              <Text style={[styles.responseText, { color: `${palette.accent}bb` }]}>
+                {responsePhrase}
+              </Text>
+            </Animated.View>
+          )}
+
           <SphereOrbV2
             phase={phase}
-            size={140}
-            variant={VARIANT}
+            size={160}
+            variant="lung"
             onPress={handleOrbPress}
           />
         </View>
 
-        {/* phrase */}
-        <View style={styles.phraseContainer}>
-          <TypewriterText
-            text={phrase}
-            color={rgba(palette.rgb, 0.85)}
-            speed={44}
-            key={phrase}
-          />
-        </View>
-
-        {/* frequency bridge */}
-        <View style={styles.frequencyBridge} pointerEvents="none">
-          <View style={[styles.frequencyLine, { backgroundColor: rgba(palette.rgb, 0.30) }]}>
-            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.60) }]}>..:</Text>
-            <View style={[styles.frequencyGlow, { backgroundColor: rgba(palette.rgb, 0.20) }]} />
-            <Text style={[styles.frequencyText, { color: rgba(palette.rgb, 0.60) }]}>:..</Text>
+        {/* ── frequency bridge ── */}
+        <View style={styles.freqBridge} pointerEvents="none">
+          <View style={styles.freqLine}>
+            <Text style={[styles.freqGlyph, { color: `${palette.accent}77` }]}>..:</Text>
+            <View style={[styles.freqGlow, { backgroundColor: `${palette.highlight}22` }]} />
+            <Text style={[styles.freqGlyph, { color: `${palette.accent}77` }]}>:..</Text>
           </View>
-          <Text style={[styles.frequencySub, { color: rgba(palette.rgb, 0.40) }]}>
-            Resonance Synchronization: 11.0s
+          <Text style={[styles.freqLabel, { color: `${palette.rgb}33` }]}>
+            Resonance Synchronization: {breathDuration.toFixed(1)}s
           </Text>
         </View>
-      </View>
 
-      {!checkedIn && (
-        <View style={styles.hintRow} pointerEvents="none">
-          <Text style={[styles.hint, { color: rgba(palette.rgb, 0.35) }]}>
-            {showCheckIn ? '' : 'tap orb · check in  ·  swipe right · return'}
+        {/* ── footer ── */}
+        <View style={styles.footer} pointerEvents="none">
+          <Text style={[styles.footerText, { color: `${palette.rgb}22` }]}>
+            // origin: thinkBad-doGood-sa.my
           </Text>
         </View>
-      )}
-
-      {/* origin footer */}
-      <View style={styles.footer} pointerEvents="none">
-        <Text style={[styles.footerText, { color: rgba(palette.rgb, 0.25) }]}>
-          // origin: thinkBad-doGood-sa.my
-        </Text>
       </View>
 
       <MoodCheck
@@ -138,63 +171,149 @@ export default function BridgeScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen:          { flex: 1, backgroundColor: BASE.bg },
-  content:         { flex: 1, alignItems: 'center' },
-  header: {
-    position: 'absolute', top: 12, left: 0, right: 0,
-    alignItems: 'center', paddingHorizontal: 24,
+  screen: {
+    flex: 1,
+    backgroundColor: BASE.bg,
   },
-  headerTitle: {
-    fontFamily: 'Courier Prime', fontSize: 14, letterSpacing: 4,
-  },
-  headlineWrap: {
-    position: 'absolute', top: 80, left: 0, right: 0,
-    alignItems: 'center', paddingHorizontal: 32,
-  },
-  headline: {
-    fontFamily: 'Courier Prime', fontSize: 16,
-    letterSpacing: 3, textAlign: 'center', lineHeight: 24,
-    textTransform: 'lowercase',
-  },
-  center:          { width: 320, height: 320, alignItems: 'center', justifyContent: 'center', marginTop: 128 },
-  ringWrap:        { position: 'absolute' },
-  phraseContainer: { marginTop: 40, paddingHorizontal: 48, alignItems: 'center' },
-  label: {
-    position: 'absolute', top: 44, left: 24,
-    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 3, textTransform: 'lowercase',
-  },
-  task: {
-    position: 'absolute', top: 44, right: 24,
-    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 3, textTransform: 'lowercase',
-  },
-  frequencyBridge: {
-    position: 'absolute', bottom: 64, left: 0, right: 0,
-    alignItems: 'center', gap: 8, paddingHorizontal: 32,
-  },
-  frequencyLine: {
-    height: 1, width: '80%',
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-  },
-  frequencyText: {
-    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 3,
-  },
-  frequencyGlow: {
-    width: 80, height: 3,
-  },
-  frequencySub: {
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-  hintRow: { alignItems: 'center', paddingBottom: 24, position: 'absolute', bottom: 32, left: 0, right: 0 },
-  hint: {
-    fontFamily: 'Courier Prime', fontSize: 10, letterSpacing: 2, textTransform: 'lowercase',
-  },
-  footer: {
-    position: 'absolute', bottom: 16, left: 0, right: 0,
+  content: {
+    flex: 1,
     alignItems: 'center',
   },
+  // vignettes
+  vignetteTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: H * 0.45,
+    opacity: 0.6,
+    pointerEvents: 'none',
+  },
+  vignetteBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: H * 0.45,
+    opacity: 0.6,
+    pointerEvents: 'none',
+  },
+  // header
+  header: {
+    position: 'absolute',
+    top: 16,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    zIndex: 5,
+  },
+  headerTitle: {
+    fontFamily: 'Courier Prime',
+    fontSize: 14,
+    letterSpacing: 5,
+  },
+  // headline
+  headlineWrap: {
+    position: 'absolute',
+    top: H * 0.18,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    zIndex: 5,
+  },
+  headline: {
+    fontFamily: 'Courier Prime',
+    fontSize: 18,
+    letterSpacing: 4,
+    textAlign: 'center',
+    lineHeight: 28,
+    textTransform: 'lowercase',
+  },
+  // ring
+  ringWrap: {
+    position: 'absolute',
+    top: H * 0.5 - (W * 1.15) / 2,
+    left: W / 2 - (W * 1.15) / 2,
+    opacity: 0.35,
+    zIndex: 1,
+  },
+  // orb
+  orbWrap: {
+    position: 'absolute',
+    top: H * 0.5 - 80,
+    left: W / 2 - 80,
+    width: 160,
+    height: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 5,
+  },
+  whisper: {
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
+    letterSpacing: 3,
+    textTransform: 'lowercase',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  responseText: {
+    fontFamily: 'Courier Prime',
+    fontSize: 12,
+    letterSpacing: 2,
+    textAlign: 'center',
+    lineHeight: 20,
+    maxWidth: 220,
+  },
+  // frequency bridge
+  freqBridge: {
+    position: 'absolute',
+    bottom: 80,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 32,
+    zIndex: 5,
+  },
+  freqLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+    height: 1,
+    gap: 8,
+  },
+  freqGlyph: {
+    fontFamily: 'Courier Prime',
+    fontSize: 11,
+    letterSpacing: 3,
+  },
+  freqGlow: {
+    flex: 1,
+    height: 2,
+    borderRadius: 1,
+  },
+  freqLabel: {
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+  },
+  // footer
+  footer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 5,
+  },
   footerText: {
-    fontFamily: 'Courier Prime', fontSize: 9, letterSpacing: 2,
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
+    letterSpacing: 2,
     textTransform: 'lowercase',
   },
 })
