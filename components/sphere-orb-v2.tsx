@@ -46,10 +46,10 @@ export function SphereOrbV2({
   const c = theme.accent
 
   const phaseSpeed = {
-    dawn: 14000,
-    day: 10000,
-    goldenHour: 8000,
-    night: 22000,
+    dawn:       11000,
+    day:         9000,
+    goldenHour: 12000,
+    night:      16000,
   }[phase]
   const breathMs = speed ?? phaseSpeed
 
@@ -73,9 +73,10 @@ export function SphereOrbV2({
     }).start()
   }, [pressed])
 
-  const scale = breath.interpolate({ inputRange: [0, 1], outputRange: [1, 1.04] })
-  const pressScale = press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] })
-  const combined = Animated.multiply(scale, pressScale)
+  const scale       = breath.interpolate({ inputRange: [0, 1], outputRange: [1, 1.14] })
+  const glowOpacity = breath.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1.0] })
+  const pressScale  = press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] })
+  const combined    = Animated.multiply(scale, pressScale)
 
   return (
     <Pressable
@@ -83,7 +84,7 @@ export function SphereOrbV2({
       onPressIn={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
       onLongPress={onLongPress}
       style={[styles.container, { width: size, height: size }, style]}>
-      <Animated.View style={{ width: size, height: size, transform: [{ scale: combined }] }}>
+      <Animated.View style={{ width: size, height: size, transform: [{ scale: combined }], opacity: glowOpacity }}>
         {variant === 'etched' && <EtchedOrb size={size} c={c} rgb={theme.rgb} />}
         {variant === 'iris'   && <IrisOrb   size={size} c={c} />}
         {variant === 'lung'   && <LungOrb   size={size} c={c} />}

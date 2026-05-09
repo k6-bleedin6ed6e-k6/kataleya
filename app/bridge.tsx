@@ -51,9 +51,9 @@ export default function BridgeScreen() {
 
         <View style={styles.center}>
           <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={280} hour={hourDecimal} variant={VARIANT} />
+            <OuroborosRing phase={phase} size={300} hour={hourDecimal} variant={VARIANT} />
           </View>
-          <SphereOrbV2 phase={phase} size={280} variant={VARIANT} />
+          <SphereOrbV2 phase={phase} size={190} variant={VARIANT} />
         </View>
 
         <View style={styles.phraseContainer}>
@@ -78,7 +78,7 @@ export default function BridgeScreen() {
 const styles = StyleSheet.create({
   screen:          { flex: 1, backgroundColor: BASE.bg },
   content:         { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  center:          { width: 280, height: 280, alignItems: 'center', justifyContent: 'center' },
+  center:          { width: 300, height: 300, alignItems: 'center', justifyContent: 'center' },
   ringWrap:        { position: 'absolute' },
   phraseContainer: { marginTop: 56, paddingHorizontal: 48, alignItems: 'center' },
   label: {

@@ -112,13 +112,18 @@ function LungRing({
       scars.map((a) => Math.round((a / 360) * TICK_COUNT) % TICK_COUNT)
     )
     const out: React.ReactElement[] = []
+    // faint guide circle so ring structure is always visible
+    out.push(
+      <Circle key="guide" cx={cx} cy={cy} r={ringR}
+        stroke={c} strokeOpacity={0.10} strokeWidth={0.3} fill="none" />
+    )
     for (let i = 0; i < TICK_COUNT; i++) {
       const angleDeg = (i / TICK_COUNT) * 360 - 90
       const rad      = (angleDeg * Math.PI) / 180
       const d        = Math.min(Math.abs(i - nowIdx), TICK_COUNT - Math.abs(i - nowIdx))
       const falloff  = Math.max(0, 1 - d / 18)
       const isScar   = scarSet.has(i)
-      const opacity  = 0.06 + falloff * 0.55
+      const opacity  = 0.12 + falloff * 0.55
       const len      = isScar ? 8 : 2.5
       const x1 = cx + Math.cos(rad) * ringR
       const y1 = cy + Math.sin(rad) * ringR

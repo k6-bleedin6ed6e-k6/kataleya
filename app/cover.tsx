@@ -53,9 +53,9 @@ export default function CoverScreen() {
 
         <View style={styles.center}>
           <View style={styles.ringWrap}>
-            <OuroborosRing phase={phase} size={300} hour={hourDecimal} variant={VARIANT} />
+            <OuroborosRing phase={phase} size={320} hour={hourDecimal} variant={VARIANT} />
           </View>
-          <SphereOrbV2 phase={phase} size={300} variant={VARIANT} />
+          <SphereOrbV2 phase={phase} size={200} variant={VARIANT} />
         </View>
 
         <Text style={[styles.phrase, { color: rgba(palette.rgb, 0.55) }]} key={phraseIndex}>
@@ -75,7 +75,7 @@ export default function CoverScreen() {
 const styles = StyleSheet.create({
   screen:   { flex: 1, backgroundColor: '#000' },
   content:  { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  center:   { width: 300, height: 300, alignItems: 'center', justifyContent: 'center' },
+  center:   { width: 320, height: 320, alignItems: 'center', justifyContent: 'center' },
   ringWrap: { position: 'absolute' },
   label: {
     position: 'absolute', top: 8, left: 24,

@@ -91,7 +91,7 @@ export default function RoomScreen() {
         <View style={styles.center}>
           <SphereOrbV2
             phase={activePhase}
-            size={300}
+            size={200}
             variant={VARIANT}
             onLongPress={handleLongPress}
           />
