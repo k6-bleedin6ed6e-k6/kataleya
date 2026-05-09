@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "goldenHour-shadow": "#6a5320",
+                    "goldenHour-rim": "#f8e8c0",
+                    "secondary-container": "#3a4966",
+                    "dawn-ambient": "#1a1108",
+                    "error-container": "#93000a",
+                    "day-highlight": "#b8dcd0",
+                    "on-error": "#690005",
+                    "surface-container-lowest": "#0c0f0e",
+                    "on-secondary-container": "#a9b9da",
+                    "primary-fixed-dim": "#a6cfbf",
+                    "on-surface": "#e2e3e0",
+                    "tertiary-fixed": "#ffdad6",
+                    "night-highlight": "#a8bcd4",
+                    "base-bg": "#050508",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#8fb8a8",
+                    "surface": "#121413",
+                    "day-shadow": "#3d6858",
+                    "base-text": "#e8e6f0",
+                    "base-surface": "#0d0d14",
+                    "goldenHour-accent": "#c9a959",
+                    "dawn-accent": "#d4a574",
+                    "on-tertiary": "#4b2622",
+                    "on-primary": "#0e372b",
+                    "surface-bright": "#383a38",
+                    "primary-fixed": "#c1ecda",
+                    "night-rim": "#d8e4f8",
+                    "on-tertiary-fixed": "#32120f",
+                    "on-secondary-fixed": "#091b36",
+                    "dawn-rim": "#fdf0e0",
+                    "primary": "#aad4c3",
+                    "goldenHour-highlight": "#e8c878",
+                    "secondary": "#b7c7e9",
+                    "on-primary-fixed": "#002118",
+                    "goldenHour-ambient": "#18130a",
+                    "error": "#ffb4ab",
+                    "surface-container-low": "#1a1c1b",
+                    "on-primary-fixed-variant": "#274e41",
+                    "on-secondary-fixed-variant": "#374763",
+                    "night-ambient": "#060810",
+                    "outline-variant": "#414845",
+                    "on-primary-container": "#23493d",
+                    "inverse-on-surface": "#2f312f",
+                    "tertiary": "#f8bdb6",
+                    "surface-container-highest": "#333534",
+                    "on-tertiary-fixed-variant": "#653c37",
+                    "surface-tint": "#a6cfbf",
+                    "secondary-fixed-dim": "#b7c7e9",
+                    "surface-variant": "#333534",
+                    "surface-container": "#1e201f",
+                    "dawn-highlight": "#f0c898",
+                    "on-background": "#e2e3e0",
+                    "inverse-primary": "#3f6658",
+                    "tertiary-container": "#daa29c",
+                    "day-rim": "#e8f5f0",
+                    "background": "#121413",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-surface-variant": "#c1c8c3",
+                    "on-secondary": "#20314c",
+                    "surface-container-high": "#282a29",
+                    "surface-dim": "#121413",
+                    "day-accent": "#8fb8a8",
+                    "night-shadow": "#2e3852",
+                    "on-tertiary-container": "#603834",
+                    "outline": "#8b928e",
+                    "inverse-surface": "#e2e3e0",
+                    "night-accent": "#8090b0",
+                    "dawn-shadow": "#7a5c38",
+                    "tertiary-fixed-dim": "#f3b8b2",
+                    "day-ambient": "#080f0c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "safe-margin": "2rem",
+                    "node-gap": "1rem",
+                    "ring-diameter": "85vw",
+                    "spine-width": "1px"
+            },
+            "fontFamily": {
+                    "terminal-code": ["JetBrains Mono"],
+                    "label-node": ["Inter"],
+                    "headline-ritual": ["Space Grotesk"],
+                    "body-typewriter": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "terminal-code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-node": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-ritual": ["32px", {"lineHeight": "40px", "letterSpacing": "0.1em", "fontWeight": "300"}],
+                    "body-typewriter": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #050508; /* base-bg fallback */
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        .phase-bleed {
+            background: radial-gradient(circle at 50% 20%, rgba(212, 165, 116, 0.15) 0%, transparent 70%),
+                        radial-gradient(circle at 50% 80%, rgba(122, 92, 56, 0.1) 0%, transparent 60%);
+        }
+        .ouroboros-arc {
+            stroke-dasharray: 282.7; /* 2 * PI * 45 */
+            stroke-dashoffset: 28; /* Creates the break at 12 o'clock */
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+        @keyframes ink-bleed {
+            0% { opacity: 1; filter: blur(0px) brightness(1); }
+            100% { opacity: 0; filter: blur(20px) brightness(0.5); transform: scale(1.1); }
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.4; filter: brightness(1); }
+            50% { opacity: 1; filter: brightness(1.5); }
+        }
+        .animate-ink-bleed {
+            animation: ink-bleed 1.5s forwards ease-in;
+        }
+        .animate-shimmer {
+            animation: shimmer 2s infinite ease-in-out;
+        }
+        .ouroboros-expand {
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s ease-out, filter 1.2s ease-out;
+        }
+    </style></head>
+<body class="font-body-typewriter text-on-surface selection:bg-dawn-accent/30 selection:text-dawn-highlight">
+<!-- Atmosphere Component -->
+<div class="fixed inset-0 phase-bleed pointer-events-none z-0">
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-overlay"></div>
+<!-- Light Column Spines -->
+<div class="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-spine-width bg-gradient-to-b from-transparent via-dawn-accent/20 to-transparent"></div>
+</div>
+<!-- Top Navigation Anchor (Simulating TopAppBar structure) -->
+<nav class="flex justify-between items-center w-full px-safe-margin pt-8 max-w-7xl mx-auto fixed top-0 left-0 right-0 z-[100]">
+<div class="flex items-center gap-2 group cursor-pointer">
+<span class="material-symbols-outlined text-dawn-accent text-2xl" data-icon="blur_on">blur_on</span>
+<span class="font-headline-ritual text-headline-ritual tracking-widest text-dawn-accent">KATALEYA</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-terminal-code text-terminal-code text-dawn-highlight/60 uppercase tracking-tighter">Phase: Dawn</span>
+<span class="material-symbols-outlined text-dawn-accent cursor-pointer" data-icon="terminal">terminal</span>
+</div>
+</nav>
+<!-- Main Content Canvas (The Room) -->
+<main class="relative h-screen w-screen flex flex-col items-center justify-center p-safe-margin overflow-hidden z-10">
+<!-- Ouroboros Ring Container -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<svg class="w-[85vw] h-[85vw] max-w-[600px] max-h-[600px] ouroboros-expand" id="ouroboros-ring" viewbox="0 0 100 100">
+<!-- Main Arc -->
+<circle class="text-dawn-accent/20 ouroboros-arc" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="0.5"></circle>
+<!-- Nodes -->
+<circle class="text-dawn-highlight" cx="50" cy="5" fill="currentColor" r="0.75"></circle> <!-- The 12 node (glow) -->
+<!-- Subtle shimmer dots -->
+<circle class="text-dawn-accent/40" cx="95" cy="50" fill="currentColor" r="0.4"></circle>
+<circle class="text-dawn-accent/40" cx="50" cy="95" fill="currentColor" r="0.4"></circle>
+<circle class="text-dawn-accent/40" cx="5" cy="50" fill="currentColor" r="0.4"></circle>
+</svg>
+</div>
+<!-- The Seed / Orb (Presence Center) -->
+<div class="relative group cursor-pointer transition-all duration-1000" id="central-orb">
+<!-- Layers of membrane -->
+<div class="absolute inset-0 scale-[2.5] bg-dawn-accent/5 blur-3xl rounded-full"></div>
+<div class="absolute inset-0 scale-[1.8] bg-dawn-accent/10 blur-2xl rounded-full"></div>
+<div class="relative w-48 h-48 md:w-64 md:h-64 rounded-full flex items-center justify-center bg-black/40 backdrop-blur-sm border border-dawn-accent/20 overflow-hidden">
+<!-- Nucleus (Full Resonance) -->
+<div class="w-12 h-12 rounded-full bg-dawn-highlight shadow-[0_0_40px_rgba(240,200,152,0.8)] z-20"></div>
+<!-- Inner Glow Rim -->
+<div class="absolute inset-2 border-2 border-dawn-rim/10 rounded-full"></div>
+<!-- Atmosphere inside orb -->
+<div class="absolute inset-0 bg-gradient-to-tr from-dawn-shadow/40 via-transparent to-dawn-highlight/20"></div>
+</div>
+</div>
+<!-- Resonance Text (Typewriter Style) -->
+<div class="mt-16 text-center max-w-md" id="resonance-container">
+<p class="font-body-typewriter text-body-typewriter text-dawn-highlight tracking-widest leading-relaxed opacity-90">
+                stay with me. life rewritten by choice.
+            </p>
+<div class="mt-4 flex justify-center gap-1 animate-shimmer" id="containment-line">
+<div class="w-1 h-1 bg-dawn-accent/40 rounded-full"></div>
+<div class="w-1 h-1 bg-dawn-accent/40 rounded-full"></div>
+<div class="w-8 h-1 bg-dawn-accent rounded-full"></div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Shell -->
+<div class="fixed bottom-0 left-0 right-0 p-safe-margin flex flex-col items-center gap-6 z-50">
+<!-- The Final Button (Enter The Garden) -->
+<button class="relative px-12 py-5 bg-dawn-accent/10 backdrop-blur-xl border border-dawn-accent/30 rounded-full group transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(212,165,114,0.15)] overflow-hidden" id="enter-garden-btn">
+<!-- Rim Glow -->
+<div class="absolute inset-0 border border-dawn-rim/40 rounded-full blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-headline-ritual text-dawn-highlight text-lg tracking-widest relative z-10">ENTER THE GARDEN</span>
+<!-- Button Background Pulse -->
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-dawn-highlight/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+</button>
+<!-- Signature / Micro-type -->
+<div class="text-center">
+<span class="font-terminal-code text-[10px] text-on-surface-variant/40 tracking-[0.2em] uppercase">
+                // origin: thinkBad-doGood-sa.my
+            </span>
+</div>
+</div>
+<!-- Hidden Image Data For Atmosphere Sync -->
+<div class="hidden">
+<img data-alt="A macro digital art piece of a bioluminescent organism floating in a deep navy and amber sea. The creature glows with golden hour light, reflecting soft oranges and warm highlights against a dark, textured background. The mood is tranquil, biological, and deeply atmospheric, evoking a sense of calm life emerging from a quiet void." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGEui56RbsU0FRLt5IlwBCySsS-bia2k92xqirPfWds3aWDcdIr4ggVyGtADsJ1RWw661cu-Gu2G4rX8tCsbjkuSpWNe-rSI3nNlEptaY8Dx0QJmObWaNpG0dsddOfmZSoSLnkO8jL3mlVeqJgMUxZ8JmpSiMhEPDzus4QPOJqFg69vB1btcokxWFpO2p9B0sQd98E6jAuCubWVFkzGj-Gzw6_LTQpAti9X3-OL_gpm-2cs82NbWsBiBGMN4QzyQ8-dQ6zqey4NsA"/>
+</div>
+<script>
+        document.getElementById('enter-garden-btn').addEventListener('click', function() {
+            const ring = document.getElementById('ouroboros-ring');
+            const orb = document.getElementById('central-orb');
+            const text = document.getElementById('resonance-container');
+            
+            // 1. Ouroboros ring expands past camera with motion blur
+            ring.style.transform = 'scale(5)';
+            ring.style.filter = 'blur(10px)';
+            ring.style.opacity = '0';
+            
+            // 2. Central orb scales up to room size
+            orb.style.transform = 'scale(3)';
+            orb.style.opacity = '0.2'; // Preparing for the next scene transition
+            
+            // 3. Text fades with ink bleed
+            text.classList.add('animate-ink-bleed');
+            
+            // 4. Button and navigation fade out
+            this.parentElement.style.transition = 'opacity 0.8s ease';
+            this.parentElement.style.opacity = '0';
+            document.querySelector('nav').style.transition = 'opacity 0.8s ease';
+            document.querySelector('nav').style.opacity = '0';
+        });
+    </script></body></html>

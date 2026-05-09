@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Physician Mirror | Kataleya</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@300;500;700&amp;family=Inter:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#93000a",
+                    "on-background": "#e2e3e0",
+                    "dawn-ambient": "#1a1108",
+                    "dawn-accent": "#d4a574",
+                    "on-primary-fixed": "#002118",
+                    "night-ambient": "#060810",
+                    "on-surface-variant": "#c1c8c3",
+                    "secondary-container": "#3a4966",
+                    "tertiary": "#f8bdb6",
+                    "on-secondary": "#20314c",
+                    "tertiary-fixed-dim": "#f3b8b2",
+                    "surface": "#121413",
+                    "goldenHour-highlight": "#e8c878",
+                    "dawn-shadow": "#7a5c38",
+                    "on-surface": "#e2e3e0",
+                    "primary": "#aad4c3",
+                    "on-primary-fixed-variant": "#274e41",
+                    "tertiary-container": "#daa29c",
+                    "outline-variant": "#414845",
+                    "tertiary-fixed": "#ffdad6",
+                    "primary-fixed": "#c1ecda",
+                    "surface-container-highest": "#333534",
+                    "goldenHour-accent": "#c9a959",
+                    "night-rim": "#d8e4f8",
+                    "surface-tint": "#a6cfbf",
+                    "secondary-fixed": "#d6e3ff",
+                    "base-surface": "#0d0d14",
+                    "primary-container": "#8fb8a8",
+                    "inverse-on-surface": "#2f312f",
+                    "goldenHour-rim": "#f8e8c0",
+                    "goldenHour-ambient": "#18130a",
+                    "error": "#ffb4ab",
+                    "secondary": "#b7c7e9",
+                    "surface-container": "#1e201f",
+                    "dawn-rim": "#fdf0e0",
+                    "on-tertiary-container": "#603834",
+                    "on-secondary-container": "#a9b9da",
+                    "inverse-surface": "#e2e3e0",
+                    "on-primary": "#0e372b",
+                    "day-accent": "#8fb8a8",
+                    "on-secondary-fixed-variant": "#374763",
+                    "surface-dim": "#121413",
+                    "background": "#121413",
+                    "night-shadow": "#2e3852",
+                    "day-ambient": "#080f0c",
+                    "on-tertiary-fixed-variant": "#653c37",
+                    "inverse-primary": "#3f6658",
+                    "secondary-fixed-dim": "#b7c7e9",
+                    "day-rim": "#e8f5f0",
+                    "base-bg": "#050508",
+                    "on-error": "#690005",
+                    "day-shadow": "#3d6858",
+                    "night-accent": "#8090b0",
+                    "day-highlight": "#b8dcd0",
+                    "surface-container-lowest": "#0c0f0e",
+                    "outline": "#8b928e",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#a6cfbf",
+                    "dawn-highlight": "#f0c898",
+                    "surface-bright": "#383a38",
+                    "on-tertiary-fixed": "#32120f",
+                    "surface-variant": "#333534",
+                    "goldenHour-shadow": "#6a5320",
+                    "night-highlight": "#a8bcd4",
+                    "on-primary-container": "#23493d",
+                    "on-secondary-fixed": "#091b36",
+                    "surface-container-low": "#1a1c1b",
+                    "surface-container-high": "#282a29",
+                    "base-text": "#e8e6f0",
+                    "on-tertiary": "#4b2622"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "safe-margin": "2rem",
+                    "spine-width": "1px",
+                    "node-gap": "1rem",
+                    "ring-diameter": "85vw"
+            },
+            "fontFamily": {
+                    "body-typewriter": ["JetBrains Mono"],
+                    "terminal-code": ["JetBrains Mono"],
+                    "label-node": ["Inter"],
+                    "headline-ritual": ["Space Grotesk"]
+            },
+            "fontSize": {
+                    "body-typewriter": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "terminal-code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-node": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-ritual": ["32px", {"lineHeight": "40px", "letterSpacing": "0.1em", "fontWeight": "300"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .vignette-atmosphere {
+            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(18, 20, 19, 0.95) 100%);
+        }
+        .mercury-gradient {
+            background: linear-gradient(to right, #2e3852 0%, #1a1c1b 30%, #3d6858 60%, #aad4c3 100%);
+            mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(24px);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .sky-heatmap {
+            background: radial-gradient(ellipse at 30% 20%, rgba(212, 165, 116, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 40%, rgba(166, 207, 191, 0.1) 0%, transparent 50%);
+        }
+        .horizon-blur {
+            box-shadow: 0 0 40px rgba(212, 165, 116, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-typewriter overflow-hidden selection:bg-dawn-accent/30">
+<!-- Atmosphere Component -->
+<div class="fixed inset-0 z-0 pointer-events-none sky-heatmap"></div>
+<div class="fixed inset-0 z-0 pointer-events-none vignette-atmosphere"></div>
+<!-- Top Navigation Anchor (Manual Implementation of TopAppBar from JSON Rules) -->
+<header class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center w-full px-safe-margin pt-8 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-dawn-accent" data-icon="blur_on">blur_on</span>
+<h1 class="font-headline-ritual text-headline-ritual tracking-widest text-dawn-accent">KATALEYA</h1>
+</div>
+<div class="flex items-center gap-8">
+<nav class="hidden md:flex gap-6">
+<span class="font-body-typewriter text-body-typewriter text-dawn-highlight font-bold cursor-pointer">Physician Mirror</span>
+<span class="font-body-typewriter text-body-typewriter text-on-surface-variant/50 hover:text-dawn-highlight transition-colors duration-500 cursor-pointer">The Room</span>
+<span class="font-body-typewriter text-body-typewriter text-on-surface-variant/50 hover:text-dawn-highlight transition-colors duration-500 cursor-pointer">The Bridge</span>
+</nav>
+<span class="material-symbols-outlined text-dawn-accent" data-icon="terminal">terminal</span>
+</div>
+</header>
+<!-- Main Canvas (Horizontal View) -->
+<main class="relative h-screen w-screen flex flex-col items-center justify-center pt-20">
+<!-- Presence Heat-map (Sky) -->
+<section class="flex-1 w-full relative flex items-end justify-around pb-12 px-20">
+<div class="absolute inset-0 opacity-20 pointer-events-none flex justify-center items-center">
+<img alt="Presence Map" class="w-full h-full object-cover mix-blend-overlay" data-alt="Abstract bioluminescent textures representing a heat-map of human choices. The visual style is organic and fluid, with soft pulses of amber and teal light emerging from a deep charcoal background. The mood is clinical yet gentle, suggesting a high-tech medical visualization of subconscious states." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAogc-_Q2RqTedAm1tNCMJj9wFKRO0Z8-pS5RSUJ7kXFB7JsvT9OoVmUzhPE5fwX3RoDQ_ZWNSIc6d-_3x3tab3uvD6c73hNI7OWQrZ3mZEL7I9XdXN1lD0WS-QmElv3PhwK0Sv53ZzoVwkmzg1y4gTf6CPaUL39cV8SOPMKrFJtp3p0VZLrCoSUSD_rM4CZm9b_pe4iCxwB3aHoJ-wBW5GLSGQt9iMPPxBoLFEbMe2hlPiCrelfADFnqVc3ohu-iS8Vzh4-sMK0WQ"/>
+</div>
+<!-- Floating Choice Density Nodes -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-32 bg-dawn-accent/10 rounded-full blur-xl mb-[-4rem]"></div>
+<div class="w-3 h-3 rounded-full bg-dawn-accent shadow-[0_0_15px_#d4a574]"></div>
+<span class="font-terminal-code text-terminal-code text-dawn-accent/60 uppercase tracking-tighter">Solitude</span>
+</div>
+<div class="flex flex-col items-center gap-2 mb-12">
+<div class="w-24 h-48 bg-primary/20 rounded-full blur-2xl mb-[-6rem]"></div>
+<div class="w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_#aad4c3]"></div>
+<span class="font-terminal-code text-terminal-code text-primary/60 uppercase tracking-tighter">Connection</span>
+</div>
+<div class="flex flex-col items-center gap-2 mb-4">
+<div class="w-12 h-24 bg-dawn-accent/5 rounded-full blur-lg mb-[-3rem]"></div>
+<div class="w-2 h-2 rounded-full bg-dawn-shadow shadow-[0_0_10px_#7a5c38]"></div>
+<span class="font-terminal-code text-terminal-code text-dawn-shadow/60 uppercase tracking-tighter">Creation</span>
+</div>
+</section>
+<!-- Unrolled Ouroboros (Horizon Line) -->
+<div class="relative w-full h-[1px] bg-dawn-accent/30 flex items-center horizon-blur">
+<!-- Scars (Glowing Nodes) -->
+<div class="absolute left-[15%] w-2 h-2 bg-dawn-rim rounded-full shadow-[0_0_12px_#fdf0e0] cursor-help"></div>
+<div class="absolute left-[35%] w-[1.5px] h-8 bg-dawn-accent/40 top-[-16px]"></div>
+<div class="absolute left-[42%] w-1.5 h-1.5 bg-error/40 rounded-full blur-[1px]"></div>
+<div class="absolute left-[65%] w-2.5 h-2.5 bg-dawn-highlight rounded-full shadow-[0_0_15px_#f0c898] cursor-help"></div>
+<div class="absolute right-[10%] w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_#aad4c3]"></div>
+<!-- Line Labels -->
+<div class="absolute left-safe-margin top-4">
+<p class="font-terminal-code text-terminal-code text-on-surface-variant/40">ANAMNESIS.LOG_001</p>
+</div>
+<div class="absolute right-safe-margin top-4 text-right">
+<p class="font-terminal-code text-terminal-code text-on-surface-variant/40">PHASE: RENEWAL_ACTIVE</p>
+</div>
+</div>
+<!-- Mercury Tide (Grounding History) -->
+<section class="flex-1 w-full relative mercury-gradient overflow-hidden">
+<div class="absolute inset-0 flex items-center justify-center opacity-30">
+<img alt="Grounding Tide" class="w-full h-full object-cover mix-blend-multiply" data-alt="A macro shot of liquid mercury flowing and swirling across a dark surface. The lighting transitions from deep violet and indigo shadows on the left to brilliant cyan and white highlights on the right. The liquid appears viscous and smooth, capturing the essence of a serene but powerful tide. The aesthetic is futuristic, clean, and calming." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAehHxc-2JgKw2RQ6hPJnkJshWX2mr2cvam4J3OMIyTs6YEevsXAMlnTQ5wRcSBG6DoMgzkVCrPOQhwBO7kz3bjxiR_a49rt9Tq-zA4adrOcRu6NI6bmBBIggYW61HKk9qqBHyTvspgHUsxZY2d7GyWjOEWGqcip_N8FpOgK0gZsZ0c9ckVmK_FKoDNeLAbwqJc-2TGB-7IIJ56pjhpAxbkNMG7Kyc-l5daNkqJqUitp1wMWOvG0xmOx0RcsYxi6x_JsGVwBcC-0rU"/>
+</div>
+<!-- Tide Information Layer (Semantic Blurring) -->
+<div class="absolute inset-0 grid grid-cols-4 px-20 pt-12 gap-10">
+<div class="flex flex-col gap-4 opacity-40">
+<div class="h-2 w-full bg-night-shadow/40 rounded-full"></div>
+<div class="h-1 w-2/3 bg-night-shadow/40 rounded-full"></div>
+<span class="font-terminal-code text-[10px] text-night-accent uppercase">Void State</span>
+</div>
+<div class="flex flex-col gap-4 opacity-50 translate-y-6">
+<div class="h-2 w-full bg-day-shadow/40 rounded-full shadow-inner"></div>
+<div class="h-1 w-1/2 bg-day-shadow/40 rounded-full"></div>
+<span class="font-terminal-code text-[10px] text-day-accent uppercase">Stabilizing</span>
+</div>
+<div class="flex flex-col gap-4 opacity-80 translate-y-2">
+<div class="h-2 w-full bg-primary-container/40 rounded-full border border-primary/20"></div>
+<div class="h-1 w-3/4 bg-primary-container/40 rounded-full"></div>
+<span class="font-terminal-code text-[10px] text-primary uppercase">Flow State</span>
+</div>
+<div class="flex flex-col gap-4 opacity-100 -translate-y-4">
+<div class="h-3 w-full bg-dawn-highlight/20 rounded-full shadow-[0_0_15px_rgba(240,200,152,0.2)]"></div>
+<div class="h-1 w-full bg-dawn-highlight/20 rounded-full"></div>
+<span class="font-terminal-code text-[10px] text-dawn-highlight uppercase tracking-[0.2em] font-bold">Present Moment</span>
+</div>
+</div>
+</section>
+<!-- Bottom Controls -->
+<footer class="absolute bottom-8 w-full px-safe-margin flex justify-between items-end">
+<div class="flex flex-col">
+<span class="font-terminal-code text-terminal-code text-on-surface-variant/60">INTEGRITY_INDEX</span>
+<span class="font-headline-ritual text-xl text-dawn-accent">98.4%</span>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 glass-panel border border-dawn-accent/20 rounded-full hover:bg-dawn-accent/10 transition-all duration-500 group">
+<span class="font-label-node text-label-node text-dawn-accent group-hover:text-dawn-highlight">RECIBRATE_MIRROR</span>
+</button>
+<button class="w-12 h-12 glass-panel flex items-center justify-center rounded-full border border-on-surface-variant/10">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="close">close</span>
+</button>
+</div>
+</footer>
+</main>
+<!-- Side Navigation (Manual Implementation of NavigationDrawer from JSON Rules) -->
+<aside class="hidden lg:flex fixed inset-y-0 left-0 w-80 z-[100] flex flex-col p-safe-margin bg-surface/90 backdrop-blur-2xl border-r border-dawn-accent/10 shadow-[0_0_50px_rgba(212,165,116,0.1)]">
+<div class="flex flex-col items-center mb-12">
+<div class="w-24 h-24 rounded-full bg-gradient-to-tr from-dawn-shadow to-dawn-rim p-[2px] mb-4">
+<div class="w-full h-full rounded-full bg-surface flex items-center justify-center overflow-hidden">
+<img alt="Nucleus" class="w-full h-full object-cover opacity-80" data-alt="A stylized bioluminescent organism nucleus, appearing as a glowing core of golden light with intricate, organic nerve-like patterns spreading outward. The core is set against a dark, velvety background, suggesting a sentient and ancient entity. The lighting is soft yet focused, highlighting the delicate textures of the organism's membrane." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl-99KjEDG907lGNjJnzfl30fwI1XhBUSw-vOWxoyf_YAcN-I__zGeuhCrbwQMmcKHQj92GrbH36wTckKXw2fcJEwzt7piMObHkimY33-Vqr-gVUhnHqZZH3ic7tN9mfAyV7NXY9OwrW9gP2gR0As795aMCxz6YXtjn--1Xe_gaMKUvMc6d2zcJUAIKuVF8HspCFIVeoewxI_XcxYolgxCld6g3PcvoVu4avpD7xbdntFA5M03BWwYikXX9yfYxnm4i5FP1YTMK2s"/>
+</div>
+</div>
+<h2 class="font-headline-ritual text-headline-ritual text-dawn-accent">Kataleya</h2>
+<p class="font-body-typewriter text-[12px] text-on-surface-variant/70 mt-1">Circadian Phase: Dawn</p>
+<p class="font-body-typewriter text-[10px] text-dawn-highlight uppercase tracking-widest mt-2">Resonance: 98%</p>
+</div>
+<nav class="flex flex-col gap-4">
+<div class="flex items-center gap-4 text-on-surface-variant px-6 py-3 hover:bg-dawn-accent/10 hover:text-dawn-highlight rounded-full transition-all duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="brightness_low">brightness_low</span>
+<span class="font-body-typewriter text-body-typewriter">The Room</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant px-6 py-3 hover:bg-dawn-accent/10 hover:text-dawn-highlight rounded-full transition-all duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="bedtime">bedtime</span>
+<span class="font-body-typewriter text-body-typewriter">The Cocoon</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant px-6 py-3 hover:bg-dawn-accent/10 hover:text-dawn-highlight rounded-full transition-all duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="Waves">waves</span>
+<span class="font-body-typewriter text-body-typewriter">The Bridge</span>
+</div>
+<div class="flex items-center gap-4 bg-dawn-accent/20 text-dawn-highlight rounded-full px-6 py-3 border border-dawn-accent/30 shadow-[0_0_20px_rgba(212,165,116,0.1)]">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+<span class="font-body-typewriter text-body-typewriter">The Terminal</span>
+</div>
+</nav>
+<div class="mt-auto pt-8 border-t border-on-surface-variant/10">
+<div class="p-4 rounded-xl bg-surface-container-lowest flex items-center justify-between">
+<div>
+<p class="font-terminal-code text-[10px] text-on-surface-variant/50 uppercase">Firmware</p>
+<p class="font-terminal-code text-[12px] text-dawn-accent">v0.9.4-AURORA</p>
+</div>
+<span class="material-symbols-outlined text-dawn-accent animate-pulse" data-icon="sync" style="font-variation-settings: 'wght' 400;">sync</span>
+</div>
+</div>
+</aside>
+</body></html>

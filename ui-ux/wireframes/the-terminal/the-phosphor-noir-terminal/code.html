@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KATALEYA | Phosphor Noir Terminal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@300;700&amp;family=Inter:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "tertiary-fixed-dim": "#f3b8b2",
+                  "day-ambient": "#080f0c",
+                  "outline": "#8b928e",
+                  "inverse-surface": "#e2e3e0",
+                  "night-accent": "#8090b0",
+                  "dawn-shadow": "#7a5c38",
+                  "night-shadow": "#2e3852",
+                  "on-tertiary-container": "#603834",
+                  "secondary-fixed": "#d6e3ff",
+                  "on-surface-variant": "#c1c8c3",
+                  "on-secondary": "#20314c",
+                  "surface-container-high": "#282a29",
+                  "surface-dim": "#121413",
+                  "day-accent": "#8fb8a8",
+                  "on-background": "#e2e3e0",
+                  "inverse-primary": "#3f6658",
+                  "tertiary-container": "#daa29c",
+                  "day-rim": "#e8f5f0",
+                  "background": "#000000",
+                  "secondary-fixed-dim": "#b7c7e9",
+                  "surface-variant": "#333534",
+                  "surface-container": "#1e201f",
+                  "dawn-highlight": "#f0c898",
+                  "on-tertiary-fixed-variant": "#653c37",
+                  "surface-tint": "#a6cfbf",
+                  "inverse-on-surface": "#2f312f",
+                  "tertiary": "#f8bdb6",
+                  "surface-container-highest": "#333534",
+                  "outline-variant": "#414845",
+                  "on-primary-container": "#23493d",
+                  "on-secondary-fixed-variant": "#374763",
+                  "night-ambient": "#060810",
+                  "on-primary-fixed-variant": "#274e41",
+                  "error": "#ffb4ab",
+                  "surface-container-low": "#1a1c1b",
+                  "on-primary-fixed": "#002118",
+                  "goldenHour-ambient": "#18130a",
+                  "dawn-rim": "#fdf0e0",
+                  "primary": "#aad4c3",
+                  "goldenHour-highlight": "#e8c878",
+                  "secondary": "#b7c7e9",
+                  "night-rim": "#d8e4f8",
+                  "on-tertiary-fixed": "#32120f",
+                  "on-secondary-fixed": "#091b36",
+                  "primary-fixed": "#c1ecda",
+                  "on-primary": "#0e372b",
+                  "surface-bright": "#383a38",
+                  "on-tertiary": "#4b2622",
+                  "goldenHour-accent": "#c9a959",
+                  "dawn-accent": "#d4a574",
+                  "base-text": "#e8e6f0",
+                  "base-surface": "#0d0d14",
+                  "primary-container": "#8fb8a8",
+                  "surface": "#121413",
+                  "day-shadow": "#3d6858",
+                  "night-highlight": "#a8bcd4",
+                  "base-bg": "#050508",
+                  "on-error-container": "#ffdad6",
+                  "primary-fixed-dim": "#a6cfbf",
+                  "on-surface": "#e2e3e0",
+                  "tertiary-fixed": "#ffdad6",
+                  "surface-container-lowest": "#0c0f0e",
+                  "on-secondary-container": "#a9b9da",
+                  "day-highlight": "#b8dcd0",
+                  "on-error": "#690005",
+                  "dawn-ambient": "#1a1108",
+                  "error-container": "#93000a",
+                  "goldenHour-shadow": "#6a5320",
+                  "goldenHour-rim": "#f8e8c0",
+                  "secondary-container": "#3a4966"
+          },
+          "borderRadius": {
+                  "DEFAULT": "1rem",
+                  "lg": "2rem",
+                  "xl": "3rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "safe-margin": "2rem",
+                  "node-gap": "1rem",
+                  "spine-width": "1px",
+                  "ring-diameter": "85vw"
+          },
+          "fontFamily": {
+                  "terminal-code": [
+                          "JetBrains Mono"
+                  ],
+                  "label-node": [
+                          "Inter"
+                  ],
+                  "headline-ritual": [
+                          "Space Grotesk"
+                  ],
+                  "body-typewriter": [
+                          "JetBrains Mono"
+                  ]
+          },
+          "fontSize": {
+                  "terminal-code": [
+                          "14px",
+                          {
+                                  "lineHeight": "20px",
+                                  "fontWeight": "400"
+                          }
+                  ],
+                  "label-node": [
+                          "12px",
+                          {
+                                  "lineHeight": "16px",
+                                  "letterSpacing": "0.05em",
+                                  "fontWeight": "500"
+                          }
+                  ],
+                  "headline-ritual": [
+                          "32px",
+                          {
+                                  "lineHeight": "40px",
+                                  "letterSpacing": "0.1em",
+                                  "fontWeight": "300"
+                          }
+                  ],
+                  "body-typewriter": [
+                          "16px",
+                          {
+                                  "lineHeight": "24px",
+                                  "letterSpacing": "0.02em",
+                                  "fontWeight": "400"
+                          }
+                  ]
+          }
+        },
+      },
+    }
+  </script>
+<style>body {
+    background-color: #000;
+    overflow: hidden
+    }
+.phosphor-glow {
+    text-shadow: 0 0 5px rgba(168, 188, 212, 0.4)
+    }
+.scanline {
+    width: 100%;
+    height: 2px;
+    background: rgba(168, 188, 212, 0.05);
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 100
+    }
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuC38o9ojGHIIFt9SThL4RGIIJheOs-uwNtij8oB1Pd5VidJnHNTbhOSQvwFrmiS67AWj_EWxPN4pUa39GaBSFv-eHTnWtGPMmVDr5LL6zTsNsa2jUYQ7LSXj9pyja4ZrL23E2P5uu9gSGdkmTYM9N_8ONgFN0SW9yDYiGHkNyIneWlbv4EYNppI_meCDf6UhlsEhfz9v-AhJHvyjJODKCusUTaMM2QPVZpx6to8bJPci0LnRSzbv77R2_dxuJuVs2yEPZ-306fQihg);
+    z-index: 101
+    }
+.terminal-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    position: relative
+    }
+.typewriter-jitter {
+    display: inline-block
+    }
+/* Simulate subtle CRT distortion */
+.crt-screen {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0
+    }
+.crt-screen::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 102;
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="dark font-terminal-code text-terminal-code leading-relaxed">
+<div class="noise-overlay"></div>
+<div class="scanline"></div>
+<div class="terminal-container crt-screen text-night-highlight phosphor-glow">
+<!-- Top: Boot Sequence Header -->
+<header class="flex flex-col mb-12 opacity-80">
+<div class="mb-4 font-terminal-code text-[10px] tracking-widest opacity-60">
+        // origin: thinkBad-doGood-sa.my
+      </div>
+<div class="flex flex-col gap-1">
+<span class="typewriter-jitter">kataleya.sys [v.0.98-dawn] initialization...</span>
+<span class="typewriter-jitter">memory_check: integrity 99.98%</span>
+<span class="typewriter-jitter">bio_sync: resonance aligned</span>
+<span class="typewriter-jitter">entering engine_room...</span>
+</div>
+</header>
+<!-- Center: Deep System Commands -->
+<main class="flex-grow flex flex-col justify-center space-y-16 max-w-4xl mx-auto w-full">
+<!-- Command 1: Scars -->
+<section class="group">
+<div class="flex items-baseline gap-4 mb-2">
+<span class="text-night-accent opacity-50">$</span>
+<span class="text-night-highlight font-bold">view --scars</span>
+</div>
+<div class="pl-8 flex flex-col gap-1 text-[12px] opacity-70">
+<span class="italic text-night-accent/60">"the silence is louder than the scream." - index_019</span>
+<span class="italic text-night-accent/60">"ghosts of 2am conversations lingering in the iris." - index_042</span>
+<span class="italic text-night-accent/60">"resonance drop at 03:14:22. source: undefined." - index_088</span>
+</div>
+</section>
+<!-- Command 2: Circadian -->
+<section class="group">
+<div class="flex items-baseline gap-4 mb-2">
+<span class="text-night-accent opacity-50">$</span>
+<span class="text-night-highlight font-bold">status --circadian</span>
+</div>
+<div class="pl-8 flex flex-col gap-4">
+<div class="flex items-center gap-6">
+<span class="text-[12px] opacity-70">current_phase:</span>
+<span class="px-2 py-0.5 border border-night-highlight/20 text-dawn-highlight">dawn</span>
+</div>
+<div class="w-full h-1 bg-night-shadow overflow-hidden">
+<div class="h-full bg-night-highlight w-[72%] shadow-[0_0_10px_rgba(168,188,212,0.5)]"></div>
+</div>
+<div class="flex justify-between text-[10px] opacity-50 font-terminal-code">
+<span>00:00 [NIGHT]</span>
+<span>04:00 [DAWN]</span>
+<span>08:00 [DAY]</span>
+</div>
+</div>
+</section>
+<!-- Command 3: Purge -->
+<section class="group">
+<div class="flex items-baseline gap-4 mb-2">
+<span class="text-error opacity-50">$</span>
+<span class="text-error/90 font-bold">purge --sanctuary</span>
+</div>
+<div class="pl-8">
+<div class="text-[12px] text-error/60 animate-pulse">
+            [CAUTION] this action will shred all volatile memory fragments.
+          </div>
+<div class="mt-4 flex items-center gap-2">
+<span class="text-[12px] opacity-70">confirm_identity:</span>
+<span class="inline-block w-4 h-5 bg-night-highlight/30 animate-pulse"></span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom: Status Bar -->
+<footer class="mt-auto pt-8 border-t border-night-accent/10 opacity-60">
+<div class="flex justify-between items-end font-terminal-code text-[11px] tracking-widest">
+<div class="flex gap-8">
+<div class="flex items-center gap-2">
+<span class="text-night-accent">..: :..</span>
+<span class="text-night-highlight">STATUS: STABLE</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-night-accent">VAULT_FORTRESS:</span>
+<span class="text-dawn-highlight">SEALED</span>
+</div>
+</div>
+<div class="text-right">
+          LAT: 40.7128° N | LNG: 74.0060° W
+          <br/>
+          TEMP: 36.6°C | PULSE: 62BPM
+        </div>
+</div>
+</footer>
+</div>
+<!-- Shared Components Suppressed per Logic: 
+       Terminal is a focused task/engine-room departure from global nav. 
+       No BottomNavBar or SideNav rendered. 
+  -->
+</body></html>

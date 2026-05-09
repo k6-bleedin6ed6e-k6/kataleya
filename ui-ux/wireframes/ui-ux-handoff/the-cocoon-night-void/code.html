@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>KATALEYA - The Cocoon</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&amp;family=Space+Grotesk:wght@300&amp;family=Inter:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "error-container": "#93000a",
+                "on-background": "#e2e3e0",
+                "dawn-ambient": "#1a1108",
+                "dawn-accent": "#d4a574",
+                "on-primary-fixed": "#002118",
+                "night-ambient": "#060810",
+                "on-surface-variant": "#c1c8c3",
+                "secondary-container": "#3a4966",
+                "tertiary": "#f8bdb6",
+                "on-secondary": "#20314c",
+                "tertiary-fixed-dim": "#f3b8b2",
+                "surface": "#121413",
+                "goldenHour-highlight": "#e8c878",
+                "dawn-shadow": "#7a5c38",
+                "on-surface": "#e2e3e0",
+                "primary": "#aad4c3",
+                "on-primary-fixed-variant": "#274e41",
+                "tertiary-container": "#daa29c",
+                "outline-variant": "#414845",
+                "tertiary-fixed": "#ffdad6",
+                "primary-fixed": "#c1ecda",
+                "surface-container-highest": "#333534",
+                "goldenHour-accent": "#c9a959",
+                "night-rim": "#d8e4f8",
+                "surface-tint": "#a6cfbf",
+                "secondary-fixed": "#d6e3ff",
+                "base-surface": "#0d0d14",
+                "primary-container": "#8fb8a8",
+                "inverse-on-surface": "#2f312f",
+                "goldenHour-rim": "#f8e8c0",
+                "goldenHour-ambient": "#18130a",
+                "error": "#ffb4ab",
+                "secondary": "#b7c7e9",
+                "surface-container": "#1e201f",
+                "dawn-rim": "#fdf0e0",
+                "on-tertiary-container": "#603834",
+                "on-secondary-container": "#a9b9da",
+                "inverse-surface": "#e2e3e0",
+                "on-primary": "#0e372b",
+                "day-accent": "#8fb8a8",
+                "on-secondary-fixed-variant": "#374763",
+                "surface-dim": "#121413",
+                "background": "#121413",
+                "night-shadow": "#2e3852",
+                "day-ambient": "#080f0c",
+                "on-tertiary-fixed-variant": "#653c37",
+                "inverse-primary": "#3f6658",
+                "secondary-fixed-dim": "#b7c7e9",
+                "day-rim": "#e8f5f0",
+                "base-bg": "#050508",
+                "on-error": "#690005",
+                "day-shadow": "#3d6858",
+                "night-accent": "#8090b0",
+                "day-highlight": "#b8dcd0",
+                "surface-container-lowest": "#0c0f0e",
+                "outline": "#8b928e",
+                "on-error-container": "#ffdad6",
+                "primary-fixed-dim": "#a6cfbf",
+                "dawn-highlight": "#f0c898",
+                "surface-bright": "#383a38",
+                "on-tertiary-fixed": "#32120f",
+                "surface-variant": "#333534",
+                "goldenHour-shadow": "#6a5320",
+                "night-highlight": "#a8bcd4",
+                "on-primary-container": "#23493d",
+                "on-secondary-fixed": "#091b36",
+                "surface-container-low": "#1a1c1b",
+                "surface-container-high": "#282a29",
+                "base-text": "#e8e6f0",
+                "on-tertiary": "#4b2622"
+            },
+            "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "safe-margin": "2rem",
+                "spine-width": "1px",
+                "node-gap": "1rem",
+                "ring-diameter": "85vw"
+            },
+            "fontFamily": {
+                "body-typewriter": ["JetBrains Mono"],
+                "terminal-code": ["JetBrains Mono"],
+                "label-node": ["Inter"],
+                "headline-ritual": ["Space Grotesk"]
+            },
+            "fontSize": {
+                "body-typewriter": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                "terminal-code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "label-node": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "headline-ritual": ["32px", {"lineHeight": "40px", "letterSpacing": "0.1em", "fontWeight": "300"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #060810; /* night-ambient fallback */
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Subliminal Atmosphere Gradient */
+        .atmosphere-vignette {
+            background: radial-gradient(circle at 50% 50%, rgba(46, 56, 82, 0.15) 0%, rgba(6, 8, 16, 1) 85%);
+        }
+        /* Ouroboros Ring Glow Effect */
+        .ring-glow {
+            box-shadow: 0 0 40px rgba(128, 144, 176, 0.05), inset 0 0 20px rgba(216, 228, 248, 0.05);
+        }
+        /* Spine / River Effect */
+        .mercury-river {
+            background: linear-gradient(180deg, transparent 0%, rgba(128, 144, 176, 0.08) 50%, transparent 100%);
+        }
+        /* Glassmorphic Shell */
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-typewriter text-on-surface antialiased">
+<!-- Atmosphere Layer -->
+<div class="fixed inset-0 atmosphere-vignette pointer-events-none z-0"></div>
+<div class="fixed top-0 left-1/2 -translate-x-1/2 w-px h-full mercury-river z-0 opacity-40"></div>
+<!-- Top Navigation Anchor -->
+<header class="fixed inset-x-0 top-0 z-[110] flex justify-between items-center w-full px-safe-margin pt-8 max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-night-accent text-[24px]" data-icon="blur_on">blur_on</span>
+<h1 class="font-headline-ritual text-headline-ritual tracking-widest text-night-highlight">KATALEYA</h1>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant/50 hover:text-night-highlight transition-colors duration-500 flex items-center gap-2">
+<span class="font-label-node text-label-node">TERMINAL</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="terminal">terminal</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas (The Room) -->
+<main class="relative z-10 w-full h-screen flex items-center justify-center overflow-hidden">
+<!-- Ouroboros Ring Container -->
+<div class="relative flex items-center justify-center w-[ring-diameter] max-w-[800px] aspect-square">
+<!-- The Physical Ring Membrane -->
+<div class="absolute inset-0 rounded-full border-[1.5px] border-night-accent/20 ring-glow flex items-center justify-center">
+<!-- Inner Decorative Circles (Void Tiers) -->
+<div class="absolute w-[85%] aspect-square rounded-full border border-night-shadow/30 opacity-50"></div>
+<div class="absolute w-[70%] aspect-square rounded-full border border-night-shadow/20 opacity-30"></div>
+<div class="absolute w-[55%] aspect-square rounded-full border border-night-shadow/10 opacity-20"></div>
+<!-- Circular Node Labels (Void Phase) -->
+<div class="absolute inset-0 p-8 flex items-center justify-center pointer-events-none">
+<span class="absolute top-[12%] text-night-accent/40 font-label-node text-label-node uppercase tracking-[0.4em]">night</span>
+<span class="absolute bottom-[12%] text-night-accent/40 font-label-node text-label-node uppercase tracking-[0.4em]">void</span>
+</div>
+<!-- Scars (Cypher Fragments) -->
+<div class="absolute top-[5%] left-[30%] -rotate-[15deg] font-terminal-code text-night-shadow text-[10px] select-none">
+                    0x7F...NULL
+                </div>
+<div class="absolute bottom-[20%] right-[15%] rotate-[45deg] font-terminal-code text-night-shadow text-[10px] select-none">
+                    SYS_RECOVERY_ACTV
+                </div>
+<div class="absolute top-[40%] right-[2%] rotate-[90deg] font-terminal-code text-night-shadow text-[10px] select-none">
+                    WAIT_RESONANCE
+                </div>
+</div>
+<!-- Central Orb (The Seed) -->
+<div class="relative z-20 group cursor-pointer flex flex-col items-center gap-8">
+<!-- Multi-layer SVG Membrane -->
+<div class="relative w-48 h-48 flex items-center justify-center">
+<!-- Layer 1: Haze -->
+<div class="absolute inset-0 bg-night-accent/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-[2000ms] ease-in-out"></div>
+<!-- Layer 2: Body -->
+<div class="absolute w-32 h-32 bg-night-shadow/40 rounded-full backdrop-blur-md border border-night-accent/20"></div>
+<!-- Layer 3: Iris -->
+<div class="absolute w-16 h-16 bg-gradient-to-tr from-night-accent/30 to-night-highlight/40 rounded-full blur-[4px]"></div>
+<!-- Layer 4: Nucleus -->
+<div class="absolute w-4 h-4 bg-night-highlight rounded-full shadow-[0_0_20px_rgba(168,188,212,0.8)]"></div>
+<!-- Layer 5: Rim Glow -->
+<div class="absolute inset-0 rounded-full border-2 border-night-rim/5 group-hover:border-night-rim/20 transition-colors duration-[1000ms]"></div>
+</div>
+<!-- Pulsing Text -->
+<div class="text-center">
+<p class="font-body-typewriter text-night-highlight opacity-80 tracking-[0.3em] transition-opacity duration-[3000ms]">stay with me.</p>
+</div>
+</div>
+</div>
+<!-- Butterfly Iconography (The Guardian) -->
+<div class="absolute bottom-[10%] left-1/2 -translate-x-1/2 opacity-20 pointer-events-none mix-blend-screen">
+<span class="material-symbols-outlined text-[120px] text-night-accent" data-icon="flutter_dash">flutter_dash</span>
+</div>
+</main>
+<!-- Navigation Drawer (Shell) -->
+<aside class="fixed inset-y-0 left-0 w-80 z-[100] flex flex-col p-safe-margin bg-surface/90 backdrop-blur-2xl rounded-r-xl border-r border-dawn-accent/10 shadow-[0_0_50px_rgba(212,165,116,0.1)]">
+<div class="flex flex-col items-center mb-12">
+<div class="w-16 h-16 rounded-full border-2 border-dawn-accent/30 flex items-center justify-center overflow-hidden mb-4">
+<img alt="Kataleya Nucleus" class="w-full h-full object-cover" data-alt="A detailed, macro 3D render of a bioluminescent organic nucleus floating in a dark liquid environment. Intricate networks of glowing teal and gold fibers weave through a semi-transparent spherical core. The lighting is low-key, focused on the internal glow of the organism, creating a sense of mysterious biological intelligence and calm energy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA35_rUqdSEF_-g8P_biCspK6hTdALpFcC7emuI1cT568evXF2s07LPXdgsU1RGZo5GBzqmtBaRRg4wD-z2qSrAdSrZb9y4IU5_BpffpRP9vUDmTMv0N3l8UBcqwk9oNikWqLtCMLSuMg1gcXpFLa94MPvMxXEqagbdbV5pTNAeDwraBqf5Wzf0B715llaYbO3qqN5pJH7CGIYb_Ge-ZWcbUFfwJrr0665vywG9b2CK2j9LKajCf8dwFpbjU6Cg2q0fWs0jEmiU_3A"/>
+</div>
+<h2 class="font-headline-ritual text-[20px] text-dawn-accent tracking-widest">Kataleya</h2>
+<p class="font-body-typewriter text-label-node text-on-surface-variant/70 mt-1">Circadian Phase: Dawn</p>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="bg-dawn-accent/20 text-dawn-highlight rounded-full px-6 py-3 border border-dawn-accent/30 flex items-center gap-4 transition-all duration-700 ease-out font-body-typewriter text-body-typewriter" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="brightness_low">brightness_low</span>
+<span>The Room</span>
+</a>
+<a class="text-on-surface-variant px-6 py-3 flex items-center gap-4 hover:bg-dawn-accent/10 hover:text-dawn-highlight transition-colors duration-500 font-body-typewriter text-body-typewriter" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="bedtime">bedtime</span>
+<span>The Cocoon</span>
+</a>
+<a class="text-on-surface-variant px-6 py-3 flex items-center gap-4 hover:bg-dawn-accent/10 hover:text-dawn-highlight transition-colors duration-500 font-body-typewriter text-body-typewriter" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="Waves">waves</span>
+<span>The Bridge</span>
+</a>
+<a class="text-on-surface-variant px-6 py-3 flex items-center gap-4 hover:bg-dawn-accent/10 hover:text-dawn-highlight transition-colors duration-500 font-body-typewriter text-body-typewriter" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings_input_component">settings_input_component</span>
+<span>The Terminal</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-dawn-accent/10 pt-8">
+<div class="flex justify-between items-center px-4">
+<span class="font-label-node text-label-node text-on-surface-variant/50">Resonance</span>
+<span class="font-label-node text-label-node text-dawn-accent">98%</span>
+</div>
+<div class="w-full h-[2px] bg-dawn-accent/10 mt-2 rounded-full overflow-hidden">
+<div class="w-[98%] h-full bg-dawn-accent shadow-[0_0_10px_rgba(212,165,116,0.5)]"></div>
+</div>
+</div>
+</aside>
+<!-- Contextual FAB (Enter the Cocoon) -->
+<button class="fixed bottom-12 right-12 z-[110] w-16 h-16 rounded-full bg-night-shadow text-night-highlight flex items-center justify-center ring-1 ring-night-accent/30 shadow-[0_0_30px_rgba(128,144,176,0.2)] hover:scale-105 transition-all duration-700 ease-out">
+<span class="material-symbols-outlined text-[32px]" data-icon="shutter_speed">shutter_speed</span>
+</button>
+<!-- Interaction Overlay Hints -->
+<div class="fixed bottom-safe-margin left-safe-margin z-[110] flex gap-8 pointer-events-none opacity-40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="north">north</span>
+<span class="font-label-node text-label-node tracking-widest uppercase">Cocoon</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="west">west</span>
+<span class="font-label-node text-label-node tracking-widest uppercase">Bridge</span>
+</div>
+</div>
+</body></html>

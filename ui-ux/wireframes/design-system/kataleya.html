@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>kataleya — prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: #070709;
+      font-family: "Courier Prime", ui-monospace, monospace;
+      color: #e8e6f0;
+      overflow: hidden;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(138,95,224,0.05) 0%, transparent 60%),
+                  radial-gradient(ellipse at 50% 90%, rgba(0,212,170,0.03) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* animations */
+    @keyframes ouroSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes ouroBreathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    @keyframes ouroGlow {
+      0%, 100% { opacity: 0.04; }
+      50% { opacity: 0.1; }
+    }
+    @keyframes orbPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+    @keyframes glyphPulse {
+      0%, 100% { opacity: 0.55; letter-spacing: 0.03em; }
+      50% { opacity: 0.85; letter-spacing: 0.08em; }
+    }
+    @keyframes butterfly {
+      0%, 100% { transform: scaleX(0.9); }
+      50% { transform: scaleX(1.05); }
+    }
+    @keyframes butterflyInv {
+      0%, 100% { transform: scaleX(1.1); opacity: 0.7; }
+      50% { transform: scaleX(0.85); opacity: 0.4; }
+    }
+    @keyframes emergencyPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(0.96); }
+    }
+    @keyframes rainDrop {
+      from { transform: translateY(-20px); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      to { transform: translateY(120px); opacity: 0; }
+    }
+    @keyframes fadeInSlow { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes softFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes screenFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    /* layout */
+    .stage {
+      position: fixed; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 0;
+      padding: 24px;
+      z-index: 1;
+    }
+    .brand {
+      grid-column: 1 / 4; grid-row: 1;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 8px 12px 0;
+    }
+    .brand .mark {
+      font-size: 13px; letter-spacing: 6px; text-transform: lowercase;
+      color: rgba(232,230,240,0.65);
+    }
+    .brand .sub {
+      font-size: 10px; letter-spacing: 2.5px; text-transform: lowercase;
+      color: rgba(138,138,158,0.6); margin-top: 6px;
+    }
+    .brand .meta { text-align: right; }
+    .brand .meta .line {
+      font-size: 10px; letter-spacing: 2px; text-transform: lowercase;
+      color: rgba(138,138,158,0.5); line-height: 16px;
+    }
+    .brand .meta .accent { color: rgba(138,95,224,0.8); }
+
+    .phone-col {
+      grid-column: 2; grid-row: 2;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .nav-col {
+      grid-column: 1; grid-row: 2;
+      display: flex; flex-direction: column; justify-content: center;
+      padding-right: 40px;
+    }
+    .notes-col {
+      grid-column: 3; grid-row: 2;
+      display: flex; flex-direction: column; justify-content: center;
+      padding-left: 40px;
+    }
+    .footer {
+      grid-column: 1 / 4; grid-row: 3;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 12px; font-size: 9px; letter-spacing: 2.5px; text-transform: lowercase;
+      color: rgba(138,138,158,0.4);
+    }
+    .screen-nav {
+      display: flex; flex-direction: column; gap: 2px;
+      max-width: 280px;
+    }
+    .screen-nav .title {
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(232,230,240,0.4); margin-bottom: 14px;
+    }
+    .screen-nav button {
+      all: unset; cursor: pointer;
+      padding: 10px 14px; margin-bottom: 4px;
+      border-left: 2px solid transparent;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .screen-nav button.active {
+      border-left-color: rgba(138,95,224,0.8);
+      background: linear-gradient(90deg, rgba(138,95,224,0.06) 0%, transparent 100%);
+    }
+    .screen-nav .label {
+      font-size: 13px; letter-spacing: 1px; text-transform: lowercase;
+      color: rgba(232,230,240,0.85);
+    }
+    .screen-nav button.active .label { color: #e8e6f0; }
+    .screen-nav .hint {
+      font-size: 9px; letter-spacing: 2px; text-transform: lowercase;
+      color: rgba(138,138,158,0.55);
+    }
+
+    .notes { max-width: 300px; }
+    .notes .title {
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(232,230,240,0.4); margin-bottom: 14px;
+    }
+    .notes p {
+      font-size: 12px; line-height: 20px;
+      color: rgba(232,230,240,0.6); margin: 0 0 14px;
+      letter-spacing: 0.3px;
+    }
+    .notes code {
+      font-family: inherit;
+      color: rgba(0,212,170,0.85);
+      background: rgba(0,212,170,0.06);
+      padding: 1px 6px; border-radius: 2px;
+    }
+    .notes .kbd {
+      display: inline-block;
+      padding: 1px 6px; border: 1px solid rgba(232,230,240,0.18);
+      border-radius: 3px; font-size: 10px;
+      color: rgba(232,230,240,0.7); margin-right: 4px;
+    }
+
+    @media (max-width: 1100px) {
+      .stage { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; }
+      .brand { grid-column: 1; grid-row: 1; }
+      .nav-col { grid-column: 1; grid-row: 2; padding: 0; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px; }
+      .phone-col { grid-column: 1; grid-row: 3; }
+      .notes-col { display: none; }
+      .footer { grid-column: 1; grid-row: 4; }
+      .screen-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; max-width: 100%; }
+      .screen-nav .title { width: 100%; text-align: center; }
+      .screen-nav button { padding: 6px 10px; border-left: none; border-bottom: 2px solid transparent; }
+      .screen-nav button.active { border-bottom-color: rgba(138,95,224,0.8); background: transparent; }
+      .screen-nav .hint { display: none; }
+    }
+  </style>
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+      <rect width="200" height="200" fill="#050508"/>
+      <circle cx="100" cy="100" r="55" fill="none" stroke="#8a5fe0" stroke-width="1.5" stroke-dasharray="280 50" transform="rotate(-90 100 100)"/>
+      <circle cx="100" cy="45" r="2.5" fill="#8a5fe0"/>
+      <text x="100" y="170" text-anchor="middle" font-family="monospace" font-size="10" fill="#8a5fe0" letter-spacing="2">kataleya</text>
+    </svg>
+  </template>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="kataleya-ui.jsx"></script>
+  <script type="text/babel" src="kataleya-screens.jsx"></script>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect } = React;
+
+    const KATALEYA_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "phase": "dawn",
+      "daysSober": 42,
+      "transmutationScars": 2,
+      "userName": "seeker",
+      "ringSize": 260,
+      "gapFraction": 0.14,
+      "bpm": 58,
+      "showFrame": true
+    }/*EDITMODE-END*/;
+
+    function Shell() {
+      const [t, setTweak] = useTweaks(KATALEYA_DEFAULTS);
+      const [screen, setScreen] = useState('bridge');
+      const [physician, setPhysician] = useState(false);
+
+      // Physician Mode access — hold `p` for 600ms (web stand-in for two-finger spiral)
+      useEffect(() => {
+        let timer = null;
+        const down = (e) => {
+          if (e.key === 'p' && !e.repeat && !timer) {
+            timer = setTimeout(() => { setPhysician(true); timer = null; }, 600);
+          }
+        };
+        const up = (e) => {
+          if (e.key === 'p' && timer) { clearTimeout(timer); timer = null; }
+        };
+        window.addEventListener('keydown', down);
+        window.addEventListener('keyup', up);
+        return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); if (timer) clearTimeout(timer); };
+      }, []);
+
+      const screens = {
+        bridge:       <BridgeScreen phase={t.phase} daysSober={t.daysSober} gapFraction={t.gapFraction} ringSize={t.ringSize} onEnter={() => setScreen('room')} />,
+        room:         <RoomScreen phase={t.phase} daysSober={t.daysSober} userName={t.userName} gapFraction={t.gapFraction} ringSize={t.ringSize} bpm={t.bpm} transmutationScars={t.transmutationScars} onTapOrb={() => setScreen('conversation')} onSwipeLeft={() => setScreen('conversation')} onSwipeUp={() => setScreen('river')} onLongPress={() => setScreen('cover')} />,
+        conversation: <ConversationScreen phase={t.phase} onBack={() => setScreen('room')} />,
+        river:        <RiverScreen phase={t.phase} daysSober={t.daysSober} onBack={() => setScreen('room')} />,
+        cover:        <CoverScreen onReturn={() => setScreen('room')} />,
+      };
+
+      const screenMeta = {
+        bridge:       { label: 'bridge',       hint: 'the arrival ritual' },
+        room:         { label: 'room',         hint: 'the orb owns the canvas' },
+        conversation: { label: 'conversation', hint: 'cbt as dialogue' },
+        river:        { label: 'river',        hint: 'memory as flow' },
+        cover:        { label: 'cover',        hint: '2am lung — pure black' },
+      };
+
+      const phone = (
+        <div key={screen} style={{
+          position: 'relative', width: '100%', height: '100%',
+          animation: 'screenFade 500ms ease-out',
+        }} data-screen-label={`${Object.keys(screens).indexOf(screen) + 1} ${screen}`}>
+          {screens[screen]}
+        </div>
+      );
+
+      return (
+        <div className="stage">
+          {/* brand */}
+          <div className="brand">
+            <div>
+              <div className="mark">..: kataleya :..</div>
+              <div className="sub">containment as architecture · 2am presence</div>
+            </div>
+            <div className="meta">
+              <div className="line">phase <span className="accent">· {t.phase}</span></div>
+              <div className="line">cycle · {t.daysSober} days sober</div>
+              <div className="line">build · v3.0 prototype</div>
+            </div>
+          </div>
+
+          {/* screen nav */}
+          <div className="nav-col">
+            <div className="screen-nav">
+              <div className="title">screens</div>
+              {Object.entries(screenMeta).map(([k, m], i) => (
+                <button key={k} className={screen === k ? 'active' : ''} onClick={() => setScreen(k)}>
+                  <span className="label">{String(i + 1).padStart(2, '0')} · {m.label}</span>
+                  <span className="hint">{m.hint}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* phone */}
+          <div className="phone-col">
+            {t.showFrame
+              ? <IOSDevice width={390} height={800} dark={true}>
+                  {phone}
+                  {physician && <PhysicianMode phase={t.phase} daysSober={t.daysSober} bpm={t.bpm} transmutationScars={t.transmutationScars} onDismiss={() => setPhysician(false)} />}
+                </IOSDevice>
+              : <div style={{ width: 390, height: 800, position: 'relative', borderRadius: 44, overflow: 'hidden', background: '#050508', boxShadow: '0 40px 80px rgba(0,0,0,0.4)' }}>
+                  {phone}
+                  {physician && <PhysicianMode phase={t.phase} daysSober={t.daysSober} bpm={t.bpm} transmutationScars={t.transmutationScars} onDismiss={() => setPhysician(false)} />}
+                </div>
+            }
+          </div>
+
+          {/* notes */}
+          <div className="notes-col">
+            <div className="notes">
+              <div className="title">how to read this</div>
+              <p>the <code>bridge</code> is the arrival ritual. every session begins here — not a loading screen, a moment of landing.</p>
+              <p>on the <code>room</code>, the orb owns the canvas. <span className="kbd">tap</span> orb → talk. <span className="kbd">drag ←</span> → talk. <span className="kbd">drag ↑</span> → memory. <span className="kbd">hold</span> orb → sanctuary.</p>
+              <p>the <code>conversation</code> is CBT as dialogue. one question per screen. no module picker — the app infers what to surface from phase + state.</p>
+              <p>the <code>river</code> is time as flow. days as hue (mood). no grid. no month boxes.</p>
+              <p>the <code>cover</code> is the 2am lung. pure black, cyan monochrome, butterfly breathing opposite to orb.</p>
+              <p style={{ color: 'rgba(255,107,53,0.72)' }}>easter egg · hold <span className="kbd">P</span> for 600ms → physician mode (raw data layer). on device this is a two-finger spiral. most users never find it.</p>
+              <p style={{ color: 'rgba(138,138,158,0.55)', fontStyle: 'italic', marginTop: 22 }}>open <span className="kbd">tweaks</span> in the toolbar to shift phase / days / ring gap / bpm. butterfly is a placeholder helix — the real butterfly-dna-t.gif is a native asset.</p>
+            </div>
+          </div>
+
+          {/* footer */}
+          <div className="footer">
+            <div>zero-knowledge · local-first · the app should know as little about you as possible</div>
+            <div>◈ {t.phase} · bpm {t.bpm}</div>
+          </div>
+
+          {/* tweaks */}
+          <TweaksPanel title="tweaks">
+            <TweakSection label="phase" />
+            <TweakRadio label="circadian" value={t.phase} options={[
+              { value: 'dawn',       label: 'dawn' },
+              { value: 'day',        label: 'day' },
+              { value: 'goldenHour', label: 'gold' },
+              { value: 'night',      label: 'night' },
+            ]} onChange={v => setTweak('phase', v)} />
+            <TweakSection label="cycle" />
+            <TweakSlider label="days sober" value={t.daysSober} min={0} max={120} step={1} onChange={v => setTweak('daysSober', v)} />
+            <TweakSlider label="trans. scars" value={t.transmutationScars} min={0} max={8} step={1} onChange={v => setTweak('transmutationScars', v)} />
+            <TweakText label="name" value={t.userName} onChange={v => setTweak('userName', v)} />
+            <TweakSection label="ring" />
+            <TweakSlider label="size" value={t.ringSize} min={200} max={320} step={4} unit="px" onChange={v => setTweak('ringSize', v)} />
+            <TweakSlider label="gap" value={t.gapFraction} min={0.04} max={0.28} step={0.01} onChange={v => setTweak('gapFraction', v)} />
+            <TweakSection label="pulse" />
+            <TweakSlider label="bpm" value={t.bpm} min={45} max={85} step={1} onChange={v => setTweak('bpm', v)} />
+            <TweakSection label="frame" />
+            <TweakToggle label="device frame" value={t.showFrame} onChange={v => setTweak('showFrame', v)} />
+          </TweaksPanel>
+        </div>
+      );
+    }
+
+    // Wait for babel scripts to load
+    const mount = () => {
+      if (window.IOSDevice && window.BridgeScreen && window.TweaksPanel) {
+        ReactDOM.createRoot(document.getElementById('root')).render(<Shell />);
+      } else {
+        setTimeout(mount, 50);
+      }
+    };
+    mount();
+  </script>
+</body>
+</html>

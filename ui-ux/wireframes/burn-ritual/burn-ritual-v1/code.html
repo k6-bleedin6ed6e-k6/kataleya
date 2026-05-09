@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>KATALEYA - Burn Ritual</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#93000a",
+                        "dawn-shadow": "#7a5c38",
+                        "day-highlight": "#b8dcd0",
+                        "surface-container": "#1e201f",
+                        "secondary": "#b7c7e9",
+                        "on-error": "#690005",
+                        "night-highlight": "#a8bcd4",
+                        "secondary-container": "#3a4966",
+                        "on-primary-container": "#23493d",
+                        "goldenHour-accent": "#c9a959",
+                        "on-primary": "#0e372b",
+                        "on-secondary-fixed": "#091b36",
+                        "night-shadow": "#2e3852",
+                        "secondary-fixed": "#d6e3ff",
+                        "base-surface": "#0d0d14",
+                        "surface-dim": "#121413",
+                        "night-rim": "#d8e4f8",
+                        "dawn-rim": "#fdf0e0",
+                        "goldenHour-rim": "#f8e8c0",
+                        "inverse-surface": "#e2e3e0",
+                        "primary-fixed": "#c1ecda",
+                        "night-ambient": "#060810",
+                        "primary-container": "#8fb8a8",
+                        "on-tertiary-fixed-variant": "#653c37",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed-dim": "#f3b8b2",
+                        "outline": "#8b928e",
+                        "day-rim": "#e8f5f0",
+                        "on-surface": "#e2e3e0",
+                        "on-tertiary": "#4b2622",
+                        "dawn-accent": "#d4a574",
+                        "on-secondary-fixed-variant": "#374763",
+                        "day-accent": "#8fb8a8",
+                        "surface-bright": "#383a38",
+                        "tertiary-container": "#daa29c",
+                        "day-ambient": "#080f0c",
+                        "on-background": "#e2e3e0",
+                        "dawn-highlight": "#f0c898",
+                        "surface": "#121413",
+                        "on-tertiary-container": "#603834",
+                        "on-primary-fixed": "#002118",
+                        "goldenHour-highlight": "#e8c878",
+                        "on-tertiary-fixed": "#32120f",
+                        "on-secondary": "#20314c",
+                        "surface-tint": "#a6cfbf",
+                        "primary": "#aad4c3",
+                        "goldenHour-shadow": "#6a5320",
+                        "dawn-ambient": "#1a1108",
+                        "on-primary-fixed-variant": "#274e41",
+                        "primary-fixed-dim": "#a6cfbf",
+                        "surface-container-high": "#282a29",
+                        "on-surface-variant": "#c1c8c3",
+                        "inverse-on-surface": "#2f312f",
+                        "tertiary-fixed": "#ffdad6",
+                        "tertiary": "#f8bdb6",
+                        "base-bg": "#050508",
+                        "surface-container-lowest": "#0c0f0e",
+                        "surface-variant": "#333534",
+                        "surface-container-highest": "#333534",
+                        "outline-variant": "#414845",
+                        "inverse-primary": "#3f6658",
+                        "day-shadow": "#3d6858",
+                        "on-secondary-container": "#a9b9da",
+                        "base-text": "#e8e6f0",
+                        "secondary-fixed-dim": "#b7c7e9",
+                        "surface-container-low": "#1a1c1b",
+                        "on-error-container": "#ffdad6",
+                        "night-accent": "#8090b0",
+                        "background": "#121413",
+                        "goldenHour-ambient": "#18130a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "safe-margin": "2rem",
+                        "spine-width": "1px",
+                        "ring-diameter": "85vw",
+                        "node-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-ritual": ["Space Grotesk"],
+                        "terminal-code": ["JetBrains Mono"],
+                        "label-node": ["Inter"],
+                        "body-typewriter": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-ritual": ["32px", {"lineHeight": "40px", "letterSpacing": "0.1em", "fontWeight": "300"}],
+                        "terminal-code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-node": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-typewriter": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+        }
+        .mercury-bleed {
+            filter: blur(8px);
+            opacity: 0.6;
+            transform: translateY(40px);
+            transition: all 5s ease-in-out;
+        }
+        .phase-bleed {
+            background: radial-gradient(circle at top, rgba(128, 144, 176, 0.15) 0%, transparent 60%),
+                        radial-gradient(circle at bottom, rgba(46, 56, 82, 0.4) 0%, transparent 70%);
+        }
+        .mercury-river {
+            background: linear-gradient(180deg, transparent 0%, rgba(128, 144, 176, 0.1) 30%, rgba(46, 56, 82, 0.4) 100%);
+            mask-image: linear-gradient(to bottom, transparent, black);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-base-bg text-on-surface selection:bg-night-highlight/30 overflow-hidden h-screen w-screen flex flex-col font-body-typewriter">
+<!-- Atmosphere Layer -->
+<div class="fixed inset-0 pointer-events-none z-0">
+<div class="absolute inset-0 grain"></div>
+<div class="absolute inset-0 phase-bleed"></div>
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,5,8,1)_100%)]"></div>
+</div>
+<!-- Top AppBar (JSON Content) -->
+<header class="flex justify-between items-center w-full px-safe-margin pt-8 max-w-7xl mx-auto z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary" data-icon="blur_on">blur_on</span>
+<h1 class="font-headline-ritual text-headline-ritual tracking-widest text-dawn-accent dark:text-dawn-accent">KATALEYA</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-body-typewriter text-body-typewriter text-on-surface-variant/50">2:44 AM</span>
+<span class="material-symbols-outlined text-primary dark:text-primary" data-icon="terminal">terminal</span>
+</div>
+</header>
+<!-- Main Ritual Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center relative z-10 px-safe-margin">
+<!-- Sacred Background Geometry (Simplified from User Image) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vw] opacity-10 pointer-events-none">
+<div class="absolute inset-0 border border-night-highlight rounded-full"></div>
+<div class="absolute inset-[10%] border border-night-highlight rounded-full"></div>
+<div class="absolute inset-[20%] border border-night-highlight rounded-full"></div>
+<div class="absolute inset-[30%] border border-night-highlight rounded-full"></div>
+</div>
+<!-- The Seed/Orb (Phase: Dimmed/Night) -->
+<div class="relative w-48 h-48 flex items-center justify-center mb-16">
+<!-- Membrane Layers -->
+<div class="absolute inset-0 rounded-full bg-night-accent/5 blur-3xl"></div>
+<div class="absolute inset-4 rounded-full border border-night-rim/20 bg-night-shadow/40 backdrop-blur-md"></div>
+<div class="absolute inset-12 rounded-full border border-night-highlight/30 bg-night-ambient/80 shadow-[0_0_40px_rgba(168,188,212,0.15)]"></div>
+<!-- Nucleus (Dimmed) -->
+<div class="w-8 h-8 rounded-full bg-night-highlight opacity-40 blur-sm"></div>
+<!-- Anchor Label -->
+<div class="absolute -bottom-8 flex flex-col items-center">
+<span class="font-label-node text-label-node text-night-highlight/60 uppercase tracking-widest">stay with me</span>
+<div class="w-spine-width h-8 bg-gradient-to-b from-night-highlight/40 to-transparent mt-2"></div>
+</div>
+</div>
+<!-- Mercury Bleed Animation Area -->
+<div class="flex flex-col items-center gap-8 text-center max-w-sm">
+<div class="relative group">
+<!-- Text Fragment undergoing transmutation -->
+<p class="font-body-typewriter text-xl text-night-highlight/80 tracking-tight leading-relaxed mercury-bleed italic">
+                    i feel like i am going to fail
+                </p>
+<!-- Secondary trails -->
+<div class="absolute inset-x-0 top-0 mercury-bleed delay-700 opacity-20 text-night-highlight/50 blur-[2px] pointer-events-none">
+                    i feel like i am going to fail
+                </div>
+</div>
+<div class="mt-24">
+<p class="font-label-node text-label-node text-night-accent/40 uppercase tracking-[0.4em] pulse">
+                    just intention. release.
+                </p>
+</div>
+</div>
+</main>
+<!-- Mercury River (Bottom Anchor) -->
+<div class="fixed bottom-0 left-0 right-0 h-48 mercury-river z-20 pointer-events-none">
+<!-- Living Liquid Texture Layer -->
+<div class="absolute bottom-0 inset-x-0 h-24 overflow-hidden">
+<div class="absolute bottom-0 w-[200%] h-full opacity-30 blur-xl bg-gradient-to-r from-transparent via-night-highlight to-transparent -left-1/2"></div>
+<svg class="absolute bottom-0 w-full h-full" preserveaspectratio="none">
+<defs>
+<lineargradient id="riverGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:rgba(128,144,176,0);"></stop>
+<stop offset="100%" style="stop-color:rgba(168,188,212,0.4);"></stop>
+</lineargradient>
+</defs>
+<path d="M0,50 Q250,20 500,50 T1000,50 L1000,100 L0,100 Z" fill="url(#riverGrad)" opacity="0.4"></path>
+</svg>
+</div>
+</div>
+<!-- Navigation Drawer (JSON Structure) -->
+<!-- Mimicking side access for top-level navigation -->
+<div class="fixed top-1/2 right-safe-margin -translate-y-1/2 flex flex-col gap-8 z-50">
+<div class="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-700 ease-out hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-night-highlight/40 group-hover:text-night-highlight transition-colors" data-icon="brightness_low">brightness_low</span>
+<span class="hidden group-hover:block absolute right-12 font-label-node text-label-node text-night-highlight bg-base-bg/80 backdrop-blur px-3 py-1 rounded-full whitespace-nowrap">The Room</span>
+</div>
+<div class="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-700 ease-out hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-night-highlight bg-night-accent/20 border border-night-accent/30 rounded-full p-2" data-icon="bedtime" style="font-variation-settings: 'FILL' 1;">bedtime</span>
+<span class="hidden group-hover:block absolute right-12 font-label-node text-label-node text-night-highlight bg-base-bg/80 backdrop-blur px-3 py-1 rounded-full whitespace-nowrap">The Cocoon</span>
+</div>
+<div class="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-700 ease-out hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-night-highlight/40 group-hover:text-night-highlight transition-colors" data-icon="Waves">Waves</span>
+<span class="hidden group-hover:block absolute right-12 font-label-node text-label-node text-night-highlight bg-base-bg/80 backdrop-blur px-3 py-1 rounded-full whitespace-nowrap">The Bridge</span>
+</div>
+<div class="group flex flex-col items-center gap-2 cursor-pointer transition-all duration-700 ease-out hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-night-highlight/40 group-hover:text-night-highlight transition-colors" data-icon="settings_input_component">settings_input_component</span>
+<span class="hidden group-hover:block absolute right-12 font-label-node text-label-node text-night-highlight bg-base-bg/80 backdrop-blur px-3 py-1 rounded-full whitespace-nowrap">The Terminal</span>
+</div>
+</div>
+<!-- Ritual Interactions (Background context from Prompt) -->
+<div class="fixed bottom-safe-margin left-safe-margin flex flex-col gap-2 z-50">
+<div class="flex items-center gap-4 text-night-highlight/30 font-label-node text-label-node uppercase tracking-widest">
+<span class="w-12 h-[1px] bg-night-highlight/20"></span>
+<span>PHASE: NIGHT VIGIL</span>
+</div>
+<div class="flex items-center gap-4 text-night-highlight/30 font-label-node text-label-node uppercase tracking-widest">
+<span class="w-12 h-[1px] bg-night-highlight/20"></span>
+<span>RESONANCE: 98%</span>
+</div>
+</div>
+<!-- Transmutation Visual Effects (Butterfly Wing Hint from provided images) -->
+<div class="fixed inset-0 pointer-events-none opacity-5">
+<img class="w-full h-full object-cover mix-blend-screen" data-alt="A highly detailed macro shot of a butterfly wing structure with intricate, shimmering patterns. The background is a deep, void-like black punctuated by soft, bioluminescent violet and silver light. The lighting is ethereal and mysterious, creating a sense of sacred geometry and natural complexity. This image follows a deep ocean and stained glass aesthetic with a cool, nocturnal color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlO7l9_kQeMEXZTBscupl8eoOJ2LxFv3mkXsqcNviLzhd6eABHKj6qwU9OU1gWZPMI3iHhc7HxFr62T8Eej5zPkZ8vL8QD-lzNU42plnvJmipo_-jaKSMUlDPXr3ShYvs7YZmX7oFPRpDna7eVUZz-GXPhXAILiMA7yUFlMglJ_pNpmOM0_P71OcOyVrTdfcqPxyQ7piwKX0fw6vXkSE29hksl2C-qSYa4y7f6417uDj1xXzo5G4ejgAa3_dEWeShrb8dnELiQ1-0"/>
+</div>
+</body></html>

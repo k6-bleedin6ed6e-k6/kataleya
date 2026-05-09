@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Room | Kataleya</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "dawn-accent": "#d4a574",
+              "dawn-rim": "#fdf0e0",
+              "primary": "#aad4c3",
+              "background": "#121413",
+              "surface": "#121413",
+              "on-background": "#e2e3e0",
+              "night-highlight": "#a8bcd4"
+            },
+            fontFamily: {
+              "courier": ["Courier Prime", "monospace"]
+            },
+            animation: {
+              'breathe': 'breathe 11s ease-in-out infinite',
+              'spin-slow': 'spin 86400s linear infinite',
+              'flow': 'flow 20s ease-in-out infinite'
+            },
+            keyframes: {
+              breathe: {
+                '0%, 100%': { transform: 'scale(1)', opacity: '0.4' },
+                '50%': { transform: 'scale(1.15)', opacity: '0.7' },
+              },
+              flow: {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { 
+            background-color: #0c0f0e; 
+            overflow: hidden; 
+            font-family: 'Courier Prime', monospace;
+            text-transform: lowercase;
+        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24; }
+        
+        /* Mercury River Background */
+        .mercury-river {
+            background: linear-gradient(135deg, #121413 0%, #1a2a24 40%, #2e3852 70%, #121413 100%);
+            background-size: 400% 400%;
+            animation: flow 15s ease infinite;
+        }
+
+        /* The Ouroboros Clock - 24h rotation */
+        .ouroboros-ring {
+            border: 1px solid rgba(212, 165, 116, 0.15);
+            border-radius: 50%;
+            width: 85vh;
+            height: 85vh;
+        }
+
+        /* The Breathing Orb */
+        .breathing-orb {
+            box-shadow: 0 0 60px rgba(170, 212, 195, 0.15), inset 0 0 20px rgba(170, 212, 195, 0.1);
+        }
+
+        /* Containment Line */
+        .containment-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 165, 116, 0.4), transparent);
+            box-shadow: 0 0 10px rgba(212, 165, 116, 0.2);
+        }
+
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(212, 165, 116, 0.05);
+            position: absolute;
+            top: 0;
+            animation: scan 12s linear infinite;
+        }
+        @keyframes scan {
+            from { transform: translateY(0); }
+            to { transform: translateY(100vh); }
+        }
+    </style>
+</head>
+<body class="text-on-background/80 relative h-screen w-screen selection:bg-dawn-accent/20">
+<!-- Global Background Elements -->
+<div class="fixed inset-0 z-0 mercury-river opacity-40"></div>
+<div class="fixed inset-0 z-10 scanline"></div>
+<!-- Main Content Layout -->
+<main class="relative z-20 flex flex-col items-center justify-between h-full py-12">
+<!-- Top: Logo & Ouroboros Progress -->
+<header class="w-full px-12 flex justify-between items-start">
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-[16px]">blur_on</span>
+<span class="tracking-[0.5em]">kataleya</span>
+</div>
+<div class="text-right flex flex-col gap-1">
+<span class="opacity-30 text-[10px] tracking-widest">phase: renewal</span>
+<span class="text-dawn-accent/60">05:42 // dawn</span>
+</div>
+</header>
+<!-- Center: The Ouroboros & Orb -->
+<div class="relative flex items-center justify-center flex-1 w-full overflow-hidden">
+<!-- 24h Clock Ring -->
+<div class="absolute ouroboros-ring animate-spin-slow opacity-20">
+<div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-dawn-accent rounded-full blur-[2px]"></div>
+</div>
+<!-- The Core Hub -->
+<div class="relative z-30 flex flex-col items-center">
+<div class="w-48 h-48 rounded-full border border-primary/20 breathing-orb animate-breathe flex items-center justify-center bg-primary/5 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary text-5xl opacity-80">psychology</span>
+</div>
+<div class="mt-8 flex flex-col items-center gap-2">
+<span class="text-[12px] tracking-[0.6em] text-primary/70">root_resonance</span>
+<div class="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"></div>
+</div>
+</div>
+</div>
+<!-- Containment & Anchor -->
+<div class="w-full relative py-8 flex flex-col items-center gap-4">
+<div class="w-[80%] containment-line relative">
+<!-- Containment Markers -->
+<div class="absolute left-0 -top-4 text-[9px] opacity-20 tracking-tighter">..: :.. containment</div>
+<div class="absolute right-0 -top-4 text-[9px] opacity-20 tracking-tighter">stable :..:</div>
+</div>
+<span class="text-[11px] tracking-[1em] text-dawn-accent/60">stay with me</span>
+</div>
+<!-- Bottom UI Controls -->
+<footer class="w-full px-12 flex justify-between items-end">
+<div class="flex flex-col gap-1">
+<span class="text-[9px] opacity-30 tracking-widest">integrity_index</span>
+<span class="text-lg text-dawn-accent/80 font-bold">98.4%</span>
+</div>
+<div class="flex flex-col items-center gap-6">
+<!-- Primary Action Hub -->
+<div class="flex gap-8 items-center mb-4">
+<button class="flex flex-col items-center gap-1 group">
+<span class="material-symbols-outlined text-night-highlight/40 group-hover:text-night-highlight transition-colors">spa</span>
+<span class="text-[9px] opacity-0 group-hover:opacity-40 transition-opacity">seed</span>
+</button>
+<button class="px-10 py-3 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all duration-500 backdrop-blur-xl group">
+<span class="tracking-[0.4em] text-[10px] text-on-background/60 group-hover:text-on-background">recalibrate_mirror</span>
+</button>
+<button class="flex flex-col items-center gap-1 group">
+<span class="material-symbols-outlined text-dawn-accent/40 group-hover:text-dawn-accent transition-colors">brightness_7</span>
+<span class="text-[9px] opacity-0 group-hover:opacity-40 transition-opacity">bloom</span>
+</button>
+</div>
+<span class="text-[9px] text-on-background/10 tracking-[0.2em]">// origin: thinkbad-dogood-sa.my</span>
+</div>
+<div class="text-right">
+<span class="text-[9px] opacity-20 block">system_status: nominal</span>
+<span class="text-[9px] opacity-20 block">v_0.9.4_aurora</span>
+</div>
+</footer>
+</main>
+<!-- Overlay HUD Elements -->
+<div class="fixed top-1/2 left-8 -translate-y-1/2 flex flex-col gap-12 opacity-10">
+<div class="w-px h-24 bg-white"></div>
+<div class="rotate-90 origin-left text-[9px] tracking-[1em] whitespace-nowrap">mercury_flow</div>
+</div>
+<div class="fixed top-1/2 right-8 -translate-y-1/2 flex flex-col gap-12 opacity-10">
+<div class="rotate-90 origin-right text-[9px] tracking-[1em] whitespace-nowrap">circadian_lock</div>
+<div class="w-px h-24 bg-white"></div>
+</div>
+</body></html>

@@ -1,43 +1,24 @@
 // surface/river-ripples.tsx
-// bioluminescent interference — six concentric rings expanding from center
-// each ring has its own phase, thickness, and opacity curve
-// native-driver scale + opacity, SVG stroke for crisp edges
+// two soft pulses from center — a heartbeat you feel more than see.
 
 import React, { useEffect, useRef } from 'react'
 import { Animated, Easing, StyleSheet, View, Dimensions } from 'react-native'
-import Svg, { Circle } from 'react-native-svg'
 
 const { width, height } = Dimensions.get('window')
 
-const BASE_SIZE = 120
+const BASE_SIZE = 160
 const MAX_SCALE = Math.hypot(width, height) / BASE_SIZE
-
-const RINGS = [
-  { delay: 0.00, thickness: 1.0,  peakOp: 0.18 },
-  { delay: 0.18, thickness: 0.75, peakOp: 0.14 },
-  { delay: 0.36, thickness: 0.55, peakOp: 0.11 },
-  { delay: 0.52, thickness: 0.85, peakOp: 0.15 },
-  { delay: 0.68, thickness: 0.45, peakOp: 0.09 },
-  { delay: 0.84, thickness: 0.60, peakOp: 0.10 },
-]
-
-const DURATION = 6400
 
 interface Props { phaseColor: string }
 
-function RippleRing({ phaseColor, delay, thickness, peakOp }: {
-  phaseColor: string
-  delay: number
-  thickness: number
-  peakOp: number
-}) {
+function Pulse({ phaseColor, delay }: { phaseColor: string; delay: number }) {
   const progress = useRef(new Animated.Value(delay)).current
 
   useEffect(() => {
     const loop = Animated.loop(
       Animated.timing(progress, {
         toValue: delay + 1,
-        duration: DURATION,
+        duration: 6000,
         easing: Easing.linear,
         useNativeDriver: true,
       })
@@ -48,13 +29,13 @@ function RippleRing({ phaseColor, delay, thickness, peakOp }: {
 
   const scale = progress.interpolate({
     inputRange: [delay, delay + 0.30, delay + 1],
-    outputRange: [0.35, MAX_SCALE * 0.80, MAX_SCALE],
+    outputRange: [0.4, MAX_SCALE * 0.75, MAX_SCALE],
     extrapolate: 'clamp',
   })
 
   const opacity = progress.interpolate({
-    inputRange: [delay, delay + 0.06, delay + 0.45, delay + 0.75, delay + 1],
-    outputRange: [0, peakOp, peakOp * 0.55, peakOp * 0.18, 0],
+    inputRange: [delay, delay + 0.05, delay + 0.50, delay + 0.80, delay + 1],
+    outputRange: [0, 0.14, 0.08, 0.03, 0],
     extrapolate: 'clamp',
   })
 
@@ -67,7 +48,7 @@ function RippleRing({ phaseColor, delay, thickness, peakOp }: {
           height: BASE_SIZE,
           borderRadius: BASE_SIZE / 2,
           borderColor: phaseColor,
-          borderWidth: thickness,
+          borderWidth: 0.8,
           transform: [{ scale }],
           opacity,
         },
@@ -77,60 +58,22 @@ function RippleRing({ phaseColor, delay, thickness, peakOp }: {
 }
 
 export function RiverRipples({ phaseColor }: Props) {
-  const mountFade = useRef(new Animated.Value(0)).current
-  const centerPulse = useRef(new Animated.Value(0)).current
+  const fade = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    Animated.timing(mountFade, {
+    Animated.timing(fade, {
       toValue: 1,
-      duration: 2600,
+      duration: 2800,
       easing: Easing.out(Easing.quad),
       useNativeDriver: true,
     }).start()
-
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(centerPulse, { toValue: 1, duration: 1800, useNativeDriver: true }),
-        Animated.timing(centerPulse, { toValue: 0, duration: 1800, useNativeDriver: true }),
-      ])
-    )
-    pulse.start()
-    return () => pulse.stop()
   }, [])
 
-  const centerScale = centerPulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 1.6],
-  })
-  const centerOp = centerPulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.35, 0.08],
-  })
-
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, { opacity: mountFade }]} pointerEvents="none">
-      {/* center source dot */}
+    <Animated.View style={[StyleSheet.absoluteFill, { opacity: fade }]} pointerEvents="none">
       <View style={styles.anchor} pointerEvents="none">
-        <Animated.View
-          style={{
-            position: 'absolute',
-            width: 6,
-            height: 6,
-            borderRadius: 3,
-            backgroundColor: phaseColor,
-            transform: [{ scale: centerScale }],
-            opacity: centerOp,
-          }}
-        />
-        {RINGS.map((r, i) => (
-          <RippleRing
-            key={i}
-            phaseColor={phaseColor}
-            delay={r.delay}
-            thickness={r.thickness}
-            peakOp={r.peakOp}
-          />
-        ))}
+        <Pulse phaseColor={phaseColor} delay={0} />
+        <Pulse phaseColor={phaseColor} delay={0.5} />
       </View>
     </Animated.View>
   )

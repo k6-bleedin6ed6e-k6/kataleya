@@ -1,0 +1,236 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-dim": "#121413",
+                  "surface-tint": "#a6cfbf",
+                  "on-primary-container": "#23493d",
+                  "goldenHour-rim": "#f8e8c0",
+                  "day-highlight": "#b8dcd0",
+                  "background": "#121413",
+                  "primary-container": "#8fb8a8",
+                  "dawn-ambient": "#1a1108",
+                  "surface": "#121413",
+                  "on-primary-fixed": "#002118",
+                  "goldenHour-ambient": "#18130a",
+                  "base-surface": "#0d0d14",
+                  "primary-fixed-dim": "#a6cfbf",
+                  "on-primary-fixed-variant": "#274e41",
+                  "on-secondary-fixed": "#091b36",
+                  "night-ambient": "#060810",
+                  "on-secondary": "#20314c",
+                  "surface-container-low": "#1a1c1b",
+                  "on-tertiary-fixed": "#32120f",
+                  "day-shadow": "#3d6858",
+                  "dawn-highlight": "#f0c898",
+                  "surface-variant": "#333534",
+                  "on-error-container": "#ffdad6",
+                  "tertiary-container": "#daa29c",
+                  "outline": "#8b928e",
+                  "secondary-fixed-dim": "#b7c7e9",
+                  "night-rim": "#d8e4f8",
+                  "secondary": "#b7c7e9",
+                  "on-secondary-fixed-variant": "#374763",
+                  "tertiary-fixed-dim": "#f3b8b2",
+                  "primary": "#aad4c3",
+                  "night-highlight": "#a8bcd4",
+                  "on-tertiary-container": "#603834",
+                  "day-rim": "#e8f5f0",
+                  "surface-container": "#1e201f",
+                  "night-shadow": "#2e3852",
+                  "goldenHour-shadow": "#6a5320",
+                  "base-text": "#e8e6f0",
+                  "on-secondary-container": "#a9b9da",
+                  "inverse-on-surface": "#2f312f",
+                  "error-container": "#93000a",
+                  "goldenHour-accent": "#c9a959",
+                  "error": "#ffb4ab",
+                  "on-primary": "#0e372b",
+                  "day-accent": "#8fb8a8",
+                  "surface-container-highest": "#333534",
+                  "inverse-primary": "#3f6658",
+                  "dawn-accent": "#d4a574",
+                  "on-tertiary": "#4b2622",
+                  "surface-bright": "#383a38",
+                  "night-accent": "#8090b0",
+                  "goldenHour-highlight": "#e8c878",
+                  "tertiary-fixed": "#ffdad6",
+                  "primary-fixed": "#c1ecda",
+                  "on-background": "#e2e3e0",
+                  "on-tertiary-fixed-variant": "#653c37",
+                  "base-bg": "#050508",
+                  "inverse-surface": "#e2e3e0",
+                  "secondary-fixed": "#d6e3ff",
+                  "on-error": "#690005",
+                  "secondary-container": "#3a4966",
+                  "on-surface-variant": "#c1c8c3",
+                  "on-surface": "#e2e3e0",
+                  "day-ambient": "#080f0c",
+                  "outline-variant": "#414845",
+                  "surface-container-lowest": "#0c0f0e",
+                  "dawn-shadow": "#7a5c38",
+                  "tertiary": "#f8bdb6",
+                  "surface-container-high": "#282a29",
+                  "dawn-rim": "#fdf0e0"
+          },
+          "borderRadius": {
+                  "DEFAULT": "1rem",
+                  "lg": "2rem",
+                  "xl": "3rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "ring-diameter": "85vw",
+                  "node-gap": "1rem",
+                  "spine-width": "1px",
+                  "safe-margin": "2rem"
+          },
+          "fontFamily": {
+                  "label-node": ["Inter"],
+                  "headline-ritual": ["Space Grotesk"],
+                  "body-typewriter": ["JetBrains Mono"],
+                  "terminal-code": ["JetBrains Mono"]
+          },
+          "fontSize": {
+                  "label-node": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                  "headline-ritual": ["32px", {"lineHeight": "40px", "letterSpacing": "0.1em", "fontWeight": "300"}],
+                  "body-typewriter": ["16px", {"lineHeight": "24px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                  "terminal-code": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    
+    .breath-pulse {
+      animation: breath 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes breath {
+      0%, 100% { transform: scale(1); opacity: 0.2; filter: blur(4px); }
+      50% { transform: scale(1.1); opacity: 0.6; filter: blur(12px); }
+    }
+
+    .ouroboros-expand {
+      border: 1px solid rgba(212, 165, 116, 0.15);
+      box-shadow: 0 0 80px rgba(212, 165, 116, 0.05), inset 0 0 40px rgba(212, 165, 116, 0.05);
+    }
+
+    .glass-membrane {
+      background: radial-gradient(circle at center, rgba(166, 207, 191, 0.1) 0%, transparent 70%);
+      backdrop-filter: blur(40px);
+    }
+
+    .phase-bleed {
+      background: radial-gradient(circle at center, #1a1108 0%, #060810 100%);
+    }
+
+    .dawn-glow {
+      background: linear-gradient(180deg, transparent 0%, rgba(166, 207, 191, 0.05) 50%, rgba(240, 200, 152, 0.1) 100%);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-dim text-on-surface selection:bg-dawn-accent/30 overflow-hidden font-body-typewriter">
+<!-- Atmospheric Background Layer -->
+<div class="fixed inset-0 phase-bleed z-0"></div>
+<div class="fixed inset-0 dawn-glow z-10 opacity-60"></div>
+<!-- Content Canvas -->
+<main class="relative z-20 w-screen h-screen flex flex-col items-center justify-center p-safe-margin">
+<!-- Top Bar Placeholder (Visual weight only, no interaction) -->
+<header class="fixed top-0 left-0 right-0 flex justify-between items-center px-safe-margin pt-8 max-w-7xl mx-auto z-50">
+<div class="font-headline-ritual text-headline-ritual tracking-widest text-dawn-accent dark:text-dawn-accent opacity-20">KATALEYA</div>
+<div class="flex gap-4 opacity-10">
+<span class="material-symbols-outlined text-primary">blur_on</span>
+<span class="material-symbols-outlined text-primary">terminal</span>
+</div>
+</header>
+<!-- The Room Surfacing Text -->
+<div class="absolute top-1/4 transform -translate-y-12">
+<h1 class="font-headline-ritual text-headline-ritual text-dawn-highlight opacity-40 text-center tracking-[0.2em]">
+            life rewritten by choice
+        </h1>
+</div>
+<!-- Expanding Ouroboros Ring (The Gateway) -->
+<div class="absolute w-[120vw] h-[120vw] rounded-full ouroboros-expand flex items-center justify-center opacity-30 border-dashed">
+<div class="w-[95%] h-[95%] rounded-full border border-dawn-accent/10"></div>
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-dawn-rim shadow-[0_0_15px_rgba(253,240,224,0.8)]"></div>
+</div>
+<!-- The Seed / Potential Orb -->
+<div class="relative group">
+<!-- Whispered Typewriter Text -->
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap">
+<p class="text-[9px] font-terminal-code tracking-widest text-on-surface-variant/40 animate-pulse">
+                stay with me
+            </p>
+</div>
+<!-- Multi-layered Orb Membrane -->
+<div class="relative w-48 h-48 flex items-center justify-center">
+<!-- Haze -->
+<div class="absolute inset-0 bg-day-accent/10 rounded-full blur-3xl scale-150 breath-pulse"></div>
+<!-- Body -->
+<div class="absolute inset-4 bg-primary/20 rounded-full blur-xl breath-pulse" style="animation-delay: -2s"></div>
+<!-- Rim -->
+<div class="absolute inset-12 border border-day-highlight/30 rounded-full breath-pulse" style="animation-delay: -4s"></div>
+<!-- Nucleus -->
+<div class="w-8 h-8 rounded-full bg-day-highlight shadow-[0_0_30px_rgba(184,220,208,0.6)] z-30"></div>
+</div>
+</div>
+<!-- Frequency Bridge (Bottom Line) -->
+<div class="fixed bottom-24 flex flex-col items-center gap-4 w-full px-safe-margin max-w-md">
+<div class="w-full h-[1px] bg-gradient-to-r from-transparent via-dawn-accent/40 to-transparent flex justify-center items-center gap-2">
+<span class="text-[8px] text-dawn-accent/60 tracking-widest">..:</span>
+<div class="w-24 h-[2px] bg-dawn-highlight/20 blur-[1px]"></div>
+<span class="text-[8px] text-dawn-accent/60 tracking-widest">:..</span>
+</div>
+<div class="text-[10px] text-on-surface-variant/20 tracking-tighter uppercase font-terminal-code">
+            Resonance Synchronization: 11.0s
+        </div>
+</div>
+<!-- Terminal Footer Signoff -->
+<footer class="fixed bottom-8 w-full flex justify-center opacity-10">
+<span class="font-terminal-code text-[10px] text-on-surface-variant tracking-widest uppercase">
+            // origin: thinkBad-doGood-sa.my
+        </span>
+</footer>
+</main>
+<!-- Navigation Drawer (Mandatory from JSON, hidden in this focus state but structurally present) -->
+<nav class="hidden">
+<div class="style_shell_layout">
+<div class="header_layout">
+<div class="profile_title">Kataleya</div>
+<div class="sub_text">Circadian Phase: Dawn</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="label_texts">The Room</div>
+<div class="label_texts">The Cocoon</div>
+<div class="label_texts active">The Bridge</div>
+<div class="label_texts">The Terminal</div>
+</div>
+</div>
+</nav>
+<!-- Atmosphere Vignettes -->
+<div class="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle_at_50%_-20%,rgba(166,207,191,0.08),transparent_50%)]"></div>
+<div class="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle_at_50%_120%,rgba(122,92,56,0.1),transparent_50%)]"></div>
+<!-- Image Prompt Placeholder for Background/Atmosphere -->
+<div class="hidden">
+<img data-alt="An ethereal digital artwork of a bioluminescent deep-sea environment. The scene is dominated by a dark, charcoal-grey void transitioning into soft, misty cyan and amber light. Thin, glowing membranes and translucent vertical light columns rise like organic skyscrapers. The atmosphere is thick with a calming, glowing fog, reflecting a sophisticated dark-mode UI aesthetic for a meditation application. Soft rim lighting highlights organic, rounded shapes in the distance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVEOzuLQ7HsgZFBjsOMWf9jtynhF0ky31_ug8jRH_ywtXxZ-KvUP2g2O1nB8_pSbxTlFRUkuYip-TDaGjKrqpRy9QQHv4ei9h08ihlJEQ33GI8UU9pW4rHYIkEzmhBj9NuH4PM749JwfJiUfZ1logbMCLt80bTVqHs3gUd337OtCWqWF0UjKOUQxyyCVGjwZqZQGiULmcg41tu6sb9R3my-gK7u-xgiA35UbfXUN77lZGdZ_PT2ZqbGqq4-sfoHkKnFwF0VNvBaIg"/>
+</div>
+</body></html>
