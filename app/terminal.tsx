@@ -112,6 +112,9 @@ export default function TerminalScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <View style={styles.container} {...panResponder.panHandlers}>
+        {/* phase bridge — subtle top glow */}
+        <View style={[styles.phaseBridge, { borderTopColor: `${palette.accent}30` }]} />
+
         {/* ── PHOSPHOR NOIR TERMINAL (always rendered) ── */}
         <ScrollView
           contentContainerStyle={styles.scroll}
@@ -198,17 +201,38 @@ export default function TerminalScreen() {
               <Text style={styles.cmd}>nav --available</Text>
             </View>
             <View style={styles.outBlock}>
+              {/* safe nav */}
               <TouchableOpacity onPress={() => router.push('/mirror')} style={styles.navRow}>
                 <Text style={styles.out}>  /mirror     </Text>
                 <Text style={styles.outAccent}>physician mirror</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/scars')} style={styles.navRow}>
+                <Text style={styles.out}>  /scars      </Text>
+                <Text style={styles.outAccent}>biometric scars</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/vault')} style={styles.navRow}>
+                <Text style={styles.out}>  /vault      </Text>
+                <Text style={styles.outAccent}>journal vault</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/settings')} style={styles.navRow}>
+                <Text style={styles.out}>  /settings   </Text>
+                <Text style={styles.outAccent}>system configuration</Text>
+              </TouchableOpacity>
+
+              <View style={styles.navDivider} />
+
+              {/* caution */}
               <TouchableOpacity onPress={() => setShowSignal(true)} style={styles.navRow}>
                 <Text style={styles.out}>  /signal     </Text>
-                <Text style={styles.outAccent}>sponsor signal</Text>
+                <Text style={styles.outCaution}>sponsor signal</Text>
               </TouchableOpacity>
+
+              <View style={styles.navDivider} />
+
+              {/* danger */}
               <TouchableOpacity onPress={handleOnboardingReset} style={styles.navRow}>
                 <Text style={styles.out}>  /reset      </Text>
-                <Text style={styles.outAccent}>onboarding --reset</Text>
+                <Text style={styles.outDanger}>onboarding --reset</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -226,14 +250,20 @@ export default function TerminalScreen() {
 
         {/* terminal footer nav */}
         <View style={styles.terminalFooter}>
-          <TouchableOpacity onPress={() => setShowSignal(true)} style={styles.terminalFooterBtn}>
-            <Text style={styles.terminalFooterText}>◉ signal</Text>
+          <TouchableOpacity onPress={() => router.push('/vault')} style={styles.terminalFooterBtn}>
+            <Text style={styles.terminalFooterText}>vault</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/scars')} style={styles.terminalFooterBtn}>
+            <Text style={styles.terminalFooterText}>scars</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/mirror')} style={styles.terminalFooterBtn}>
-            <Text style={styles.terminalFooterText}>◉ mirror</Text>
+            <Text style={styles.terminalFooterText}>mirror</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/settings')} style={styles.terminalFooterBtn}>
+            <Text style={styles.terminalFooterText}>config</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.back()} style={styles.terminalFooterBtn}>
-            <Text style={styles.terminalFooterText}>◉ close</Text>
+            <Text style={styles.terminalFooterText}>close</Text>
           </TouchableOpacity>
         </View>
 
@@ -454,6 +484,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: GREEN_DIM,
     letterSpacing: 1.2,
+  },
+
+  // phase bridge
+  phaseBridge: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    borderTopWidth: 1,
+    zIndex: 50,
+    pointerEvents: 'none',
+  },
+
+  // nav hierarchy
+  navDivider: {
+    height: 1,
+    backgroundColor: GREEN_FAINT,
+    marginVertical: 8,
+    opacity: 0.4,
+  },
+  outCaution: {
+    fontFamily: 'Courier Prime',
+    fontSize: 12,
+    color: '#ccaa22',
+    opacity: 0.85,
+    letterSpacing: 0.3,
+    lineHeight: 18,
+  },
+  outDanger: {
+    fontFamily: 'Courier Prime',
+    fontSize: 12,
+    color: '#cc4444',
+    opacity: 0.85,
+    letterSpacing: 0.3,
+    lineHeight: 18,
   },
 
   // ── sponsor signal overlay ──

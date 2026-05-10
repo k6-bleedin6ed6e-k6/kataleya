@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Circadian App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#030305',
+                        obsidian: '#0a0a0f',
+                        phosphor: '#39FF14',
+                        violet: '#8A2BE2',
+                        'violet-glow': 'rgba(138, 43, 226, 0.4)',
+                        'phosphor-glow': 'rgba(57, 255, 20, 0.4)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        widest: '.25em',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #030305;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar { display: none; }
+        
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .ink-bleed {
+            filter: url('#ink-bleed-filter');
+        }
+
+        .phosphor-glow-box {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3), inset 0 0 10px rgba(57, 255, 20, 0.2);
+        }
+        
+        .violet-glow-box {
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3), inset 0 0 10px rgba(138, 43, 226, 0.2);
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider.phosphor-toggle {
+            background-color: rgba(57, 255, 20, 0.2);
+            border-color: rgba(57, 255, 20, 0.5);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        }
+        input:checked + .toggle-slider.phosphor-toggle:before {
+            transform: translateX(20px);
+            background-color: #39FF14;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+        }
+        input:checked + .toggle-slider.violet-toggle {
+            background-color: rgba(138, 43, 226, 0.2);
+            border-color: rgba(138, 43, 226, 0.5);
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+        }
+        input:checked + .toggle-slider.violet-toggle:before {
+            transform: translateX(20px);
+            background-color: #8A2BE2;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.8);
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #0a0a0f;
+            cursor: pointer;
+            margin-top: -8px;
+            position: relative;
+            z-index: 20;
+        }
+        input[type=range].phosphor-range::-webkit-slider-thumb {
+            border: 2px solid #39FF14;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+        input[type=range].violet-range::-webkit-slider-thumb {
+            border: 2px solid #8A2BE2;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-[100dvh] flex flex-col items-center justify-center bg-void selection:bg-phosphor selection:text-void m-0 p-0">
+
+    <!-- SVG Filters -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="ink-bleed-filter">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="glow" />
+                <feBlend in="SourceGraphic" in2="glow" mode="normal" />
+            </filter>
+        </defs>
+    </svg>
+
+    <div class="noise-overlay"></div>
+
+    <!-- Mobile Container -->
+    <main id="app-container" class="relative w-full max-w-[375px] h-[840px] mx-auto bg-[#000000] overflow-y-auto overflow-x-hidden flex flex-col sm:rounded-none scroll-smooth font-mono scanline">
+        
+        <!-- Header / Actions -->
+        <header id="onboarding-header" class="w-full flex justify-between items-center p-6 z-20 sticky top-0 bg-[#000000] border-b border-[#00FF41]">
+            <div class="w-16">
+                <button class="text-sm font-mono text-[#00FF41] hover:bg-[#00FF41] hover:text-[#000000] transition-colors lowercase px-2 py-1">
+                    < back
+                </button>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="flex items-center gap-2 text-sm text-[#00FF41]">
+                <span>[</span>
+                <span class="opacity-50">.</span>
+                <span>.</span>
+                <span class="opacity-50">.</span>
+                <span>]</span>
+            </div>
+
+            <div class="w-16 flex justify-end">
+                <button class="text-sm font-mono text-[#00FF41] hover:bg-[#00FF41] hover:text-[#000000] transition-colors lowercase px-2 py-1">
+                    skip >
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 flex flex-col gap-16 pb-32 relative z-10 pt-16 px-6">
+            
+            <!-- Terminal Header -->
+            <section id="terminal-header" class="w-full border border-[#00FF41] bg-[#000000] p-4 relative">
+                <div class="flex justify-between items-end border-b border-[#00FF41] pb-2 mb-4">
+                    <h1 class="text-sm text-[#00FF41] tracking-widest uppercase">[ system_configuration ]</h1>
+                    <span class="text-xs text-[#00FF41] uppercase opacity-90">v.1.0.4</span>
+                </div>
+                <div class="flex flex-col gap-2 text-xs text-[#00FF41] lowercase opacity-80">
+                    <p>> root_access: granted</p>
+                    <p>> last_login: 02:44:12_utc</p>
+                    <p>> status: nominal</p>
+                </div>
+            </section>
+
+            <!-- System Diagnostics -->
+            <section id="system-diagnostics" class="w-full border border-[#00FF41] bg-[#000000] p-4 relative">
+                <h2 class="text-xs text-[#00FF41] tracking-widest uppercase border-b border-[#00FF41] pb-2 mb-4">[ core_diagnostics ]</h2>
+                <div class="flex flex-col gap-4 text-sm text-[#00FF41] lowercase">
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>neural_link_status</span>
+                        </div>
+                        <span class="font-bold">active</span>
+                    </div>
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>void_sensor_calibration</span>
+                        </div>
+                        <span class="font-bold text-red-500 group-hover:text-[#000000]">req_update</span>
+                    </div>
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>circadian_rhythm_sync</span>
+                        </div>
+                        <span class="font-bold">optimal</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Parameters -->
+            <section id="account-parameters" class="w-full border border-[#00FF41] bg-[#000000] p-4 relative">
+                <h2 class="text-xs text-[#00FF41] tracking-widest uppercase border-b border-[#00FF41] pb-2 mb-4">[ user_parameters ]</h2>
+                <div class="flex flex-col gap-4 text-sm text-[#00FF41] lowercase">
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>profile_identifier</span>
+                        </div>
+                        <span class="opacity-70 group-hover:opacity-100">user_0x9a</span>
+                    </div>
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>data_retention</span>
+                        </div>
+                        <span class="font-bold">[ x ]</span>
+                    </div>
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>telemetry_stream</span>
+                        </div>
+                        <span class="font-bold">[   ]</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Protocols -->
+            <section id="security-protocols" class="w-full border border-[#00FF41] bg-[#000000] p-4 relative">
+                <h2 class="text-xs text-[#00FF41] tracking-widest uppercase border-b border-[#00FF41] pb-2 mb-4">[ sec_protocols ]</h2>
+                <div class="flex flex-col gap-4 text-sm text-[#00FF41] lowercase">
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>biometric_lock</span>
+                        </div>
+                        <span class="font-bold">[ x ]</span>
+                    </div>
+                    <div class="flex justify-between items-center group cursor-pointer hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span>></span>
+                            <span>encryption_level</span>
+                        </div>
+                        <span class="opacity-70 group-hover:opacity-100">aes-256</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Firmware Actions -->
+            <section id="firmware-actions" class="w-full border border-[#00FF41] bg-[#000000] p-4 relative mb-8">
+                <h2 class="text-xs text-[#00FF41] tracking-widest uppercase border-b border-[#00FF41] pb-2 mb-4">[ execution ]</h2>
+                <div class="flex flex-col gap-2 text-sm text-[#00FF41] lowercase">
+                    <button class="w-full text-left flex items-center gap-3 hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors">
+                        <span>></span>
+                        <span>execute_system_reboot</span>
+                    </button>
+                    <button class="w-full text-left flex items-center gap-3 hover:bg-[#00FF41] hover:text-[#000000] p-2 -mx-2 transition-colors text-red-500 hover:text-red-900">
+                        <span>></span>
+                        <span>purge_local_memory</span>
+                    </button>
+                </div>
+            </section>
+            
+        </div>
+
+    </main>
+
+</body>
+</html>

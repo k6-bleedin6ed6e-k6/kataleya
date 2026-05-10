@@ -14,7 +14,10 @@
 | M3 — Bridge Check-in | ✅ | Mood logging to sanctuary, check-in flow |
 | M4 — Cover + Graphics | ✅ | Cover screen, palette v2, orb/spine/ring/seed rewrite |
 | M5 — Burn Ritual | ✅ | `burn.tsx` — ambient text dissolve, no forced input |
-| M6 — Physician Mirror | ✅ | `mirror.tsx` — real days sober, horizon, tide, readable text |
+| M6 — Physician Mirror | ✅ | `mirror.tsx` — wireframe vessel, real diagnostic data |
+| M6b — Scars | ✅ | `scars.tsx` — mood/urge timeline, circuit traces, moss growth |
+| M6c — Vault | ✅ | `vault.tsx` — journal/mood entry list, decrypt-flicker reveal |
+| M6d — Settings | ✅ | `settings.tsx` — system config, user params, data purge |
 | M7 — Vaults Encryption | ⏳ | Encrypted storage, fortress vault (pending dev account) |
 | M8 — EAS Builds | ⏳ | iOS + Android dev builds, reanimated v3 migration (pending dev account) |
 
@@ -133,7 +136,10 @@ base        bg=#050508   surface=#0d0d14   text=#e8e6f0   textMuted=#8a8a9e   bo
 | `/terminal` | `terminal.tsx` | Engine Room | **Phosphor noir terminal**, sponsor signal overlay, **`/reset` → onboarding**, breath technique |
 | `/onboarding` | `onboarding.tsx` | Awakening Ritual | 3 beats + seal, name + date attunement, **centered orb** |
 | `/burn` | `burn.tsx` | Burn Ritual | **Ambient text dissolve** (tap to release), mercury river, sacred geometry |
-| `/mirror` | `mirror.tsx` | Physician Mirror | Seed/Root/Bloom, horizon scars, mercury tide, **real days sober** |
+| `/mirror` | `mirror.tsx` | Physician Mirror | Wireframe vessel SVG, real diagnostic overlays (days sober, mood trend, phase, last checkin) |
+| `/scars` | `scars.tsx` | Biometric Scars | Mood/urge timeline, circuit traces, decrypt-flicker reveal |
+| `/vault` | `vault.tsx` | Journal Vault | Journal + mood entry directory, circuit board trace line |
+| `/settings` | `settings.tsx` | System Configuration | Editable user params, breath technique, haptics, data purge |
 
 **Bold** = changed in fidelity rebuild pass.
 
@@ -162,7 +168,8 @@ See `ui-ux/README.md` for full mapping to app routes.
 ## 7. NEXT STEPS
 
 ### Immediate (Systemic Polish)
-- [ ] **Font load** — Space Grotesk (headlines), JetBrains Mono (body/terminal), Inter (labels)
+- [x] **Font load** — Courier Prime (terminal screens), wireframe designs integrated
+- [x] **UXPilot wireframe integration** — 4 new terminal screens from HTML designs
 - [ ] **Material icons** — Replace unicode/styled-View glyphs with Material Symbols
 - [ ] **Atmospheric effects** — RN-safe grain, scanlines, CRT vignettes, phase-bleed
 - [ ] **Mood check visual** — 5 orb-like light states instead of text labels
@@ -191,6 +198,24 @@ See `ui-ux/README.md` for full mapping to app routes.
 - Circadian timing fixed (dawn 5am–11am, day displayName "day")
 - Cover orb made the touch target (not whole screen)
 - Build: web export 1.18MB, TypeScript strict clean
+
+**2026-05-09 — UXPilot Wireframe Integration**
+- 4 HTML designs extracted from `uxpilot-export-1778366434515.zip` and translated to RN
+- `mirror.tsx` — Rebuilt with wireframe human vessel SVG + real diagnostic overlays
+- `scars.tsx` — New screen: mood/urge log timeline with circuit traces and decrypt flicker
+- `vault.tsx` — New screen: journal/mood entry directory with staggered reveal animation
+- `settings.tsx` — New screen: system configuration panel with editable user params
+- `terminal.tsx` — Updated nav with `/scars`, `/vault`, `/settings` routes
+- `sanctuary.ts` — Added `getAllMoodLogs`, `getAllUrgeLogs`, `getAllJournalEntries`, `clearSanctuary`
+- All designs adapted to real-data philosophy (no fake biometrics)
+- Build: web export 1.21MB, TypeScript strict clean
+
+**2026-05-09 — Precision Fixes (Post-Integration)**
+- `mirror.tsx` — Removed invalid `filter: 'blur(40px)'` (CSS prop, RN silently drops it). Replaced with layered translucent radial glows (`backgroundColor` + `borderRadius` + `opacity`). Changed absolute positioning from `H * 0.18` pixel math to percentage-based (`top: '16%'`, `left: '6%'`) for cross-device stability.
+- `scars.tsx` — Capped entry list to 20 items. Replaced N individual `Animated.Value` instances with single base value + inline `interpolate` per row. Eliminates type errors and reduces native driver allocations.
+- `vault.tsx` — Same animation optimization as scars: 20-item cap, single base animation, inline interpolation.
+- `terminal.tsx` — Added visual hierarchy to nav commands: safe routes in cyan, caution in amber (`/signal`), destructive in red (`/reset`). Grouped with divider lines. Added `phaseBridge` — 1px accent-colored top border that shifts with circadian phase, bridging garden/terminal aesthetics.
+- Build: web export 1.21MB, TypeScript strict clean
 
 **2026-05-09 — Initial Screen Build**
 - Room, Bridge, Cover, Terminal, Burn, Mirror screens built from stitch wireframes

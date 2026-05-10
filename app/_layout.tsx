@@ -35,6 +35,9 @@ export default function RootLayout() {
         <Stack.Screen name="terminal" />
         <Stack.Screen name="burn" />
         <Stack.Screen name="mirror" />
+        <Stack.Screen name="scars" />
+        <Stack.Screen name="vault" />
+        <Stack.Screen name="settings" />
       </Stack>
     </View>
   );

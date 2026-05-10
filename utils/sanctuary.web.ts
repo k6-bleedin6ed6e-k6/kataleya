@@ -28,3 +28,11 @@ export function getRecentUrgeLogs(_limit = 10): UrgeLog[] { return [] }
 export function insertJournalEntry(_phase: PhaseKey, _body: string): void {}
 export function getLatestJournalEntry(): JournalEntry | null { return null }
 export function getRecentJournalEntries(_limit = 10): JournalEntry[] { return [] }
+
+// all-history reads (shim)
+export function getAllMoodLogs(_limit = 50): MoodLog[] { return [] }
+export function getAllUrgeLogs(_limit = 50): UrgeLog[] { return [] }
+export function getAllJournalEntries(_limit = 50): JournalEntry[] { return [] }
+
+// nuclear: wipe sanctuary (shim)
+export function clearSanctuary(): void {}

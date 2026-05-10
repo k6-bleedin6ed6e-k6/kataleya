@@ -139,3 +139,34 @@ export function getRecentJournalEntries(limit = 10): JournalEntry[] {
     [since, limit]
   )
 }
+
+// ------------------------------------------------------------------
+// all-history reads (for vault / scars screens)
+// ------------------------------------------------------------------
+export function getAllMoodLogs(limit = 50): MoodLog[] {
+  return db.getAllSync<MoodLog>(
+    'SELECT * FROM mood_logs ORDER BY logged_at DESC LIMIT ?',
+    [limit]
+  )
+}
+
+export function getAllUrgeLogs(limit = 50): UrgeLog[] {
+  return db.getAllSync<UrgeLog>(
+    'SELECT * FROM urge_logs ORDER BY logged_at DESC LIMIT ?',
+    [limit]
+  )
+}
+
+export function getAllJournalEntries(limit = 50): JournalEntry[] {
+  return db.getAllSync<JournalEntry>(
+    'SELECT * FROM journal_entries ORDER BY logged_at DESC LIMIT ?',
+    [limit]
+  )
+}
+
+// ------------------------------------------------------------------
+// nuclear: wipe sanctuary (for settings / reset)
+// ------------------------------------------------------------------
+export function clearSanctuary(): void {
+  db.execSync('DELETE FROM mood_logs; DELETE FROM urge_logs; DELETE FROM journal_entries;')
+}

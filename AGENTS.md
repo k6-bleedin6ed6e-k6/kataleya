@@ -28,7 +28,10 @@ kataleya/
 │   ├── terminal.tsx              # phosphor noir engine room + sponsor signal + /reset
 │   ├── onboarding.tsx            # awakening ritual — 3 beats, seal, centered orb
 │   ├── burn.tsx                  # burn ritual — ambient text dissolve into mercury river
-│   └── mirror.tsx                # physician mirror — real days sober, horizon, tide
+│   ├── mirror.tsx                # physician mirror — wireframe vessel, real diagnostics
+│   ├── scars.tsx                 # biometric scars — mood/urge timeline
+│   ├── vault.tsx                 # journal vault — encrypted entry directory
+│   └── settings.tsx              # system configuration — user params, purge
 ├── components/
 │   ├── garden-presence.tsx       # the organism — seed, spine, wings, scars
 │   ├── sphere-orb-v2.tsx         # phase-reactive orb (lung/iris/etched)
@@ -90,6 +93,9 @@ kataleya/
 | `/onboarding` | Awakening Ritual | first launch gate |
 | `/burn` | Burn Ritual | nav from Room / Terminal |
 | `/mirror` | Physician Mirror | nav from Terminal |
+| `/scars` | Biometric Scars | nav from Terminal |
+| `/vault` | Journal Vault | nav from Terminal |
+| `/settings` | System Configuration | nav from Terminal |
 
 ### Gesture Map
 | Screen | Gesture | Target |
@@ -108,6 +114,9 @@ kataleya/
 | Terminal | tap `/reset` | clear vault → onboarding |
 | Burn | swipe down | back |
 | Mirror | swipe right | back |
+| Scars | swipe right | back |
+| Vault | swipe right | back |
+| Settings | swipe right | back |
 
 ---
 
@@ -148,6 +157,20 @@ CREATE TABLE mood_logs (
   mood_value  INTEGER NOT NULL,  -- 1=storm .. 5=sun
   logged_at   INTEGER NOT NULL   -- epoch ms
 );
+
+CREATE TABLE urge_logs (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  phase       TEXT    NOT NULL,
+  intensity   INTEGER NOT NULL,  -- 1=ember .. 5=inferno
+  logged_at   INTEGER NOT NULL   -- epoch ms
+);
+
+CREATE TABLE journal_entries (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  phase       TEXT    NOT NULL,
+  body        TEXT    NOT NULL,
+  logged_at   INTEGER NOT NULL   -- epoch ms
+);
 ```
 
 Web builds use `sanctuary.web.ts` (no-op). Native builds use `sanctuary.ts` (expo-sqlite sync API).
@@ -177,6 +200,21 @@ Web builds use `sanctuary.web.ts` (no-op). Native builds use `sanctuary.ts` (exp
 ---
 
 ## 7. SESSION HISTORY
+
+### 2026-05-09 — UXPilot Wireframe Integration
+Four HTML designs (`uxpilot-export-1778366434515.zip`) translated to React Native screens:
+1. **`mirror.tsx`** — Wireframe human vessel SVG with real diagnostic overlays (days sober, mood trend, phase, last checkin). No fake biometrics.
+2. **`scars.tsx`** — Mood/urge log timeline as "scars" with circuit traces, moss growth visualization, and decrypt-flicker animations.
+3. **`vault.tsx`** — Journal + mood entry directory with staggered decrypt-flicker reveal and circuit board trace line.
+4. **`settings.tsx`** — System configuration panel with editable name, sobriety date, breath technique, haptics toggle, and data purge.
+
+`terminal.tsx` updated with `/scars`, `/vault`, `/settings` nav links. `sanctuary.ts` extended with `getAllMoodLogs`, `getAllUrgeLogs`, `getAllJournalEntries`, `clearSanctuary`. Web shim updated.
+
+**Precision fixes applied:**
+- `mirror.tsx` — Removed invalid `filter: 'blur(40px)'` (RN StyleSheet silently drops CSS filter props). Replaced with layered translucent radial glows using `backgroundColor` + `borderRadius` + `opacity`. Changed absolute positioning from `H * 0.18` pixel math to percentage-based (`top: '16%'`, `left: '6%'`) for cross-device stability.
+- `scars.tsx` — Capped entry list to 20 items. Replaced N individual `Animated.Value` instances with a single base value + inline `interpolate` per row. Eliminates `AnimatedInterpolation` type errors in arrays and reduces native driver allocations.
+- `vault.tsx` — Same animation optimization as scars: 20-item cap, single base animation, inline interpolation.
+- `terminal.tsx` — Added visual hierarchy to nav commands: safe routes in cyan, caution in amber (`/signal`), destructive in red (`/reset`). Grouped with divider lines. Added `phaseBridge` — 1px accent-colored top border that shifts with circadian phase, intentionally bridging the garden and terminal aesthetics.
 
 ### 2026-05-09 — Fidelity Rebuild Pass (All Screens)
 All six main screens rebuilt to match stitch wireframes after user feedback that initial builds had unreadable micro-text, off-screen elements, meaningless metrics, and confusing UX.
@@ -247,7 +285,6 @@ npx expo export --platform web
 
 | Gap | Impact | Priority |
 |-----|--------|----------|
-| **Font mismatch** | App uses Courier Prime. Wireframes specify Space Grotesk (headlines), JetBrains Mono (body/terminal), Inter (labels) | High |
 | **Missing Material icons** | Using styled Views / text instead of Material Symbols (`blur_on`, `terminal`, `spa`, `psychology`, `brightness_low`) | High |
 | **Atmospheric backgrounds** | No CSS grain, scanlines, CRT vignettes, backdrop-blur (RN limitations vs HTML wireframes) | Medium |
 | **Orb rendering** | App uses simple SVG gradient sphere. Wireframe shows 5-layer glassmorphic orb (haze/body/iris/nucleus/rim) | Medium |
