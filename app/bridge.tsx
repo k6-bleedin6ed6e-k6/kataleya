@@ -1,27 +1,98 @@
 // app/bridge.tsx
-// the bridge — presence gateway. swipe left from room, swipe right to return.
-// tap orb → mood check-in. hold orb → return. the orb breathes on its own.
+// the bridge — presence gateway. phosphor monochrome void.
+// tap orb → mood check-in. swipe right to return.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Dimensions, Easing, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  PanResponder,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { OuroborosRing } from '../components/ouroboros-ring'
-import { SphereOrbV2 } from '../components/sphere-orb-v2'
+import Svg, { Circle } from 'react-native-svg'
+
 import { MoodCheck } from '../components/mood-check'
-import { MercuryCaduceus } from '../surface/mercury-caduceus'
 import { useCircadian } from '../hooks/use-circadian'
 import { getBreathTechnique } from '../utils/storage'
 import { pickCheckinResponse } from '../constants/phrases'
-import { BASE } from '../constants/palettes'
 import type { MoodValue } from '../utils/sanctuary'
 
 const { width: W, height: H } = Dimensions.get('window')
-const RING_SIZE = W - 48
+const ORB_SIZE = Math.round(W * 0.38)
+const RING_SIZE = Math.round(W * 0.62)
+
+const PHOSPHOR = '#00FF41'
+const BLACK = '#000000'
+
+function PhosphorOrb({
+  size,
+  onPress,
+  breathing,
+}: {
+  size: number
+  onPress: () => void
+  breathing: Animated.Value
+}) {
+  const scale = breathing.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] })
+  const opacity = breathing.interpolate({ inputRange: [0, 1], outputRange: [0.65, 0.9] })
+  const hazeOpacity = breathing.interpolate({ inputRange: [0, 1], outputRange: [0.1, 0.2] })
+
+  return (
+    <Pressable onPress={onPress}>
+      <Animated.View style={[styles.orbContainer, { width: size, height: size }]}>
+        <Animated.View
+          style={[
+            styles.orbHaze,
+            { width: size * 1.5, height: size * 1.5, borderRadius: size * 0.75, opacity: hazeOpacity },
+          ]}
+        />
+        <Animated.View
+          style={[
+            styles.orbBody,
+            { width: size, height: size, borderRadius: size / 2, opacity, transform: [{ scale }] },
+          ]}
+        />
+        <View
+          style={[
+            styles.orbNucleus,
+            { width: size * 0.3, height: size * 0.3, borderRadius: size * 0.15 },
+          ]}
+        />
+      </Animated.View>
+    </Pressable>
+  )
+}
+
+function OuroborosRingSimple({ size }: { size: number }) {
+  const circumference = 2 * Math.PI * (size / 2 - 1)
+  const dashArray = `${circumference * 0.92} ${circumference * 0.08}`
+
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={styles.ringSvg}>
+      <Circle
+        cx={size / 2}
+        cy={size / 2}
+        r={size / 2 - 1}
+        fill="none"
+        stroke={PHOSPHOR}
+        strokeWidth={1}
+        strokeDasharray={dashArray}
+        strokeLinecap="butt"
+        opacity={0.3}
+      />
+    </Svg>
+  )
+}
 
 export default function BridgeScreen() {
   const router = useRouter()
-  const { phase, palette, hour, minute } = useCircadian()
+  const { phase, hour, minute } = useCircadian()
   const hourDecimal = hour + minute / 60
 
   const [showCheckIn, setShowCheckIn] = useState(false)
@@ -33,12 +104,22 @@ export default function BridgeScreen() {
 
   const responsePhrase = mood !== null ? pickCheckinResponse(phase, mood) : ''
 
-  // orb self-breathing — scale + opacity pulse
+  // orb self-breathing
   useEffect(() => {
     const anim = Animated.loop(
       Animated.sequence([
-        Animated.timing(orbBreath, { toValue: 1, duration: 3500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-        Animated.timing(orbBreath, { toValue: 0, duration: 3500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(orbBreath, {
+          toValue: 1,
+          duration: 3500,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(orbBreath, {
+          toValue: 0,
+          duration: 3500,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
       ])
     )
     anim.start()
@@ -47,7 +128,7 @@ export default function BridgeScreen() {
 
   // load real breath technique duration
   useEffect(() => {
-    getBreathTechnique().then(tech => {
+    getBreathTechnique().then((tech) => {
       if (tech === '4-7-8') setBreathDuration(19)
       else if (tech === 'box') setBreathDuration(16)
       else setBreathDuration(11)
@@ -87,60 +168,32 @@ export default function BridgeScreen() {
     setShowCheckIn(false)
   }, [])
 
-  const orbScale = orbBreath.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] })
-  const orbOpacity = orbBreath.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] })
-
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      {/* background: mercury caduceus — two slow rivers of light */}
-      <MercuryCaduceus phaseColor={palette.accent} flowDuration={12000} />
-
       <View style={styles.content} {...pan.panHandlers}>
-
         {/* header */}
         <View style={styles.header} pointerEvents="none">
-          <Text style={[styles.headerTitle, { color: `${palette.accent}99` }]}>
-            KATALEYA
-          </Text>
+          <Text style={styles.headerTitle}>[ presence_bridge ]</Text>
         </View>
 
         {/* headline */}
         <View style={styles.headlineWrap} pointerEvents="none">
-          <Text style={[styles.headline, { color: `${palette.highlight}aa` }]}>
-            life rewritten by choice
-          </Text>
+          <Text style={styles.headline}>life rewritten by choice</Text>
         </View>
 
         {/* center: ring + orb */}
         <View style={styles.center}>
-          {/* ouroboros ring — visible, fits screen */}
           <View style={styles.ringWrap} pointerEvents="none">
-            <OuroborosRing
-              phase={phase}
-              size={RING_SIZE}
-              hour={hourDecimal}
-              variant="lung"
-            />
+            <OuroborosRingSimple size={RING_SIZE} />
           </View>
 
-          {/* breathing orb */}
-          <Animated.View
-            style={[
-              styles.orbWrap,
-              { transform: [{ scale: orbScale }], opacity: orbOpacity },
-            ]}
-          >
-            <SphereOrbV2
-              phase={phase}
-              size={160}
-              variant="lung"
-              onPress={handleOrbPress}
-            />
-          </Animated.View>
+          <View style={styles.orbWrap}>
+            <PhosphorOrb size={ORB_SIZE} onPress={handleOrbPress} breathing={orbBreath} />
+          </View>
 
           {/* whisper above orb */}
           <View style={styles.whisperWrap} pointerEvents="none">
-            <Text style={[styles.whisper, { color: `${palette.rgb}77` }]}>
+            <Text style={styles.whisper}>
               {checkedIn ? responsePhrase : 'stay with me'}
             </Text>
           </View>
@@ -148,9 +201,7 @@ export default function BridgeScreen() {
           {/* response phrase after check-in */}
           {checkedIn && (
             <Animated.View style={[styles.responseWrap, { opacity: responseOpacity }]} pointerEvents="none">
-              <Text style={[styles.responseText, { color: `${palette.accent}dd` }]}>
-                {responsePhrase}
-              </Text>
+              <Text style={styles.responseText}>{responsePhrase}</Text>
             </Animated.View>
           )}
         </View>
@@ -158,28 +209,23 @@ export default function BridgeScreen() {
         {/* frequency bridge */}
         <View style={styles.freqBridge} pointerEvents="none">
           <View style={styles.freqLine}>
-            <Text style={[styles.freqGlyph, { color: `${palette.accent}aa` }]}>..:</Text>
-            <View style={[styles.freqGlow, { backgroundColor: `${palette.highlight}44` }]} />
-            <Text style={[styles.freqGlyph, { color: `${palette.accent}aa` }]}>:..</Text>
+            <Text style={styles.freqGlyph}>..:</Text>
+            <View style={styles.freqGlow} />
+            <Text style={styles.freqGlyph}>:..</Text>
           </View>
-          <Text style={[styles.freqLabel, { color: `${palette.rgb}66` }]}>
-            Resonance Synchronization: {breathDuration.toFixed(1)}s
+          <Text style={styles.freqLabel}>
+            {'>'} resonance_sync: {breathDuration.toFixed(1)}s
           </Text>
         </View>
 
         {/* footer */}
         <View style={styles.footer} pointerEvents="none">
-          <Text style={[styles.footerText, { color: `${palette.rgb}44` }]}>
-            // origin: thinkBad-doGood-sa.my
-          </Text>
+          <Text style={styles.footerText}>// origin: thinkBad-doGood-sa.my</Text>
+          <Text style={styles.footerHint}>[ swipe right to return ]</Text>
         </View>
       </View>
 
-      <MoodCheck
-        phase={phase}
-        visible={showCheckIn}
-        onComplete={handleCheckInComplete}
-      />
+      <MoodCheck phase={phase} visible={showCheckIn} onComplete={handleCheckInComplete} />
     </SafeAreaView>
   )
 }
@@ -187,7 +233,7 @@ export default function BridgeScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: BASE.bg,
+    backgroundColor: BLACK,
   },
   content: {
     flex: 1,
@@ -195,6 +241,36 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 16,
   },
+
+  // orb
+  orbContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orbHaze: {
+    position: 'absolute',
+    backgroundColor: PHOSPHOR,
+  },
+  orbBody: {
+    position: 'absolute',
+    backgroundColor: PHOSPHOR,
+    shadowColor: PHOSPHOR,
+    shadowRadius: 20,
+    shadowOpacity: 0.5,
+  },
+  orbNucleus: {
+    position: 'absolute',
+    backgroundColor: `${PHOSPHOR}cc`,
+    shadowColor: PHOSPHOR,
+    shadowRadius: 10,
+    shadowOpacity: 0.8,
+  },
+
+  // ring
+  ringSvg: {
+    position: 'absolute',
+  },
+
   // header
   header: {
     alignItems: 'center',
@@ -203,9 +279,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: 'Courier Prime',
-    fontSize: 14,
-    letterSpacing: 5,
+    fontSize: 11,
+    color: `${PHOSPHOR}50`,
+    letterSpacing: 4,
+    textTransform: 'lowercase',
   },
+
   // headline
   headlineWrap: {
     alignItems: 'center',
@@ -214,12 +293,14 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontFamily: 'Courier Prime',
-    fontSize: 18,
-    letterSpacing: 4,
+    fontSize: 16,
+    color: `${PHOSPHOR}77`,
+    letterSpacing: 3,
     textAlign: 'center',
-    lineHeight: 28,
+    lineHeight: 26,
     textTransform: 'lowercase',
   },
+
   // center
   center: {
     alignItems: 'center',
@@ -230,7 +311,6 @@ const styles = StyleSheet.create({
   },
   ringWrap: {
     position: 'absolute',
-    opacity: 0.6,
   },
   orbWrap: {
     alignItems: 'center',
@@ -246,6 +326,7 @@ const styles = StyleSheet.create({
   whisper: {
     fontFamily: 'Courier Prime',
     fontSize: 11,
+    color: `${PHOSPHOR}50`,
     letterSpacing: 3,
     textTransform: 'lowercase',
     textAlign: 'center',
@@ -261,10 +342,12 @@ const styles = StyleSheet.create({
   responseText: {
     fontFamily: 'Courier Prime',
     fontSize: 13,
+    color: `${PHOSPHOR}cc`,
     letterSpacing: 1.5,
     textAlign: 'center',
     lineHeight: 22,
   },
+
   // frequency bridge
   freqBridge: {
     alignItems: 'center',
@@ -283,28 +366,40 @@ const styles = StyleSheet.create({
   freqGlyph: {
     fontFamily: 'Courier Prime',
     fontSize: 11,
+    color: `${PHOSPHOR}55`,
     letterSpacing: 3,
   },
   freqGlow: {
     flex: 1,
-    height: 2,
-    borderRadius: 1,
+    height: 1,
+    backgroundColor: `${PHOSPHOR}44`,
   },
   freqLabel: {
     fontFamily: 'Courier Prime',
     fontSize: 10,
+    color: `${PHOSPHOR}44`,
     letterSpacing: 1.5,
-    textTransform: 'uppercase',
+    textTransform: 'lowercase',
   },
+
   // footer
   footer: {
     alignItems: 'center',
+    gap: 4,
     marginBottom: 4,
   },
   footerText: {
     fontFamily: 'Courier Prime',
     fontSize: 10,
+    color: `${PHOSPHOR}25`,
     letterSpacing: 2,
+    textTransform: 'lowercase',
+  },
+  footerHint: {
+    fontFamily: 'Courier Prime',
+    fontSize: 9,
+    color: `${PHOSPHOR}18`,
+    letterSpacing: 1.5,
     textTransform: 'lowercase',
   },
 })

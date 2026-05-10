@@ -20,12 +20,12 @@ The app has no tab bar, no dashboard, no analytics. Navigation is entirely gestu
 
 | Screen | Route | What it does |
 |--------|-------|--------------|
-| **The Room** | `/` | The home screen. A breathing orb inside a sacred timekeeper ring. Phase-aware color. Bottom nav to all screens. Shows real sobriety days (from onboarding date). |
-| **The Bridge** | `/bridge` | Mood check-in. Tap the orb, report your "weather inside," get a response phrase calibrated to your phase + mood. Frequency bridge at bottom shows your breath technique sync. |
+| **The Room** | `/` | Total void. Pure `#000000` background. Phosphor green orb with haze/body/nucleus layers inside a thin 1px Ouroboros ring. Floating whispers at low opacity. No visible chrome — gestures only. |
+| **The Bridge** | `/bridge` | Phosphor monochrome mood check-in. Tap the orb for mood overlay. Bracketed header `[ presence_bridge ]`. 1px frequency bridge line. All lowercase monospace. |
 | **The Cocoon** | `/cover` | 2am grounding. Tap the orb to cycle phrases. Hold the orb for 2.5s to dissolve back to the Room. |
 | **The Terminal** | `/terminal` | Engine room. Phosphor noir `#33ff33` on black. Live circadian data, breath technique selector, build milestones. Color-coded nav hierarchy (cyan/amber/red). Phase bridge accent border. Tap "signal" for the Sponsor Signal overlay. Type `/reset` to clear all data and restart onboarding. |
 | **Burn Ritual** | `/burn` | Tap a thought to release it — watch the words blur and sink into the mercury river. No typing required. |
-| **Physician Mirror** | `/mirror` | Wireframe human vessel SVG with real diagnostic overlays: days sober, mood trend, current phase, last check-in. Percentage-based responsive positioning. Swipe right to return. |
+| **Physician Mirror** | `/mirror` | Wireframe human vessel SVG with real diagnostic data. Clean vertical stack: vessel → 2×2 diagnostic grid → system logs. Days sober, mood trend, phase, last check-in. No scattered absolute positioning. Swipe right to return. |
 | **Biometric Scars** | `/scars` | Timeline of difficult moments from mood/urge logs. Circuit trace visuals, moss growth metaphor, decrypt-flicker reveal. 20-entry cap. |
 | **Journal Vault** | `/vault` | Directory of journal entries and mood logs from sanctuary. Circuit board trace line, staggered decrypt-flicker reveal. 20-entry cap. |
 | **System Configuration** | `/settings` | Editable name, sobriety date, breath technique, haptics toggle. "Purge local memory" wipes sanctuary + surface vault → onboarding. |

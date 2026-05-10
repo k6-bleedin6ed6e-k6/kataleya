@@ -216,6 +216,12 @@ Four HTML designs (`uxpilot-export-1778366434515.zip`) translated to React Nativ
 - `vault.tsx` — Same animation optimization as scars: 20-item cap, single base animation, inline interpolation.
 - `terminal.tsx` — Added visual hierarchy to nav commands: safe routes in cyan, caution in amber (`/signal`), destructive in red (`/reset`). Grouped with divider lines. Added `phaseBridge` — 1px accent-colored top border that shifts with circadian phase, intentionally bridging the garden and terminal aesthetics.
 
+### 2026-05-09 — Phosphor Void Redesign (Room + Bridge + Mirror)
+- `index.tsx` (Room) — Stripped to total void. Removed header, phase label, nav bar, metrics. Pure `#000000` background. Inline `PhosphorOrb` component (haze/body/nucleus layers) + inline `OuroborosRingSimple` (1px stroke, dasharray gap). Floating whispers at low opacity ("mood orb", "breathe. just the next one.", "you're not alone."). Sobriety days as tiny ghost text. All `#00FF41` phosphor green.
+- `bridge.tsx` — Converted to phosphor monochrome. Removed MercuryCaduceus, circadian palette, rounded elements. Reuses inline phosphor orb + ring. Bracketed header `[ presence_bridge ]`. Lowercase monospace. Frequency bridge as 1px phosphor line.
+- `mirror.tsx` — Complete layout restructuring. Removed all absolute-positioned floating data points. Replaced with clean vertical stack inside ScrollView: header → vessel (centered, fixed 220×400 container) → 2×2 diagnostic grid (flex row, equal columns) → divider → system logs → footer. No scattered words. No `position: 'absolute'` on data.
+- Build: web export 1.21MB, TypeScript strict clean
+
 ### 2026-05-09 — Fidelity Rebuild Pass (All Screens)
 All six main screens rebuilt to match stitch wireframes after user feedback that initial builds had unreadable micro-text, off-screen elements, meaningless metrics, and confusing UX.
 

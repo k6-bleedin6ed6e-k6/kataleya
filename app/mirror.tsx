@@ -1,6 +1,6 @@
 // app/mirror.tsx
 // physician mirror — wireframe vessel with real diagnostic data.
-// rebuilt from uxpilot wireframe. no fake metrics.
+// vertical stack layout. no absolute scatter. everything fits.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -8,6 +8,7 @@ import {
   Dimensions,
   Easing,
   PanResponder,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -24,8 +25,8 @@ import {
   type MoodLog,
 } from '../utils/sanctuary'
 
-const { height: H, width: W } = Dimensions.get('window')
-const GREEN = '#33ff33'
+const { height: H } = Dimensions.get('window')
+const GREEN = '#00FF41'
 const GREEN_DIM = '#22cc22'
 const GREEN_FAINT = '#113311'
 const BLACK = '#000000'
@@ -138,130 +139,139 @@ export default function MirrorScreen() {
           pointerEvents="none"
         />
 
-        {/* header */}
-        <View style={styles.header}>
-          <Text style={styles.headerLabel}>[ sys_diagnostic ]</Text>
-          <View style={styles.headerRight}>
-            <Animated.View style={[styles.headerDot, { opacity: pulseOpacity }]} />
-            <Text style={styles.headerStatus}>online</Text>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* header */}
+          <View style={styles.header}>
+            <Text style={styles.headerLabel}>[ sys_diagnostic ]</Text>
+            <View style={styles.headerRight}>
+              <Animated.View style={[styles.headerDot, { opacity: pulseOpacity }]} />
+              <Text style={styles.headerStatus}>online</Text>
+            </View>
           </View>
-        </View>
 
-        {/* ── wireframe vessel ── */}
-        <View style={styles.vesselContainer}>
-          {/* outer glow layers */}
-          <View style={styles.vesselGlow} />
-          <View style={styles.vesselGlowInner} />
+          {/* ── wireframe vessel ── */}
+          <View style={styles.vesselSection}>
+            <View style={styles.vesselContainer}>
+              <View style={styles.vesselGlow} />
+              <View style={styles.vesselGlowInner} />
+              <Svg width={200} height={380} viewBox="0 0 280 520" style={styles.vesselSvg}>
+                {/* head box */}
+                <Rect x="120" y="30" width="40" height="50" fill="none" stroke={GREEN} strokeWidth="1" strokeDasharray="2 2" />
+                {/* neck */}
+                <Line x1="140" y1="80" x2="140" y2="105" stroke={GREEN} strokeWidth="1" />
+                {/* shoulders */}
+                <Line x1="80" y1="105" x2="200" y2="105" stroke={GREEN} strokeWidth="1" />
+                {/* torso grid */}
+                <Rect x="100" y="105" width="80" height="140" fill="none" stroke={GREEN} strokeWidth="1" />
+                <Line x1="100" y1="145" x2="180" y2="145" stroke={GREEN} strokeWidth="1" strokeDasharray="2 4" />
+                <Line x1="100" y1="185" x2="180" y2="185" stroke={GREEN} strokeWidth="1" strokeDasharray="2 4" />
+                <Line x1="100" y1="225" x2="180" y2="225" stroke={GREEN} strokeWidth="1" strokeDasharray="2 4" />
+                <Line x1="140" y1="105" x2="140" y2="245" stroke={GREEN} strokeWidth="1" />
+                {/* arms */}
+                <Polyline points="80,105 60,200 65,290" fill="none" stroke={GREEN} strokeWidth="1" strokeDasharray="4 4" />
+                <Polyline points="200,105 220,200 215,290" fill="none" stroke={GREEN} strokeWidth="1" strokeDasharray="4 4" />
+                {/* pelvis */}
+                <Polygon points="100,245 180,245 160,275 120,275" fill="none" stroke={GREEN} strokeWidth="1" />
+                {/* legs */}
+                <Polyline points="120,275 110,400 115,500" fill="none" stroke={GREEN} strokeWidth="1" />
+                <Polyline points="160,275 170,400 165,500" fill="none" stroke={GREEN} strokeWidth="1" />
+                {/* joints */}
+                <Rect x="138" y="53" width="4" height="4" fill={GREEN} />
+                <Rect x="138" y="143" width="4" height="4" fill={GREEN} />
+                <Rect x="138" y="243" width="4" height="4" fill={GREEN} />
+                <Rect x="78" y="103" width="4" height="4" fill={GREEN} />
+                <Rect x="198" y="103" width="4" height="4" fill={GREEN} />
+                <Rect x="118" y="273" width="4" height="4" fill={GREEN} />
+                <Rect x="158" y="273" width="4" height="4" fill={GREEN} />
+              </Svg>
+            </View>
+          </View>
 
-          {/* wireframe SVG */}
-          <Svg width={260} height={480} viewBox="0 0 280 520" style={styles.vesselSvg}>
-            {/* head box */}
-            <Rect x="120" y="30" width="40" height="50" fill="none" stroke={GREEN} strokeWidth="1" strokeDasharray="2 2" />
-            {/* neck */}
-            <Line x1="140" y1="80" x2="140" y2="105" stroke={GREEN} strokeWidth="1" />
-            {/* shoulders */}
-            <Line x1="80" y1="105" x2="200" y2="105" stroke={GREEN} strokeWidth="1" />
-            {/* torso grid */}
-            <Rect x="100" y="105" width="80" height="140" fill="none" stroke={GREEN} strokeWidth="1" />
-            <Line x1="100" y1="145" x2="180" y2="145" stroke={GREEN} strokeWidth="1" strokeDasharray="2 4" />
-            <Line x1="100" y1="185" x2="180" y2="185" stroke={GREEN} strokeWidth="1" strokeDasharray="2 4" />
-            <Line x1="100" y1="225" x2="180" y2="225" stroke={GREEN} strokeWidth="1" strokeDasharray="2 4" />
-            <Line x1="140" y1="105" x2="140" y2="245" stroke={GREEN} strokeWidth="1" />
-            {/* arms */}
-            <Polyline points="80,105 60,200 65,290" fill="none" stroke={GREEN} strokeWidth="1" strokeDasharray="4 4" />
-            <Polyline points="200,105 220,200 215,290" fill="none" stroke={GREEN} strokeWidth="1" strokeDasharray="4 4" />
-            {/* pelvis */}
-            <Polygon points="100,245 180,245 160,275 120,275" fill="none" stroke={GREEN} strokeWidth="1" />
-            {/* legs */}
-            <Polyline points="120,275 110,400 115,500" fill="none" stroke={GREEN} strokeWidth="1" />
-            <Polyline points="160,275 170,400 165,500" fill="none" stroke={GREEN} strokeWidth="1" />
-            {/* joints */}
-            <Rect x="138" y="53" width="4" height="4" fill={GREEN} />
-            <Rect x="138" y="143" width="4" height="4" fill={GREEN} />
-            <Rect x="138" y="243" width="4" height="4" fill={GREEN} />
-            <Rect x="78" y="103" width="4" height="4" fill={GREEN} />
-            <Rect x="198" y="103" width="4" height="4" fill={GREEN} />
-            <Rect x="118" y="273" width="4" height="4" fill={GREEN} />
-            <Rect x="158" y="273" width="4" height="4" fill={GREEN} />
-          </Svg>
-        </View>
+          {/* ── diagnostics grid ── */}
+          <View style={styles.diagSection}>
+            {/* row 1 */}
+            <View style={styles.diagRow}>
+              <View style={styles.diagCell}>
+                <View style={styles.diagLabelRow}>
+                  <View style={styles.diagDot} />
+                  <Text style={styles.diagLabel}>[ days_sober ]</Text>
+                </View>
+                <Text style={styles.diagValue}>{sobrietyDays}</Text>
+                <View style={styles.diagBar}>
+                  <View style={[styles.diagBarFill, { width: `${Math.min(100, sobrietyDays / 3)}%` }]} />
+                </View>
+              </View>
+              <View style={styles.diagCell}>
+                <View style={styles.diagLabelRow}>
+                  <View style={styles.diagDot} />
+                  <Text style={styles.diagLabel}>[ phase ]</Text>
+                </View>
+                <Text style={styles.diagValue}>{phase}</Text>
+                <View style={styles.diagPhaseBars}>
+                  <View style={[styles.phaseBar, { opacity: phase === 'dawn' ? 1 : 0.2 }]} />
+                  <View style={[styles.phaseBar, { opacity: phase === 'day' ? 1 : 0.2 }]} />
+                  <View style={[styles.phaseBar, { opacity: phase === 'goldenHour' ? 1 : 0.2 }]} />
+                  <View style={[styles.phaseBar, { opacity: phase === 'night' ? 1 : 0.2 }]} />
+                </View>
+              </View>
+            </View>
 
-        {/* ── diagnostic overlays ── */}
-        {/* days sober — top left */}
-        <View style={[styles.dataPoint, { top: '16%', left: '6%' }]}>
-          <View style={styles.dataLabelRow}>
-            <View style={styles.dataDot} />
-            <Text style={styles.dataLabel}>[ days_sober ]</Text>
+            {/* row 2 */}
+            <View style={styles.diagRow}>
+              <View style={styles.diagCell}>
+                <View style={styles.diagLabelRow}>
+                  <View style={styles.diagDot} />
+                  <Text style={styles.diagLabel}>[ mood_trend ]</Text>
+                </View>
+                <Text style={styles.diagValue}>{trend}</Text>
+                <View style={styles.diagMiniBars}>
+                  <View style={[styles.miniBar, { opacity: trend === 'critical' ? 1 : 0.3 }]} />
+                  <View style={[styles.miniBar, { opacity: trend === 'unsettled' ? 1 : 0.3 }]} />
+                  <View style={[styles.miniBar, { opacity: trend === 'stable' ? 1 : 0.3 }]} />
+                  <View style={[styles.miniBar, { opacity: trend === 'ascendant' ? 1 : 0.3 }]} />
+                </View>
+              </View>
+              <View style={styles.diagCell}>
+                <View style={styles.diagLabelRow}>
+                  <View style={styles.diagDot} />
+                  <Text style={styles.diagLabel}>[ last_bridge ]</Text>
+                </View>
+                <Text style={styles.diagValue}>{lastCheckin}</Text>
+                <View style={[styles.diagBar, { width: 48 }]}>
+                  <View style={[styles.diagBarFill, { width: '60%' }]} />
+                </View>
+              </View>
+            </View>
           </View>
-          <Text style={styles.dataValue}>{sobrietyDays}</Text>
-          <View style={styles.dataBar}>
-            <View style={[styles.dataBarFill, { width: `${Math.min(100, sobrietyDays / 3)}%` }]} />
-          </View>
-        </View>
 
-        {/* mood trend — mid left */}
-        <View style={[styles.dataPoint, { top: '34%', left: '5%' }]}>
-          <View style={styles.dataLabelRow}>
-            <View style={styles.dataDot} />
-            <Text style={styles.dataLabel}>[ mood_trend ]</Text>
-          </View>
-          <Text style={styles.dataValue}>{trend}</Text>
-          <View style={styles.dataMiniBars}>
-            <View style={[styles.miniBar, { opacity: trend === 'critical' ? 1 : 0.3 }]} />
-            <View style={[styles.miniBar, { opacity: trend === 'unsettled' ? 1 : 0.3 }]} />
-            <View style={[styles.miniBar, { opacity: trend === 'stable' ? 1 : 0.3 }]} />
-            <View style={[styles.miniBar, { opacity: trend === 'ascendant' ? 1 : 0.3 }]} />
-          </View>
-        </View>
+          <View style={styles.divider} />
 
-        {/* phase — top right */}
-        <View style={[styles.dataPoint, { top: '22%', right: '6%', alignItems: 'flex-end' }]}>
-          <View style={[styles.dataLabelRow, { flexDirection: 'row-reverse' }]}>
-            <View style={styles.dataDot} />
-            <Text style={styles.dataLabel}>[ phase ]</Text>
+          {/* ── system logs ── */}
+          <View style={styles.logs}>
+            <Text style={styles.logTitle}>[ system_log ]</Text>
+            <View style={styles.logRow}>
+              <Text style={styles.logPrompt}>{'>'}</Text>
+              <Text style={styles.logText}>vessel_aligned</Text>
+            </View>
+            <View style={styles.logRow}>
+              <Text style={styles.logPrompt}>{'>'}</Text>
+              <Text style={styles.logText}>phase_sync: {phase}</Text>
+            </View>
+            <View style={styles.logRow}>
+              <Text style={styles.logPrompt}>{'>'}</Text>
+              <Text style={[styles.logText, styles.logPulse]}>awaiting_input_</Text>
+            </View>
           </View>
-          <Text style={styles.dataValue}>{phase}</Text>
-          <View style={[styles.dataPhaseBars, { alignSelf: 'flex-end' }]}>
-            <View style={[styles.phaseBar, { opacity: phase === 'dawn' ? 1 : 0.2 }]} />
-            <View style={[styles.phaseBar, { opacity: phase === 'day' ? 1 : 0.2 }]} />
-            <View style={[styles.phaseBar, { opacity: phase === 'goldenHour' ? 1 : 0.2 }]} />
-            <View style={[styles.phaseBar, { opacity: phase === 'night' ? 1 : 0.2 }]} />
-          </View>
-        </View>
 
-        {/* last checkin — mid right */}
-        <View style={[styles.dataPoint, { top: '46%', right: '5%', alignItems: 'flex-end' }]}>
-          <View style={[styles.dataLabelRow, { flexDirection: 'row-reverse' }]}>
-            <View style={styles.dataDot} />
-            <Text style={styles.dataLabel}>[ last_bridge ]</Text>
+          {/* ── footer ── */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>{userName || '// awaiting attunement'}</Text>
+            <Text style={styles.footerHint}>[ swipe right to return ]</Text>
           </View>
-          <Text style={styles.dataValue}>{lastCheckin}</Text>
-          <View style={[styles.dataBar, { width: 48, alignSelf: 'flex-end' }]}>
-            <View style={[styles.dataBarFill, { width: '60%' }]} />
-          </View>
-        </View>
-
-        {/* ── system logs ── */}
-        <View style={styles.logs}>
-          <Text style={styles.logTitle}>[ system_log ]</Text>
-          <View style={styles.logRow}>
-            <Text style={styles.logPrompt}>{'>'}</Text>
-            <Text style={styles.logText}>vessel_aligned</Text>
-          </View>
-          <View style={styles.logRow}>
-            <Text style={styles.logPrompt}>{'>'}</Text>
-            <Text style={styles.logText}>phase_sync: {phase}</Text>
-          </View>
-          <View style={styles.logRow}>
-            <Text style={styles.logPrompt}>{'>'}</Text>
-            <Text style={[styles.logText, styles.logPulse]}>awaiting_input_</Text>
-          </View>
-        </View>
-
-        {/* ── footer hint ── */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>[ swipe right to return ]</Text>
-        </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   )
@@ -284,16 +294,19 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
     backgroundColor: `${GREEN}08`,
   },
+  scroll: {
+    paddingTop: 16,
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+    gap: 24,
+  },
 
   // header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 8,
-    zIndex: 20,
+    paddingVertical: 8,
   },
   headerLabel: {
     fontFamily: 'Courier Prime',
@@ -325,47 +338,53 @@ const styles = StyleSheet.create({
   },
 
   // vessel
+  vesselSection: {
+    alignItems: 'center',
+  },
   vesselContainer: {
-    position: 'absolute',
-    top: H * 0.12,
-    left: 0,
-    right: 0,
+    width: 220,
+    height: 400,
     alignItems: 'center',
     justifyContent: 'center',
-    height: H * 0.6,
-    pointerEvents: 'none',
   },
   vesselGlow: {
     position: 'absolute',
-    width: 320,
-    height: 560,
+    width: 240,
+    height: 420,
     backgroundColor: `${GREEN}08`,
-    borderRadius: 160,
+    borderRadius: 120,
     opacity: 0.6,
+  },
+  vesselGlowInner: {
+    position: 'absolute',
+    width: 180,
+    height: 340,
+    backgroundColor: `${GREEN}05`,
+    borderRadius: 90,
+    opacity: 0.8,
   },
   vesselSvg: {
     opacity: 0.85,
   },
-  vesselGlowInner: {
-    position: 'absolute',
-    width: 240,
-    height: 440,
-    backgroundColor: `${GREEN}05`,
-    borderRadius: 120,
-    opacity: 0.8,
-  },
 
-  // data points
-  dataPoint: {
-    position: 'absolute',
-    zIndex: 20,
+  // diagnostics
+  diagSection: {
+    gap: 16,
   },
-  dataLabelRow: {
+  diagRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  diagCell: {
+    flex: 1,
+    gap: 6,
+  },
+  diagLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  dataDot: {
+  diagDot: {
     width: 4,
     height: 4,
     backgroundColor: GREEN,
@@ -373,36 +392,36 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.8,
   },
-  dataLabel: {
+  diagLabel: {
     fontFamily: 'Courier Prime',
     fontSize: 10,
     color: `${GREEN}aa`,
     letterSpacing: 2,
     textTransform: 'lowercase',
   },
-  dataValue: {
+  diagValue: {
     fontFamily: 'Courier Prime',
-    fontSize: 16,
+    fontSize: 18,
     color: GREEN,
-    marginTop: 4,
+    marginTop: 2,
     marginLeft: 12,
   },
-  dataBar: {
+  diagBar: {
     width: 64,
     height: 2,
     backgroundColor: `${GREEN}30`,
-    marginTop: 6,
+    marginTop: 4,
     marginLeft: 12,
     overflow: 'hidden',
   },
-  dataBarFill: {
+  diagBarFill: {
     height: '100%',
     backgroundColor: `${GREEN}88`,
   },
-  dataMiniBars: {
+  diagMiniBars: {
     flexDirection: 'row',
     gap: 3,
-    marginTop: 6,
+    marginTop: 4,
     marginLeft: 12,
   },
   miniBar: {
@@ -412,10 +431,10 @@ const styles = StyleSheet.create({
     borderColor: GREEN,
     backgroundColor: GREEN,
   },
-  dataPhaseBars: {
+  diagPhaseBars: {
     flexDirection: 'row',
     gap: 3,
-    marginTop: 6,
+    marginTop: 4,
     marginLeft: 12,
   },
   phaseBar: {
@@ -426,13 +445,16 @@ const styles = StyleSheet.create({
     backgroundColor: GREEN,
   },
 
+  divider: {
+    height: 1,
+    backgroundColor: GREEN_FAINT,
+    marginVertical: 4,
+    opacity: 0.6,
+  },
+
   // logs
   logs: {
-    position: 'absolute',
-    bottom: 72,
-    left: 24,
-    maxWidth: '55%',
-    zIndex: 20,
+    gap: 4,
   },
   logTitle: {
     fontFamily: 'Courier Prime',
@@ -468,18 +490,26 @@ const styles = StyleSheet.create({
 
   // footer
   footer: {
-    position: 'absolute',
-    bottom: 24,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginTop: 8,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: `${GREEN}20`,
   },
   footerText: {
     fontFamily: 'Courier Prime',
     fontSize: 10,
+    color: `${GREEN}40`,
+    letterSpacing: 1,
+    textTransform: 'lowercase',
+  },
+  footerHint: {
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
     color: `${GREEN}55`,
-    letterSpacing: 3,
+    letterSpacing: 2,
     textTransform: 'lowercase',
   },
 })

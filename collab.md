@@ -7,12 +7,12 @@
 ## 1. CURRENT STATE
 
 ### What's shipped (2026-05-09)
-- **The Room (`index.tsx`)** — Real sobriety-days counter from AsyncStorage. Readable nav labels. Phrase with breathing room below orb. Swipe gestures preserved.
-- **The Bridge (`bridge.tsx`)** — "life rewritten by choice" headline at proper `top: 18%`. Expanding 115vw gateway ring. Real breath sync duration from storage. Atmospheric vignettes. Frequency bridge at bottom.
+- **The Room (`index.tsx`)** — Total void redesign. Stripped all chrome (header, nav bar, phase label, metrics). Pure `#000000` background. Phosphor orb (haze/body/nucleus) + thin 1px Ouroboros ring with gap. Floating whispers at low opacity. All `#00FF41` phosphor green.
+- **The Bridge (`bridge.tsx`)** — Phosphor monochrome redesign. Removed MercuryCaduceus, circadian palette, rounded elements. Phosphor orb + Ouroboros ring. Bracketed header `[ presence_bridge ]`. Lowercase monospace. Frequency bridge as 1px phosphor line.
 - **The Cocoon (`cover.tsx`)** — Tap orb (not whole screen) to cycle phrases. Hold-to-return arc on orb. Readable text. Header + nav hints.
 - **The Terminal (`terminal.tsx`)** — Phosphor noir `#33ff33` on black. Blinking cursor. Phase bridge (accent-colored top border). Color-coded nav hierarchy (cyan/amber/red). `/reset` command clears vault → onboarding. Sponsor signal as absolute overlay.
 - **Burn Ritual (`burn.tsx`)** — Ambient dissolving text (tap thought to release). No forced input. No fake metrics. Sacred geometry rings, mercury river.
-- **Physician Mirror (`mirror.tsx`)** — Wireframe human vessel SVG. Real diagnostic overlays: days sober, mood trend, current phase, last check-in. Percentage-based responsive positioning. Layered translucent glows (no CSS filter).
+- **Physician Mirror (`mirror.tsx`)** — Wireframe human vessel SVG. Clean vertical stack layout: header → vessel → 2×2 diagnostic grid → system logs → footer. No absolute scatter. Real data only.
 - **Biometric Scars (`scars.tsx`)** — Mood/urge log timeline. Circuit trace visuals. Decrypt-flicker reveal. 20-entry cap. Single-base animation with inline interpolation.
 - **Journal Vault (`vault.tsx`)** — Journal + mood entry directory. Circuit board trace line. Staggered decrypt-flicker reveal. 20-entry cap.
 - **System Configuration (`settings.tsx`)** — Editable name, sobriety date, breath technique, haptics toggle. "Purge local memory" wipes sanctuary + surface vault → onboarding.

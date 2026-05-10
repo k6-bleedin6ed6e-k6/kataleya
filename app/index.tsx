@@ -1,43 +1,148 @@
 // app/index.tsx
-// the room. one sphere. one ring. one phrase. darkness.
+// the room. total void. one orb. one ring. one phrase. darkness.
 // swipe left → bridge. swipe up → cover. long-press → terminal.
-// tap nav → burn (terminal icon) | mirror (not yet wired)
+// no chrome. no nav bars. no buttons. the user interacts with the void.
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Dimensions, Easing, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  PanResponder,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { SphereOrbV2 } from '../components/sphere-orb-v2'
-import { OuroborosRing } from '../components/ouroboros-ring'
-import { TypewriterText } from '../components/typewriter-text'
+import Svg, { Circle } from 'react-native-svg'
+
 import { useCircadian } from '../hooks/use-circadian'
 import { useReEntry } from '../hooks/use-re-entry'
 import { getItem, getAttunement } from '../utils/storage'
 import { selectPhrase } from '../constants/phrases'
-import { PHASES, BASE } from '../constants/palettes'
 
 const { width: W, height: H } = Dimensions.get('window')
-const ORB_SIZE    = Math.round(W * 0.56)
-const RING_SIZE   = Math.round(W * 0.92)
-const ORB_TOP     = Math.round(H * 0.38 - ORB_SIZE / 2)
-const RING_TOP    = Math.round(H * 0.38 - RING_SIZE / 2)
+const ORB_SIZE = Math.round(W * 0.44)
+const RING_SIZE = Math.round(W * 0.72)
+
+const PHOSPHOR = '#00FF41'
+const BLACK = '#000000'
+
+function PhosphorOrb({ size, onLongPress }: { size: number; onLongPress: () => void }) {
+  const pulse = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 4000,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0,
+          duration: 4000,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ])
+    )
+    anim.start()
+    return () => anim.stop()
+  }, [])
+
+  const scale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] })
+  const opacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0.85] })
+  const hazeOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.08, 0.18] })
+
+  return (
+    <Pressable onLongPress={onLongPress} delayLongPress={800}>
+      <Animated.View
+        style={[
+          styles.orbContainer,
+          { width: size, height: size },
+        ]}
+      >
+        {/* haze layer */}
+        <Animated.View
+          style={[
+            styles.orbHaze,
+            {
+              width: size * 1.6,
+              height: size * 1.6,
+              borderRadius: size * 0.8,
+              opacity: hazeOpacity,
+            },
+          ]}
+        />
+        {/* body */}
+        <Animated.View
+          style={[
+            styles.orbBody,
+            {
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+              opacity,
+              transform: [{ scale }],
+            },
+          ]}
+        />
+        {/* nucleus */}
+        <View
+          style={[
+            styles.orbNucleus,
+            {
+              width: size * 0.35,
+              height: size * 0.35,
+              borderRadius: size * 0.175,
+            },
+          ]}
+        />
+      </Animated.View>
+    </Pressable>
+  )
+}
+
+function OuroborosRingSimple({ size }: { size: number }) {
+  const circumference = 2 * Math.PI * (size / 2 - 1)
+  const dashArray = `${circumference * 0.92} ${circumference * 0.08}`
+
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={styles.ringSvg}>
+      <Circle
+        cx={size / 2}
+        cy={size / 2}
+        r={size / 2 - 1}
+        fill="none"
+        stroke={PHOSPHOR}
+        strokeWidth={1}
+        strokeDasharray={dashArray}
+        strokeLinecap="butt"
+        opacity={0.35}
+      />
+    </Svg>
+  )
+}
 
 export default function RoomScreen() {
-  const router  = useRouter()
-  const { phase, palette, hour, minute } = useCircadian()
+  const router = useRouter()
+  const { phase } = useCircadian()
   const { activePhase, isInGrace, isBlending, gracePhrase } = useReEntry(phase)
   const isReEntry = isInGrace || isBlending
   const [burnComplete] = useState(false)
-  const hourDecimal = hour + minute / 60
 
   const [sobrietyDays, setSobrietyDays] = useState<number | null>(null)
 
   useEffect(() => {
-    getItem<boolean>('has_seen_onboarding').then(seen => {
+    getItem<boolean>('has_seen_onboarding').then((seen) => {
       if (!seen) router.replace('/onboarding')
     })
 
-    getAttunement().then(att => {
+    getAttunement().then((att) => {
       if (att?.sobriety_date) {
         const start = new Date(att.sobriety_date)
         const now = new Date()
@@ -59,8 +164,11 @@ export default function RoomScreen() {
     if (isInGrace) {
       entryFade.setValue(0)
       Animated.timing(entryFade, {
-        toValue: 1, duration: 3000, delay: 200,
-        easing: Easing.out(Easing.quad), useNativeDriver: true,
+        toValue: 1,
+        duration: 3000,
+        delay: 200,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
       }).start()
     }
   }, [isInGrace])
@@ -72,10 +180,12 @@ export default function RoomScreen() {
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onStartShouldSetPanResponderCapture: () => false,
-      onMoveShouldSetPanResponder: (_, { dx, dy }) => Math.abs(dx) > 12 || Math.abs(dy) > 12,
+      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
+        Math.abs(dx) > 12 || Math.abs(dy) > 12,
       onMoveShouldSetPanResponderCapture: () => false,
       onPanResponderRelease: (_, { dx, dy }) => {
-        const ax = Math.abs(dx), ay = Math.abs(dy)
+        const ax = Math.abs(dx)
+        const ay = Math.abs(dy)
         if (ax > 60 && ax > ay * 1.5 && dx < 0) routerRef.current.push('/bridge')
         else if (ay > 60 && ay > ax * 1.5 && dy < 0) routerRef.current.push('/cover')
       },
@@ -84,102 +194,51 @@ export default function RoomScreen() {
 
   const handleLongPress = useCallback(() => routerRef.current.push('/terminal'), [])
 
-  const accentColor = `rgba(${PHASES[activePhase].rgb}, 0.62)`
-  const hintColor   = `rgba(${palette.rgb}, 0.25)`
-
-  // nav items
-  const navItems = [
-    { label: 'room',     route: '/',        active: true },
-    { label: 'cocoon',   route: '/cover',   active: false },
-    { label: 'bridge',   route: '/bridge',  active: false },
-    { label: 'terminal', route: '/terminal', active: false },
-  ]
-
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <Animated.View style={[styles.content, { opacity: entryFade }]} {...pan.panHandlers}>
+        {/* ── top whisper ── */}
+        <View style={styles.topWhisper} pointerEvents="none">
+          <Text style={styles.topWhisperText}>mood orb</Text>
+        </View>
 
-        {/* ── header ── */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Text style={[styles.headerTitle, { color: palette.accent }]}>KATALEYA</Text>
+        {/* ── center: ring + orb ── */}
+        <View style={styles.center}>
+          <View style={styles.ringWrap}>
+            <OuroborosRingSimple size={RING_SIZE} />
           </View>
-          <Pressable onPress={() => router.push('/terminal')} style={styles.headerRight}>
-            <Text style={[styles.headerTerminal, { color: `${palette.accent}cc` }]}>TERMINAL</Text>
-          </Pressable>
+          <View style={styles.orbWrap}>
+            <PhosphorOrb size={ORB_SIZE} onLongPress={handleLongPress} />
+          </View>
         </View>
 
-        {/* ── phase label ── */}
-        <View style={styles.phaseRow}>
-          <View style={[styles.phaseLine, { backgroundColor: `${palette.accent}33` }]} />
-          <Text style={[styles.phaseLabel, { color: `${palette.accent}cc` }]}>
-            CIRCADIAN PHASE: {activePhase.toUpperCase()}
-          </Text>
-          <View style={[styles.phaseLine, { backgroundColor: `${palette.accent}33` }]} />
+        {/* ── side whisper ── */}
+        <View style={styles.sideWhisper} pointerEvents="none">
+          <Text style={styles.sideWhisperText}>breathe.</Text>
+          <Text style={styles.sideWhisperText}>just the next one.</Text>
         </View>
 
-        {/* ── ouroboros ring ── */}
-        <View style={[styles.ringWrap, { top: RING_TOP, left: (W - RING_SIZE) / 2 }]}>
-          <OuroborosRing phase={activePhase} size={RING_SIZE} hour={hourDecimal} />
-        </View>
-
-        {/* ── sphere ── */}
-        <View style={[styles.orb, { top: ORB_TOP, left: (W - ORB_SIZE) / 2 }]}>
-          <SphereOrbV2
-            phase={activePhase}
-            size={ORB_SIZE}
-            variant="lung"
-            onLongPress={handleLongPress}
-          />
-        </View>
-
-        {/* ── phrase ── */}
+        {/* ── main phrase ── */}
         <View style={styles.phrase} pointerEvents="none">
-          <TypewriterText
-            text={phrase}
-            color={accentColor}
-            speed={44}
-            key={phrase}
-          />
+          <Text style={styles.phraseText}>{phrase}</Text>
         </View>
 
-        {/* ── metrics ── */}
+        {/* ── sobriety ghost ── */}
         {sobrietyDays !== null && (
-          <View style={styles.metrics}>
-            <View style={styles.metric}>
-              <Text style={[styles.metricLabel, { color: `${palette.rgb}99` }]}>SOBRIETY</Text>
-              <Text style={[styles.metricValue, { color: palette.accent }]}>{sobrietyDays} DAYS</Text>
-            </View>
+          <View style={styles.sobrietyGhost} pointerEvents="none">
+            <Text style={styles.sobrietyText}>day {sobrietyDays}</Text>
           </View>
         )}
 
-        {/* ── bottom nav ── */}
-        <View style={styles.navBar}>
-          {navItems.map((item) => (
-            <Pressable
-              key={item.label}
-              onPress={() => {
-                if (item.route !== '/') router.push(item.route)
-              }}
-              style={[
-                styles.navItem,
-                item.active && { backgroundColor: `${palette.accent}20`, borderColor: `${palette.accent}4d` },
-              ]}
-            >
-              <Text style={[styles.navLabel, { color: item.active ? palette.accent : `${palette.rgb}aa` }]}>
-                {item.label}
-              </Text>
-            </Pressable>
-          ))}
+        {/* ── bottom whisper ── */}
+        <View style={styles.bottomWhisper} pointerEvents="none">
+          <Text style={styles.bottomWhisperText}>you're not alone.</Text>
         </View>
 
-        {/* ── ghost hint ── */}
+        {/* ── gesture ghost ── */}
         <View style={styles.hint} pointerEvents="none">
-          <Text style={[styles.hintText, { color: hintColor }]}>
-            ← bridge · ↑ cover · hold · engine
-          </Text>
+          <Text style={styles.hintText}>{'← bridge · ↑ cover · hold · engine'}</Text>
         </View>
-
       </Animated.View>
     </SafeAreaView>
   )
@@ -188,122 +247,133 @@ export default function RoomScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: BASE.bg,
+    backgroundColor: BLACK,
   },
   content: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    zIndex: 10,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerTitle: {
-    fontFamily: 'Courier Prime',
-    fontSize: 15,
-    letterSpacing: 4,
-  },
-  headerRight: {
-    paddingVertical: 4,
-  },
-  headerTerminal: {
-    fontFamily: 'Courier Prime',
-    fontSize: 10,
-    letterSpacing: 2,
-  },
-  phaseRow: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 12,
-    gap: 12,
-    paddingHorizontal: 48,
-    zIndex: 10,
   },
-  phaseLine: {
-    height: 1,
-    flex: 1,
+
+  // orb
+  orbContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  phaseLabel: {
-    fontFamily: 'Courier Prime',
-    fontSize: 10,
-    letterSpacing: 3,
+  orbHaze: {
+    position: 'absolute',
+    backgroundColor: PHOSPHOR,
+  },
+  orbBody: {
+    position: 'absolute',
+    backgroundColor: PHOSPHOR,
+    shadowColor: PHOSPHOR,
+    shadowRadius: 24,
+    shadowOpacity: 0.5,
+  },
+  orbNucleus: {
+    position: 'absolute',
+    backgroundColor: `${PHOSPHOR}cc`,
+    shadowColor: PHOSPHOR,
+    shadowRadius: 12,
+    shadowOpacity: 0.8,
+  },
+
+  // ring
+  ringSvg: {
+    position: 'absolute',
+  },
+
+  // layout
+  center: {
+    width: RING_SIZE,
+    height: RING_SIZE,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ringWrap: {
     position: 'absolute',
-    zIndex: 1,
   },
-  orb: {
-    position: 'absolute',
+  orbWrap: {
     zIndex: 5,
   },
-  phrase: {
+
+  // whispers
+  topWhisper: {
     position: 'absolute',
-    top: ORB_TOP + ORB_SIZE + 52,
-    left: 44,
-    right: 44,
+    top: H * 0.14,
     alignItems: 'center',
   },
-  metrics: {
-    position: 'absolute',
-    bottom: 96,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 40,
-    zIndex: 10,
+  topWhisperText: {
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
+    color: `${PHOSPHOR}30`,
+    letterSpacing: 4,
+    textTransform: 'lowercase',
   },
-  metric: {
-    alignItems: 'center',
+  sideWhisper: {
+    position: 'absolute',
+    left: 24,
+    top: H * 0.42,
     gap: 4,
   },
-  metricLabel: {
+  sideWhisperText: {
     fontFamily: 'Courier Prime',
-    fontSize: 10,
-    letterSpacing: 2,
+    fontSize: 11,
+    color: `${PHOSPHOR}45`,
+    letterSpacing: 1.5,
+    textTransform: 'lowercase',
+    lineHeight: 18,
   },
-  metricValue: {
-    fontFamily: 'Courier Prime',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  navBar: {
+  bottomWhisper: {
     position: 'absolute',
-    bottom: 48,
-    left: 24,
-    right: 24,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    zIndex: 10,
-  },
-  navItem: {
+    bottom: H * 0.18,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
-  navLabel: {
+  bottomWhisperText: {
     fontFamily: 'Courier Prime',
-    fontSize: 10,
+    fontSize: 11,
+    color: `${PHOSPHOR}35`,
     letterSpacing: 2,
     textTransform: 'lowercase',
   },
+
+  // phrase
+  phrase: {
+    position: 'absolute',
+    top: H * 0.58,
+    left: 48,
+    right: 48,
+    alignItems: 'center',
+  },
+  phraseText: {
+    fontFamily: 'Courier Prime',
+    fontSize: 13,
+    color: `${PHOSPHOR}88`,
+    letterSpacing: 2,
+    textAlign: 'center',
+    textTransform: 'lowercase',
+    lineHeight: 22,
+  },
+
+  // sobriety
+  sobrietyGhost: {
+    position: 'absolute',
+    top: H * 0.26,
+    right: 32,
+  },
+  sobrietyText: {
+    fontFamily: 'Courier Prime',
+    fontSize: 10,
+    color: `${PHOSPHOR}30`,
+    letterSpacing: 2,
+    textTransform: 'lowercase',
+  },
+
+  // hint
   hint: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 20,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -311,6 +381,7 @@ const styles = StyleSheet.create({
   hintText: {
     fontFamily: 'Courier Prime',
     fontSize: 9,
+    color: `${PHOSPHOR}18`,
     letterSpacing: 1.5,
     textTransform: 'lowercase',
   },

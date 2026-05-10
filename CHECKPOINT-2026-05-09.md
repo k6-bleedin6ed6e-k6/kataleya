@@ -210,6 +210,12 @@ See `ui-ux/README.md` for full mapping to app routes.
 - All designs adapted to real-data philosophy (no fake biometrics)
 - Build: web export 1.21MB, TypeScript strict clean
 
+**2026-05-09 — Phosphor Void Redesign (Room + Bridge + Mirror)**
+- `index.tsx` (Room) — Stripped to total void. Removed header, phase label, nav bar, metrics. Pure `#000000` background. Phosphor orb with haze/body/nucleus layers + thin 1px Ouroboros ring with gap. Floating whispers at low opacity ("mood orb", "breathe. just the next one.", "you're not alone."). Sobriety days as tiny ghost text. All `#00FF41` phosphor green.
+- `bridge.tsx` — Converted to phosphor monochrome. Removed MercuryCaduceus background, circadian palette, rounded elements. Phosphor orb + Ouroboros ring. Bracketed header `[ presence_bridge ]`. Lowercase monospace throughout. Frequency bridge as 1px line with phosphor glow.
+- `mirror.tsx` — Complete layout restructuring. Removed all absolute-positioned floating data points. Replaced with clean vertical stack: header → vessel → 2×2 diagnostic grid → divider → system logs → footer. Vessel centered in fixed container. Data cells use flex row with equal columns. No scattered words.
+- Build: web export 1.21MB, TypeScript strict clean
+
 **2026-05-09 — Precision Fixes (Post-Integration)**
 - `mirror.tsx` — Removed invalid `filter: 'blur(40px)'` (CSS prop, RN silently drops it). Replaced with layered translucent radial glows (`backgroundColor` + `borderRadius` + `opacity`). Changed absolute positioning from `H * 0.18` pixel math to percentage-based (`top: '16%'`, `left: '6%'`) for cross-device stability.
 - `scars.tsx` — Capped entry list to 20 items. Replaced N individual `Animated.Value` instances with single base value + inline `interpolate` per row. Eliminates type errors and reduces native driver allocations.
