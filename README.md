@@ -1,6 +1,22 @@
-# Kataleya
+# kataleya
 
 > A circadian-aware recovery companion. One screen, four phases, no metrics dashboard. The garden is a living presence that holds you at 2am.
+
+---
+
+## 🌿 Try the Demo
+
+**[Open the Interactive Demo →](https://kwasikontor45.github.io/kataleya/)**
+
+Or open [`index.html`](./index.html) directly in your browser. No build, no install — just a phosphor-green void you can explore.
+
+The demo simulates four screens:
+- **Room** — the breath. Orb, Ouroboros ring, floating whispers.
+- **Bridge** — mood check-in. Tap the orb, report your weather inside.
+- **Terminal** — engine room. Live circadian data, nav commands.
+- **Mirror** — wireframe vessel with real diagnostic overlays.
+
+Use the dock at the bottom (or ← → arrow keys) to navigate.
 
 ---
 
@@ -12,7 +28,6 @@ The app has no tab bar, no dashboard, no analytics. Navigation is entirely gestu
 - **Swipe left** from the Room → Bridge (mood check-in)
 - **Swipe up** from the Room → Cover (2am cocoon, phrase cycling, hold-to-return)
 - **Long-press** the seed → Terminal (phosphor noir engine room)
-- From Terminal → Mirror, Scars, Vault, Settings, Burn, or Signal
 
 ---
 
@@ -98,6 +113,7 @@ constants/        # palette v2, phrases
 hooks/            # circadian phase detector, re-entry grace
 utils/            # storage, sanctuary (SQLite), web shims
 ui-ux/            # design reference wireframes (HTML + PNG)
+index.html        # interactive HTML demo (self-contained)
 ```
 
 ---

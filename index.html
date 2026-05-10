@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>kataleya — circadian recovery companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --phosphor: #00FF41;
+      --phosphor-dim: #22cc22;
+      --phosphor-faint: #113311;
+      --void: #000000;
+      --void-soft: #050508;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--void-soft);
+      font-family: 'Courier Prime', monospace;
+      color: var(--phosphor);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── landing layout ── */
+    #landing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      z-index: 10;
+    }
+
+    .landing-title {
+      font-size: clamp(28px, 5vw, 48px);
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      color: var(--phosphor);
+      text-shadow: 0 0 20px rgba(0,255,65,0.4);
+      margin-bottom: 12px;
+    }
+
+    .landing-sub {
+      font-size: clamp(12px, 2vw, 16px);
+      color: rgba(0,255,65,0.5);
+      letter-spacing: 3px;
+      text-transform: lowercase;
+      margin-bottom: 48px;
+      text-align: center;
+      padding: 0 24px;
+    }
+
+    /* ── phone frame ── */
+    .device {
+      width: 375px;
+      height: 812px;
+      background: var(--void);
+      border: 1px solid rgba(0,255,65,0.15);
+      border-radius: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 2px rgba(0,255,65,0.05),
+        0 0 60px rgba(0,255,65,0.08),
+        0 40px 80px rgba(0,0,0,0.8);
+    }
+
+    .device::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 28px;
+      background: var(--void);
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      border: 1px solid rgba(0,255,65,0.1);
+      border-top: none;
+      z-index: 100;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      background: var(--void);
+    }
+
+    .screen.active { display: flex; }
+
+    /* ── scanlines overlay ── */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 90;
+      opacity: 0.06;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,65,0.03) 2px,
+        rgba(0,255,65,0.03) 4px
+      );
+    }
+
+    /* ── phosphor orb ── */
+    .orb-container {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb-haze {
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,65,0.12) 0%, transparent 70%);
+      animation: orb-pulse-haze 8s ease-in-out infinite;
+    }
+
+    .orb-body {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(0,255,65,0.9) 0%, rgba(0,255,65,0.4) 50%, rgba(0,255,65,0.1) 100%);
+      box-shadow: 0 0 40px rgba(0,255,65,0.3), 0 0 80px rgba(0,255,65,0.1);
+      animation: orb-pulse 8s ease-in-out infinite;
+    }
+
+    .orb-nucleus {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, rgba(200,255,220,0.9) 0%, rgba(0,255,65,0.6) 100%);
+      box-shadow: 0 0 20px rgba(0,255,65,0.6);
+    }
+
+    @keyframes orb-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.08); opacity: 0.9; }
+    }
+
+    @keyframes orb-pulse-haze {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* ── ouroboros ring ── */
+    .ouroboros {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      animation: ring-rotate 60s linear infinite;
+    }
+
+    @keyframes ring-rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── screen: room ── */
+    #room-screen {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .room-whisper-top {
+      position: absolute;
+      top: 14%;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: rgba(0,255,65,0.25);
+      text-transform: lowercase;
+    }
+
+    .room-whisper-side {
+      position: absolute;
+      left: 28px;
+      top: 42%;
+      font-size: 11px;
+      line-height: 20px;
+      color: rgba(0,255,65,0.35);
+      text-transform: lowercase;
+    }
+
+    .room-phrase {
+      position: absolute;
+      bottom: 32%;
+      left: 40px; right: 40px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 22px;
+      color: rgba(0,255,65,0.7);
+      letter-spacing: 2px;
+      text-transform: lowercase;
+      min-height: 44px;
+    }
+
+    .room-ghost {
+      position: absolute;
+      top: 26%;
+      right: 32px;
+      font-size: 10px;
+      color: rgba(0,255,65,0.2);
+      letter-spacing: 2px;
+    }
+
+    .room-bottom {
+      position: absolute;
+      bottom: 18%;
+      font-size: 11px;
+      color: rgba(0,255,65,0.3);
+      letter-spacing: 2px;
+      text-transform: lowercase;
+    }
+
+    .room-hint {
+      position: absolute;
+      bottom: 24px;
+      font-size: 9px;
+      color: rgba(0,255,65,0.12);
+      letter-spacing: 1.5px;
+      text-transform: lowercase;
+    }
+
+    /* ── screen: bridge ── */
+    #bridge-screen {
+      align-items: center;
+      padding-top: 60px;
+    }
+
+    .bridge-header {
+      font-size: 11px;
+      color: rgba(0,255,65,0.4);
+      letter-spacing: 4px;
+      margin-bottom: 24px;
+    }
+
+    .bridge-headline {
+      font-size: 16px;
+      color: rgba(0,255,65,0.55);
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 0 40px;
+      text-transform: lowercase;
+      line-height: 26px;
+    }
+
+    .bridge-center {
+      width: 260px;
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 48px;
+    }
+
+    .bridge-whisper {
+      position: absolute;
+      top: -20px;
+      font-size: 11px;
+      color: rgba(0,255,65,0.35);
+      letter-spacing: 3px;
+    }
+
+    .bridge-freq {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 70%;
+      margin-bottom: 8px;
+    }
+
+    .bridge-freq-glyph {
+      font-size: 11px;
+      color: rgba(0,255,65,0.4);
+      letter-spacing: 3px;
+    }
+
+    .bridge-freq-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(0,255,65,0.25);
+    }
+
+    .bridge-freq-label {
+      font-size: 10px;
+      color: rgba(0,255,65,0.3);
+      letter-spacing: 1.5px;
+      text-transform: lowercase;
+    }
+
+    .bridge-footer {
+      margin-top: auto;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .bridge-footer-text {
+      font-size: 10px;
+      color: rgba(0,255,65,0.2);
+      letter-spacing: 2px;
+    }
+
+    /* ── screen: terminal ── */
+    #terminal-screen {
+      padding: 60px 28px 28px;
+    }
+
+    .term-boot {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .term-origin {
+      font-size: 12px;
+      color: rgba(0,255,65,0.4);
+      margin-bottom: 16px;
+    }
+
+    .term-divider {
+      height: 1px;
+      background: rgba(0,255,65,0.15);
+      margin: 16px 0;
+    }
+
+    .term-section {
+      margin-bottom: 4px;
+    }
+
+    .term-cmd-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .term-prompt {
+      font-size: 13px;
+      color: rgba(0,255,65,0.5);
+      width: 14px;
+    }
+
+    .term-cmd {
+      font-size: 13px;
+      color: var(--phosphor);
+      letter-spacing: 0.3px;
+    }
+
+    .term-out {
+      font-size: 12px;
+      color: rgba(0,255,65,0.75);
+      margin-left: 4px;
+      margin-bottom: 3px;
+      line-height: 18px;
+    }
+
+    .term-accent {
+      color: #a8bcd4;
+      opacity: 0.75;
+    }
+
+    .term-caution { color: #ccaa22; opacity: 0.85; }
+    .term-danger { color: #cc4444; opacity: 0.85; }
+
+    .term-cursor {
+      font-size: 14px;
+      margin-top: 8px;
+      animation: blink 1.06s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 0; }
+    }
+
+    /* ── screen: mirror ── */
+    #mirror-screen {
+      padding: 60px 24px 24px;
+      overflow-y: auto;
+    }
+
+    .mirror-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .mirror-header-label {
+      font-size: 12px;
+      color: rgba(0,255,65,0.55);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .mirror-online {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mirror-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--phosphor);
+      box-shadow: 0 0 8px var(--phosphor);
+      animation: pulse-dot 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .mirror-vessel {
+      width: 200px;
+      height: 300px;
+      margin: 0 auto 24px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mirror-vessel-glow {
+      position: absolute;
+      width: 220px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,65,0.06) 0%, transparent 70%);
+    }
+
+    .mirror-diag-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .mirror-diag-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mirror-diag-label {
+      font-size: 10px;
+      color: rgba(0,255,65,0.5);
+      letter-spacing: 2px;
+      text-transform: lowercase;
+    }
+
+    .mirror-diag-value {
+      font-size: 18px;
+      color: var(--phosphor);
+    }
+
+    .mirror-divider {
+      height: 1px;
+      background: rgba(0,255,65,0.15);
+      margin: 8px 0 16px;
+    }
+
+    .mirror-logs {
+      margin-bottom: 24px;
+    }
+
+    .mirror-log-title {
+      font-size: 9px;
+      color: rgba(0,255,65,0.35);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(0,255,65,0.1);
+      padding-bottom: 4px;
+      display: inline-block;
+    }
+
+    .mirror-log-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 10px;
+      color: rgba(0,255,65,0.6);
+      text-transform: lowercase;
+    }
+
+    .mirror-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0,255,65,0.1);
+    }
+
+    /* ── nav dock ── */
+    .nav-dock {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 100;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,255,65,0.1);
+    }
+
+    .nav-dock-btn {
+      padding: 6px 12px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      color: rgba(0,255,65,0.4);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: lowercase;
+      transition: all 0.2s ease;
+    }
+
+    .nav-dock-btn:hover {
+      color: var(--phosphor);
+      border-color: rgba(0,255,65,0.3);
+      background: rgba(0,255,65,0.05);
+    }
+
+    .nav-dock-btn.active {
+      color: var(--phosphor);
+      border-color: rgba(0,255,65,0.4);
+      background: rgba(0,255,65,0.08);
+    }
+
+    /* ── landing controls ── */
+    .landing-controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .landing-btn {
+      padding: 12px 28px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: lowercase;
+      border: 1px solid rgba(0,255,65,0.3);
+      background: transparent;
+      color: var(--phosphor);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .landing-btn:hover {
+      background: rgba(0,255,65,0.1);
+      border-color: var(--phosphor);
+      box-shadow: 0 0 20px rgba(0,255,65,0.2);
+    }
+
+    .landing-btn.primary {
+      background: rgba(0,255,65,0.08);
+    }
+
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 11px;
+      color: rgba(0,255,65,0.3);
+      text-decoration: none;
+      letter-spacing: 1px;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .back-link:hover { color: var(--phosphor); }
+
+    /* ── info panel (shown on landing) ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 600px;
+      margin-top: 40px;
+      padding: 0 24px;
+    }
+
+    .info-cell {
+      text-align: center;
+    }
+
+    .info-cell h3 {
+      font-size: 11px;
+      color: var(--phosphor);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .info-cell p {
+      font-size: 11px;
+      color: rgba(0,255,65,0.45);
+      line-height: 18px;
+      text-transform: lowercase;
+    }
+
+    /* ── typewriter cursor ── */
+    .typewriter::after {
+      content: '_';
+      animation: blink 1.06s step-end infinite;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 480px) {
+      .device {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+      .device::before { display: none; }
+      .landing-controls { flex-direction: column; align-items: center; }
+      .info-grid { grid-template-columns: 1fr; }
+      .landing-sub { margin-bottom: 24px; }
+    }
+
+    /* ── hidden state ── */
+    .hidden { display: none !important; }
+
+    /* ── mood check overlay ── */
+    .mood-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 80;
+      padding: 40px;
+    }
+
+    .mood-overlay.active { display: flex; }
+
+    .mood-title {
+      font-size: 13px;
+      color: rgba(0,255,65,0.6);
+      letter-spacing: 3px;
+      margin-bottom: 32px;
+      text-transform: lowercase;
+    }
+
+    .mood-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .mood-option {
+      padding: 14px 20px;
+      border: 1px solid rgba(0,255,65,0.2);
+      background: transparent;
+      color: rgba(0,255,65,0.6);
+      font-family: 'Courier Prime', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-transform: lowercase;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .mood-option:hover {
+      border-color: var(--phosphor);
+      color: var(--phosphor);
+      background: rgba(0,255,65,0.05);
+    }
+
+    .mood-close {
+      margin-top: 24px;
+      font-size: 10px;
+      color: rgba(0,255,65,0.3);
+      background: transparent;
+      border: none;
+      font-family: 'Courier Prime', monospace;
+      cursor: pointer;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ LANDING ═══════ -->
+  <div id="landing">
+    <div class="landing-title">kataleya</div>
+    <div class="landing-sub">a circadian-aware recovery companion. the garden is a living presence that holds you at 2am.</div>
+
+    <div class="device" id="demo-device">
+      <div class="scanlines"></div>
+
+      <!-- ROOM -->
+      <div class="screen active" id="room-screen">
+        <div class="room-whisper-top">mood orb</div>
+        <div class="room-whisper-side">
+          breathe.<br>just the next one.
+        </div>
+        <div class="orb-container">
+          <svg class="ouroboros" viewBox="0 0 260 260">
+            <circle cx="130" cy="130" r="129" fill="none" stroke="#00FF41" stroke-width="1"
+              stroke-dasharray="745 60" opacity="0.3" />
+          </svg>
+          <div class="orb-haze"></div>
+          <div class="orb-body"></div>
+          <div class="orb-nucleus"></div>
+        </div>
+        <div class="room-phrase typewriter" id="room-phrase">one breath at a time.</div>
+        <div class="room-ghost">day <span id="demo-days">0</span></div>
+        <div class="room-bottom">you're not alone.</div>
+        <div class="room-hint">← bridge · ↑ cover · hold · engine</div>
+      </div>
+
+      <!-- BRIDGE -->
+      <div class="screen" id="bridge-screen">
+        <div class="bridge-header">[ presence_bridge ]</div>
+        <div class="bridge-headline">life rewritten by choice</div>
+        <div class="bridge-center">
+          <svg class="ouroboros" style="width:220px;height:220px;" viewBox="0 0 260 260">
+            <circle cx="130" cy="130" r="129" fill="none" stroke="#00FF41" stroke-width="1"
+              stroke-dasharray="745 60" opacity="0.25" />
+          </svg>
+          <div class="orb-container" style="width:120px;height:120px;">
+            <div class="orb-haze" style="width:180px;height:180px;"></div>
+            <div class="orb-body" style="width:120px;height:120px;"></div>
+            <div class="orb-nucleus" style="width:36px;height:36px;"></div>
+          </div>
+          <div class="bridge-whisper" id="bridge-whisper">stay with me</div>
+        </div>
+        <div class="bridge-freq">
+          <span class="bridge-freq-glyph">..:</span>
+          <div class="bridge-freq-line"></div>
+          <span class="bridge-freq-glyph">:..</span>
+        </div>
+        <div class="bridge-freq-label">> resonance_sync: 11.0s</div>
+        <div class="bridge-footer">
+          <div class="bridge-footer-text">// origin: thinkBad-doGood-sa.my</div>
+        </div>
+
+        <!-- mood overlay -->
+        <div class="mood-overlay" id="mood-overlay">
+          <div class="mood-title">[ weather_inside ]</div>
+          <div class="mood-options">
+            <button class="mood-option" onclick="selectMood('storm')">> storm</button>
+            <button class="mood-option" onclick="selectMood('rain')">> rain</button>
+            <button class="mood-option" onclick="selectMood('grey')">> grey</button>
+            <button class="mood-option" onclick="selectMood('clear')">> clear</button>
+            <button class="mood-option" onclick="selectMood('sun')">> sun</button>
+          </div>
+          <button class="mood-close" onclick="closeMood()">[ close ]</button>
+        </div>
+      </div>
+
+      <!-- TERMINAL -->
+      <div class="screen" id="terminal-screen">
+        <div class="term-boot">KATALEYA OS v1.0.4</div>
+        <div class="term-origin">// origin: thinkBad-doGood-sa.my</div>
+        <div class="term-divider"></div>
+
+        <div class="term-section">
+          <div class="term-cmd-row">
+            <span class="term-prompt">$</span>
+            <span class="term-cmd">status --circadian</span>
+          </div>
+          <div class="term-out">  phase       : <span id="term-phase">night</span></div>
+          <div class="term-out">  accent      : #8090b0</div>
+          <div class="term-out">  time        : <span id="term-time">02:14</span></div>
+        </div>
+
+        <div class="term-divider"></div>
+
+        <div class="term-section">
+          <div class="term-cmd-row">
+            <span class="term-prompt">$</span>
+            <span class="term-cmd">nav --available</span>
+          </div>
+          <div class="term-out term-accent">  /mirror     physician mirror</div>
+          <div class="term-out term-accent">  /scars      biometric scars</div>
+          <div class="term-out term-accent">  /vault      journal vault</div>
+          <div class="term-out term-accent">  /settings   system configuration</div>
+          <div class="term-out term-caution">  /signal     sponsor signal</div>
+          <div class="term-out term-danger">  /reset      onboarding --reset</div>
+        </div>
+
+        <div class="term-divider"></div>
+        <div class="term-cursor">█</div>
+      </div>
+
+      <!-- MIRROR -->
+      <div class="screen" id="mirror-screen">
+        <div class="mirror-header">
+          <span class="mirror-header-label">[ sys_diagnostic ]</span>
+          <div class="mirror-online">
+            <div class="mirror-dot"></div>
+            <span style="font-size:11px;color:rgba(0,255,65,0.5);letter-spacing:2px;">online</span>
+          </div>
+        </div>
+
+        <div class="mirror-vessel">
+          <div class="mirror-vessel-glow"></div>
+          <svg width="160" height="280" viewBox="0 0 280 520" style="opacity:0.75;">
+            <rect x="120" y="30" width="40" height="50" fill="none" stroke="#00FF41" stroke-width="1" stroke-dasharray="2 2"/>
+            <line x1="140" y1="80" x2="140" y2="105" stroke="#00FF41" stroke-width="1"/>
+            <line x1="80" y1="105" x2="200" y2="105" stroke="#00FF41" stroke-width="1"/>
+            <rect x="100" y="105" width="80" height="140" fill="none" stroke="#00FF41" stroke-width="1"/>
+            <line x1="100" y1="145" x2="180" y2="145" stroke="#00FF41" stroke-width="1" stroke-dasharray="2 4"/>
+            <line x1="100" y1="185" x2="180" y2="185" stroke="#00FF41" stroke-width="1" stroke-dasharray="2 4"/>
+            <line x1="140" y1="105" x2="140" y2="245" stroke="#00FF41" stroke-width="1"/>
+            <polyline points="80,105 60,200 65,290" fill="none" stroke="#00FF41" stroke-width="1" stroke-dasharray="4 4"/>
+            <polyline points="200,105 220,200 215,290" fill="none" stroke="#00FF41" stroke-width="1" stroke-dasharray="4 4"/>
+            <polygon points="100,245 180,245 160,275 120,275" fill="none" stroke="#00FF41" stroke-width="1"/>
+            <polyline points="120,275 110,400 115,500" fill="none" stroke="#00FF41" stroke-width="1"/>
+            <polyline points="160,275 170,400 165,500" fill="none" stroke="#00FF41" stroke-width="1"/>
+            <rect x="138" y="53" width="4" height="4" fill="#00FF41"/>
+            <rect x="138" y="143" width="4" height="4" fill="#00FF41"/>
+            <rect x="138" y="243" width="4" height="4" fill="#00FF41"/>
+            <rect x="78" y="103" width="4" height="4" fill="#00FF41"/>
+            <rect x="198" y="103" width="4" height="4" fill="#00FF41"/>
+          </svg>
+        </div>
+
+        <div class="mirror-diag-grid">
+          <div class="mirror-diag-cell">
+            <div class="mirror-diag-label">[ days_sober ]</div>
+            <div class="mirror-diag-value" id="mirror-days">0</div>
+          </div>
+          <div class="mirror-diag-cell">
+            <div class="mirror-diag-label">[ phase ]</div>
+            <div class="mirror-diag-value" id="mirror-phase">night</div>
+          </div>
+          <div class="mirror-diag-cell">
+            <div class="mirror-diag-label">[ mood_trend ]</div>
+            <div class="mirror-diag-value">stable</div>
+          </div>
+          <div class="mirror-diag-cell">
+            <div class="mirror-diag-label">[ last_bridge ]</div>
+            <div class="mirror-diag-value">2h</div>
+          </div>
+        </div>
+
+        <div class="mirror-divider"></div>
+
+        <div class="mirror-logs">
+          <div class="mirror-log-title">[ system_log ]</div>
+          <div class="mirror-log-row"><span style="color:rgba(0,255,65,0.3)">></span> vessel_aligned</div>
+          <div class="mirror-log-row"><span style="color:rgba(0,255,65,0.3)">></span> phase_sync: <span id="log-phase">night</span></div>
+          <div class="mirror-log-row"><span style="color:rgba(0,255,65,0.3)">></span> <span style="color:#00FF41">awaiting_input_</span></div>
+        </div>
+
+        <div class="mirror-footer">
+          <span style="font-size:10px;color:rgba(0,255,65,0.3);">// awaiting attunement</span>
+          <span style="font-size:10px;color:rgba(0,255,65,0.35);">[ swipe right to return ]</span>
+        </div>
+      </div>
+
+      <!-- NAV DOCK -->
+      <div class="nav-dock">
+        <button class="nav-dock-btn active" data-screen="room" onclick="goTo('room')">room</button>
+        <button class="nav-dock-btn" data-screen="bridge" onclick="goTo('bridge')">bridge</button>
+        <button class="nav-dock-btn" data-screen="terminal" onclick="goTo('terminal')">terminal</button>
+        <button class="nav-dock-btn" data-screen="mirror" onclick="goTo('mirror')">mirror</button>
+      </div>
+    </div>
+
+    <div class="landing-controls">
+      <button class="landing-btn primary" onclick="enterDemo()">enter the garden</button>
+      <button class="landing-btn" onclick="window.open('https://github.com/kwasikontor45/kataleya','_blank')">view source</button>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-cell">
+        <h3>[ no metrics ]</h3>
+        <p>no streaks. no charts. no analytics. no accounts. no cloud.</p>
+      </div>
+      <div class="info-cell">
+        <h3>[ real data ]</h3>
+        <p>sobriety days, mood logs, breath technique. nothing fabricated.</p>
+      </div>
+      <div class="info-cell">
+        <h3>[ gestures ]</h3>
+        <p>swipe left for bridge. swipe up for cover. long-press for terminal.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── state ──
+    const phrases = [
+      'one breath at a time.',
+      'the next right thing.',
+      'stay with me.',
+      'you are not alone.',
+      'this too shall pass.',
+      'breathe. just breathe.',
+    ];
+    let phraseIndex = 0;
+    let currentScreen = 'room';
+
+    // ── typewriter effect ──
+    function typewrite(element, text, speed = 50) {
+      element.textContent = '';
+      element.classList.add('typewriter');
+      let i = 0;
+      function tick() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(tick, speed);
+        }
+      }
+      tick();
+    }
+
+    // ── cycle room phrase ──
+    setInterval(() => {
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      const el = document.getElementById('room-phrase');
+      if (el && currentScreen === 'room') {
+        typewrite(el, phrases[phraseIndex], 60);
+      }
+    }, 8000);
+
+    // ── update time ──
+    function updateTime() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('term-time');
+      if (el) el.textContent = `${h}:${m}`;
+    }
+    setInterval(updateTime, 30000);
+    updateTime();
+
+    // ── detect phase ──
+    function getPhase() {
+      const h = new Date().getHours();
+      if (h >= 5 && h < 11) return 'dawn';
+      if (h >= 11 && h < 17) return 'day';
+      if (h >= 17 && h < 20) return 'goldenHour';
+      return 'night';
+    }
+
+    function updatePhase() {
+      const phase = getPhase();
+      ['term-phase', 'mirror-phase', 'log-phase'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = phase;
+      });
+    }
+    updatePhase();
+
+    // ── sobriety days (demo: 47) ──
+    document.getElementById('demo-days').textContent = '47';
+    document.getElementById('mirror-days').textContent = '47';
+
+    // ── navigation ──
+    function goTo(screen) {
+      currentScreen = screen;
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screen + '-screen').classList.add('active');
+      document.querySelectorAll('.nav-dock-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.nav-dock-btn[data-screen="${screen}"]`).classList.add('active');
+
+      if (screen === 'room') {
+        typewrite(document.getElementById('room-phrase'), phrases[phraseIndex], 60);
+      }
+    }
+
+    function enterDemo() {
+      document.getElementById('landing').scrollIntoView({ behavior: 'smooth' });
+      const device = document.getElementById('demo-device');
+      device.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ── mood check ──
+    document.querySelector('.bridge-center .orb-container').addEventListener('click', () => {
+      document.getElementById('mood-overlay').classList.add('active');
+    });
+
+    function selectMood(mood) {
+      document.getElementById('bridge-whisper').textContent = mood + ' acknowledged.';
+      closeMood();
+      setTimeout(() => {
+        document.getElementById('bridge-whisper').textContent = 'stay with me';
+      }, 4000);
+    }
+
+    function closeMood() {
+      document.getElementById('mood-overlay').classList.remove('active');
+    }
+
+    // ── keyboard nav ──
+    document.addEventListener('keydown', (e) => {
+      const screens = ['room', 'bridge', 'terminal', 'mirror'];
+      const idx = screens.indexOf(currentScreen);
+      if (e.key === 'ArrowRight') goTo(screens[(idx + 1) % screens.length]);
+      if (e.key === 'ArrowLeft') goTo(screens[(idx - 1 + screens.length) % screens.length]);
+    });
+  </script>
+</body>
+</html>
