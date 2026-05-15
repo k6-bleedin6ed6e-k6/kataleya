@@ -985,6 +985,14 @@
       return '#8090b0';
     }
 
+    function getPhaseColorName() {
+      const p = getPhase();
+      if (p === 'dawn') return 'warm amber';
+      if (p === 'day') return 'cool mint';
+      if (p === 'goldenHour') return 'rich gold';
+      return 'deep slate';
+    }
+
     function formatTime() {
       const now = new Date();
       const h = String(now.getHours()).padStart(2, '0');
@@ -1042,7 +1050,7 @@
       printTerm('', 'divider');
       printTerm('status --circadian', 'cmd');
       printTerm(`  phase       : ${getPhase()}`);
-      printTerm(`  accent      : ${getPhaseColor()}`);
+      printTerm(`  accent      : ${getPhaseColorName()}`);
       printTerm(`  time        : ${formatTime()}`);
       printTerm('', 'divider');
       printTerm('nav --available', 'cmd');
@@ -1063,7 +1071,7 @@
         case 'status --circadian':
           printTerm(cmd, 'cmd');
           printTerm(`  phase       : ${getPhase()}`);
-          printTerm(`  accent      : ${getPhaseColor()}`);
+          printTerm(`  accent      : ${getPhaseColorName()}`);
           printTerm(`  time        : ${formatTime()}`);
           break;
         case 'nav':
