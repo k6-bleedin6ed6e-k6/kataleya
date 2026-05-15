@@ -387,6 +387,31 @@
       animation: blink 1.06s step-end infinite;
     }
 
+    .term-history {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 8px;
+    }
+
+    .term-input-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0,255,65,0.15);
+    }
+
+    .term-input {
+      font-size: 13px;
+      color: var(--phosphor);
+      letter-spacing: 0.3px;
+      min-width: 1ch;
+    }
+
+    .term-input-line .term-cursor {
+      margin-top: 0;
+    }
+
     @keyframes blink {
       0%, 100% { opacity: 0.85; }
       50% { opacity: 0; }
@@ -801,37 +826,12 @@
 
       <!-- TERMINAL -->
       <div class="screen" id="terminal-screen">
-        <div class="term-boot">KATALEYA OS v1.0.4</div>
-        <div class="term-origin">// origin: thinkBad-doGood-sa.my</div>
-        <div class="term-divider"></div>
-
-        <div class="term-section">
-          <div class="term-cmd-row">
-            <span class="term-prompt">$</span>
-            <span class="term-cmd">status --circadian</span>
-          </div>
-          <div class="term-out">  phase       : <span id="term-phase">night</span></div>
-          <div class="term-out">  accent      : #8090b0</div>
-          <div class="term-out">  time        : <span id="term-time">02:14</span></div>
+        <div class="term-history" id="term-history"></div>
+        <div class="term-input-line">
+          <span class="term-prompt">$</span>
+          <span id="term-input" class="term-input"></span>
+          <span class="term-cursor">█</span>
         </div>
-
-        <div class="term-divider"></div>
-
-        <div class="term-section">
-          <div class="term-cmd-row">
-            <span class="term-prompt">$</span>
-            <span class="term-cmd">nav --available</span>
-          </div>
-          <div class="term-out term-accent">  /mirror     physician mirror</div>
-          <div class="term-out term-accent">  /scars      biometric scars</div>
-          <div class="term-out term-accent">  /vault      journal vault</div>
-          <div class="term-out term-accent">  /settings   system configuration</div>
-          <div class="term-out term-caution">  /signal     sponsor signal</div>
-          <div class="term-out term-danger">  /reset      onboarding --reset</div>
-        </div>
-
-        <div class="term-divider"></div>
-        <div class="term-cursor">█</div>
       </div>
 
       <!-- MIRROR -->
@@ -921,8 +921,8 @@
         <p>no streaks. no charts. no analytics. no accounts. no cloud.</p>
       </div>
       <div class="info-cell">
-        <h3>[ real data ]</h3>
-        <p>sobriety days, mood logs, breath technique. nothing fabricated.</p>
+        <h3>[ circadian ]</h3>
+        <p>dawn 5–11am · day 11am–5pm · golden hour 5–8pm · night 8pm–5am</p>
       </div>
       <div class="info-cell">
         <h3>[ gestures ]</h3>
@@ -968,18 +968,7 @@
       }
     }, 8000);
 
-    // ── update time ──
-    function updateTime() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const el = document.getElementById('term-time');
-      if (el) el.textContent = `${h}:${m}`;
-    }
-    setInterval(updateTime, 30000);
-    updateTime();
-
-    // ── detect phase ──
+    // ── circadian system ──
     function getPhase() {
       const h = new Date().getHours();
       if (h >= 5 && h < 11) return 'dawn';
@@ -988,18 +977,155 @@
       return 'night';
     }
 
+    function getPhaseColor() {
+      const p = getPhase();
+      if (p === 'dawn') return '#d4a574';
+      if (p === 'day') return '#8fb8a8';
+      if (p === 'goldenHour') return '#c9a959';
+      return '#8090b0';
+    }
+
+    function formatTime() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      return `${h}:${m}`;
+    }
+
     function updatePhase() {
       const phase = getPhase();
-      ['term-phase', 'mirror-phase', 'log-phase'].forEach(id => {
+      ['mirror-phase', 'log-phase'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = phase;
       });
     }
     updatePhase();
 
+    // ── interactive terminal ──
+    let terminalInput = '';
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function printTerm(text, type = '') {
+      const history = document.getElementById('term-history');
+      if (!history) return;
+      const line = document.createElement('div');
+      if (type === 'divider') {
+        line.className = 'term-divider';
+      } else if (type === 'cmd') {
+        line.className = 'term-cmd-row';
+        line.innerHTML = `<span class="term-prompt">$</span><span class="term-cmd">${escapeHtml(text)}</span>`;
+      } else if (type === 'accent') {
+        line.className = 'term-out term-accent';
+        line.textContent = text;
+      } else if (type === 'caution') {
+        line.className = 'term-out term-caution';
+        line.textContent = text;
+      } else if (type === 'danger') {
+        line.className = 'term-out term-danger';
+        line.textContent = text;
+      } else {
+        line.className = 'term-out';
+        line.textContent = text;
+      }
+      history.appendChild(line);
+      history.scrollTop = history.scrollHeight;
+    }
+
+    function initTerminal() {
+      printTerm('KATALEYA OS v1.0.4');
+      printTerm('// origin: thinkBad-doGood-sa.my');
+      printTerm('', 'divider');
+      printTerm('status --circadian', 'cmd');
+      printTerm(`  phase       : ${getPhase()}`);
+      printTerm(`  accent      : ${getPhaseColor()}`);
+      printTerm(`  time        : ${formatTime()}`);
+      printTerm('', 'divider');
+      printTerm('nav --available', 'cmd');
+      printTerm('  /mirror     physician mirror', 'accent');
+      printTerm('  /scars      biometric scars', 'accent');
+      printTerm('  /vault      journal vault', 'accent');
+      printTerm('  /settings   system configuration', 'accent');
+      printTerm('  /signal     sponsor signal', 'caution');
+      printTerm('  /reset      onboarding --reset', 'danger');
+      printTerm('', 'divider');
+    }
+
+    function executeCommand(cmd) {
+      const clean = cmd.trim().toLowerCase();
+
+      switch (clean) {
+        case 'status':
+        case 'status --circadian':
+          printTerm(cmd, 'cmd');
+          printTerm(`  phase       : ${getPhase()}`);
+          printTerm(`  accent      : ${getPhaseColor()}`);
+          printTerm(`  time        : ${formatTime()}`);
+          break;
+        case 'nav':
+        case 'nav --available':
+        case 'help':
+          printTerm(cmd, 'cmd');
+          printTerm('  available commands:', 'accent');
+          printTerm('  status, nav, help, time, clear', 'accent');
+          printTerm('  /mirror, /scars, /vault, /settings, /signal, /reset');
+          break;
+        case 'time':
+          printTerm(cmd, 'cmd');
+          printTerm(`  ${formatTime()}`);
+          break;
+        case 'clear':
+          document.getElementById('term-history').innerHTML = '';
+          return;
+        case '/mirror':
+          printTerm(cmd, 'cmd');
+          printTerm('> routing to physician mirror...');
+          setTimeout(() => goTo('mirror'), 500);
+          break;
+        case '/scars':
+          printTerm(cmd, 'cmd');
+          printTerm('> biometric scars timeline');
+          printTerm('  [20-entry cap] circuit trace visuals');
+          break;
+        case '/vault':
+          printTerm(cmd, 'cmd');
+          printTerm('> journal vault');
+          printTerm('  [20-entry cap] encrypted entry directory');
+          break;
+        case '/settings':
+          printTerm(cmd, 'cmd');
+          printTerm('> system configuration');
+          printTerm('  name · sobriety date · breath · haptics');
+          break;
+        case '/signal':
+          printTerm(cmd, 'cmd');
+          printTerm('> sponsor signal');
+          printTerm('  awaiting handshake... no active sponsor.', 'caution');
+          break;
+        case '/reset':
+          printTerm(cmd, 'cmd');
+          printTerm('> WARNING: purge all local memory?', 'danger');
+          printTerm('  simulation mode — reset disabled.', 'danger');
+          break;
+        default:
+          if (clean) {
+            printTerm(cmd, 'cmd');
+            printTerm(`  command not found: ${clean}`);
+          }
+      }
+      if (clean !== 'clear') printTerm('', 'divider');
+    }
+
     // ── sobriety days (demo: 47) ──
     document.getElementById('demo-days').textContent = '47';
     document.getElementById('mirror-days').textContent = '47';
+
+    // ── init terminal ──
+    initTerminal();
 
     // ── navigation ──
     function goTo(screen) {
@@ -1041,11 +1167,32 @@
 
     // ── keyboard nav ──
     document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        exitDemo();
+        return;
+      }
+
+      if (currentScreen === 'terminal') {
+        if (e.key === 'Enter') {
+          executeCommand(terminalInput);
+          terminalInput = '';
+          const inputEl = document.getElementById('term-input');
+          if (inputEl) inputEl.textContent = '';
+        } else if (e.key === 'Backspace') {
+          terminalInput = terminalInput.slice(0, -1);
+          const inputEl = document.getElementById('term-input');
+          if (inputEl) inputEl.textContent = terminalInput;
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          terminalInput += e.key;
+          const inputEl = document.getElementById('term-input');
+          if (inputEl) inputEl.textContent = terminalInput;
+        }
+      }
+
       const screens = ['room', 'bridge', 'terminal', 'mirror'];
       const idx = screens.indexOf(currentScreen);
       if (e.key === 'ArrowRight') goTo(screens[(idx + 1) % screens.length]);
       if (e.key === 'ArrowLeft') goTo(screens[(idx - 1 + screens.length) % screens.length]);
-      if (e.key === 'Escape') exitDemo();
     });
   </script>
 </body>
