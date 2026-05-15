@@ -597,6 +597,20 @@
     }
 
     .back-link:hover { color: var(--phosphor); }
+    .back-link { display: none; }
+    #landing.demo-mode .back-link { display: block; }
+
+    /* ── demo mode ── */
+    #landing.demo-mode .landing-title,
+    #landing.demo-mode .landing-sub,
+    #landing.demo-mode .landing-controls,
+    #landing.demo-mode .info-grid {
+      display: none !important;
+    }
+
+    #landing.demo-mode {
+      background: var(--void);
+    }
 
     /* ── info panel (shown on landing) ── */
     .info-grid {
@@ -717,6 +731,7 @@
 
   <!-- ═══════ LANDING ═══════ -->
   <div id="landing">
+    <a class="back-link" onclick="exitDemo()">← exit garden</a>
     <div class="landing-title">kataleya</div>
     <div class="landing-sub">a circadian-aware recovery companion. the garden is a living presence that holds you at 2am.</div>
 
@@ -1000,9 +1015,11 @@
     }
 
     function enterDemo() {
-      document.getElementById('landing').scrollIntoView({ behavior: 'smooth' });
-      const device = document.getElementById('demo-device');
-      device.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('landing').classList.add('demo-mode');
+    }
+
+    function exitDemo() {
+      document.getElementById('landing').classList.remove('demo-mode');
     }
 
     // ── mood check ──
@@ -1028,6 +1045,7 @@
       const idx = screens.indexOf(currentScreen);
       if (e.key === 'ArrowRight') goTo(screens[(idx + 1) % screens.length]);
       if (e.key === 'ArrowLeft') goTo(screens[(idx - 1 + screens.length) % screens.length]);
+      if (e.key === 'Escape') exitDemo();
     });
   </script>
 </body>
