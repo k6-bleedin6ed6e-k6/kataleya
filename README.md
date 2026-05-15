@@ -6,7 +6,7 @@
 
 ## 🌿 Try the Demo
 
-**[Open the Interactive Demo →](https://kwasikontor45.github.io/kataleya/)**
+**[Open the Interactive Demo →](https://kontor.studio/kataleya-demo)**
 
 Or open [`index.html`](./index.html) directly in your browser. No build, no install — just a phosphor-green void you can explore.
 
