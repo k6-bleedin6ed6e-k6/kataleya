@@ -60,31 +60,37 @@
 
     /* ── phone frame ── */
     .device {
-      width: 375px;
-      height: 812px;
+      width: 100vw;
+      height: 100dvh;
       background: var(--void);
-      border: 1px solid rgba(0,255,65,0.15);
-      border-radius: 40px;
       position: relative;
       overflow: hidden;
-      box-shadow:
-        0 0 0 2px rgba(0,255,65,0.05),
-        0 0 60px rgba(0,255,65,0.08),
-        0 40px 80px rgba(0,0,0,0.8);
     }
 
-    .device::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 120px; height: 28px;
-      background: var(--void);
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-      border: 1px solid rgba(0,255,65,0.1);
-      border-top: none;
-      z-index: 100;
+    @media (min-width: 481px) {
+      .device {
+        width: 375px;
+        height: 812px;
+        border: 1px solid rgba(0,255,65,0.15);
+        border-radius: 40px;
+        box-shadow:
+          0 0 0 2px rgba(0,255,65,0.05),
+          0 0 60px rgba(0,255,65,0.08),
+          0 40px 80px rgba(0,0,0,0.8);
+      }
+      .device::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 120px; height: 28px;
+        background: var(--void);
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        border: 1px solid rgba(0,255,65,0.1);
+        border-top: none;
+        z-index: 100;
+      }
     }
 
     .screen {
@@ -720,19 +726,21 @@
       animation: blink 1.06s step-end infinite;
     }
 
-    /* ── responsive ── */
+    /* ── mobile tweaks ── */
     @media (max-width: 480px) {
-      .device {
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
-      }
-      .device::before { display: none; }
       .landing-controls { flex-direction: column; align-items: center; }
       .info-grid { grid-template-columns: 1fr; }
       .landing-sub { margin-bottom: 24px; }
+      .room-whisper-side { display: none; }
+      .room-stack { gap: 18px; margin-top: 24px; }
+      .room-phrase { font-size: 16px; line-height: 26px; }
+      .orb-container { width: 200px; height: 200px; }
+      .orb-haze { width: 300px; height: 300px; }
+      .orb-body { width: 200px; height: 200px; }
+      .orb-nucleus { width: 70px; height: 70px; }
+      .ouroboros { width: 320px; height: 320px; }
+      .nav-dock { padding: 4px 8px; gap: 4px; }
+      .nav-dock-btn { padding: 5px 10px; font-size: 9px; }
     }
 
     /* ── hidden state ── */
@@ -1294,6 +1302,43 @@
       if (e.key === 'ArrowRight') goTo(screens[(idx + 1) % screens.length]);
       if (e.key === 'ArrowLeft') goTo(screens[(idx - 1 + screens.length) % screens.length]);
     });
+
+    // ── mobile auto-enter ──
+    if (window.innerWidth <= 480) {
+      enterDemo();
+    }
+
+    // ── swipe navigation ──
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchTarget = null;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchTarget = e.target;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+
+      // don't swipe when touching interactive elements
+      if (touchTarget && (
+        touchTarget.closest('.nav-dock-btn') ||
+        touchTarget.closest('.mood-option') ||
+        touchTarget.closest('.term-override-btn') ||
+        touchTarget.closest('.landing-btn') ||
+        touchTarget.closest('.mood-overlay')
+      )) return;
+
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+        const screens = ['room', 'bridge', 'terminal', 'mirror'];
+        const idx = screens.indexOf(currentScreen);
+        if (dx < 0) goTo(screens[(idx + 1) % screens.length]);
+        else goTo(screens[(idx - 1 + screens.length) % screens.length]);
+      }
+    }, { passive: true });
   </script>
 </body>
 </html>
