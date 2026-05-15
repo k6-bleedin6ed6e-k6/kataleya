@@ -412,6 +412,60 @@
       margin-top: 0;
     }
 
+    .term-override {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .term-override-label {
+      font-size: 10px;
+      color: rgba(0,255,65,0.3);
+      letter-spacing: 1.5px;
+      text-transform: lowercase;
+    }
+
+    .term-override-btn {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      color: rgba(0,255,65,0.4);
+      background: transparent;
+      border: 1px solid rgba(0,255,65,0.15);
+      padding: 3px 8px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: lowercase;
+      transition: all 0.2s ease;
+    }
+
+    .term-override-btn:hover {
+      color: var(--phosphor);
+      border-color: rgba(0,255,65,0.4);
+      background: rgba(0,255,65,0.05);
+    }
+
+    .term-override-btn.active {
+      color: var(--phosphor);
+      border-color: rgba(0,255,65,0.5);
+      background: rgba(0,255,65,0.1);
+    }
+
+    /* phase tints on device frame */
+    .device.dawn-phase {
+      border-color: rgba(212, 165, 116, 0.3);
+      box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.05), 0 0 60px rgba(212, 165, 116, 0.1), 0 40px 80px rgba(0,0,0,0.8);
+    }
+    .device.day-phase {
+      border-color: rgba(143, 184, 168, 0.3);
+      box-shadow: 0 0 0 2px rgba(143, 184, 168, 0.05), 0 0 60px rgba(143, 184, 168, 0.1), 0 40px 80px rgba(0,0,0,0.8);
+    }
+    .device.golden-phase {
+      border-color: rgba(201, 169, 89, 0.3);
+      box-shadow: 0 0 0 2px rgba(201, 169, 89, 0.05), 0 0 60px rgba(201, 169, 89, 0.1), 0 40px 80px rgba(0,0,0,0.8);
+    }
+
     @keyframes blink {
       0%, 100% { opacity: 0.85; }
       50% { opacity: 0; }
@@ -826,6 +880,14 @@
 
       <!-- TERMINAL -->
       <div class="screen" id="terminal-screen">
+        <div class="term-override">
+          <span class="term-override-label">override:</span>
+          <button class="term-override-btn" data-phase="dawn" onclick="setPhaseOverride('dawn')">dawn</button>
+          <button class="term-override-btn" data-phase="day" onclick="setPhaseOverride('day')">day</button>
+          <button class="term-override-btn" data-phase="goldenHour" onclick="setPhaseOverride('goldenHour')">golden</button>
+          <button class="term-override-btn" data-phase="night" onclick="setPhaseOverride('night')">night</button>
+          <button class="term-override-btn active" data-phase="auto" onclick="setPhaseOverride(null)">auto</button>
+        </div>
         <div class="term-history" id="term-history"></div>
         <div class="term-input-line">
           <span class="term-prompt">$</span>
@@ -969,12 +1031,38 @@
     }, 8000);
 
     // ── circadian system ──
+    let phaseOverride = null;
+
     function getPhase() {
+      if (phaseOverride) return phaseOverride;
       const h = new Date().getHours();
       if (h >= 5 && h < 11) return 'dawn';
       if (h >= 11 && h < 17) return 'day';
       if (h >= 17 && h < 20) return 'goldenHour';
       return 'night';
+    }
+
+    function setPhaseOverride(phase) {
+      phaseOverride = phase;
+      updatePhase();
+
+      const device = document.getElementById('demo-device');
+      device.classList.remove('dawn-phase', 'day-phase', 'golden-phase');
+      if (phase === 'dawn') device.classList.add('dawn-phase');
+      if (phase === 'day') device.classList.add('day-phase');
+      if (phase === 'goldenHour') device.classList.add('golden-phase');
+
+      document.querySelectorAll('.term-override-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.phase === (phase || 'auto')) btn.classList.add('active');
+      });
+
+      if (currentScreen === 'terminal') {
+        printTerm('', 'divider');
+        printTerm(`> circadian override: ${phase || 'auto'}`, 'caution');
+        printTerm(`  phase: ${getPhase()} · accent: ${getPhaseColorName()}`);
+        printTerm('', 'divider');
+      }
     }
 
     function getPhaseColor() {
