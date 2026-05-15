@@ -1088,6 +1088,13 @@
       return `${h}:${m}`;
     }
 
+    function getTimezoneInfo() {
+      const now = new Date();
+      const offset = -now.getTimezoneOffset() / 60;
+      const sign = offset >= 0 ? '+' : '';
+      return `UTC${sign}${offset} · detected hour: ${now.getHours()}`;
+    }
+
     function updatePhase() {
       const phase = getPhase();
       ['mirror-phase', 'log-phase'].forEach(id => {
@@ -1140,6 +1147,7 @@
       printTerm(`  phase       : ${getPhase()}`);
       printTerm(`  accent      : ${getPhaseColorName()}`);
       printTerm(`  time        : ${formatTime()}`);
+      printTerm(`  ${getTimezoneInfo()}`);
       printTerm('', 'divider');
       printTerm('nav --available', 'cmd');
       printTerm('  /mirror     physician mirror', 'accent');
@@ -1161,6 +1169,7 @@
           printTerm(`  phase       : ${getPhase()}`);
           printTerm(`  accent      : ${getPhaseColorName()}`);
           printTerm(`  time        : ${formatTime()}`);
+          printTerm(`  ${getTimezoneInfo()}`);
           break;
         case 'nav':
         case 'nav --available':
