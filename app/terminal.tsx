@@ -25,6 +25,7 @@ import {
   clearSurfaceVault,
   type BreathTechnique,
 } from '../utils/storage';
+import { clearSanctuary } from '../utils/sanctuary';
 
 const GREEN = '#33ff33';
 const GREEN_DIM = '#22cc22';
@@ -83,6 +84,7 @@ export default function TerminalScreen() {
   }
 
   async function handleOnboardingReset() {
+    clearSanctuary();
     await clearSurfaceVault();
     router.replace('/onboarding');
   }
