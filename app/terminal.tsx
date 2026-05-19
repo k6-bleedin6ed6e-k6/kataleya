@@ -121,7 +121,7 @@ export default function TerminalScreen() {
           showsVerticalScrollIndicator={false}
         >
           {/* boot header */}
-          <Text style={styles.boot}>KATALEYA OS v1.0.4</Text>
+          <Text style={styles.boot}>KATALEYA OS v2.4</Text>
           <Text style={styles.origin}>// origin: thinkBad-doGood-sa.my</Text>
           <View style={styles.divider} />
 
