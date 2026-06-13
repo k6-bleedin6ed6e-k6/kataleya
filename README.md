@@ -6,9 +6,9 @@
 
 ## 🌿 Try the Demo
 
-**[Open the Interactive Demo →](https://kontor.studio/kataleya-demo)**
+**[Open the Interactive Demo →](https://kontor.studio/)**
 
-Or open [`index.html`](./index.html) directly in your browser. No build, no install — just a phosphor-green void you can explore.
+Or open [`index.html`](./index.html) directly in your browser; it will redirect to the live demo. No build, no install — just a circadian-aware garden you can explore.
 
 The demo simulates four screens:
 - **Room** — the breath. Orb, Ouroboros ring, floating whispers.
