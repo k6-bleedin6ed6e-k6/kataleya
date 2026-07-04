@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kataleya — For Clinicians</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ── reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  /* ── dark zone vars (hero + fig) ── */
+  :root {
+    --void: #080809;
+    --ph: #c8f563;
+    --ph-dim: rgba(200,245,99,0.55);
+    --ph-faint: rgba(200,245,99,0.18);
+    --ph-rgb: 200,245,99;
+    --rim: #dedad4;
+    --text: rgba(226,224,220,0.88);
+    --dim: rgba(226,224,220,0.45);
+    --rule: rgba(200,245,99,0.12);
+    /* cream zone vars */
+    --ink:       #1a1a1a;
+    --ink-muted: #5a5a5a;
+    --ink-faint: #9a9a9a;
+    --cream:     #f7f4ef;
+    --rule-c:    #d8d2c8;
+    --accent-c:  #2a4a3a;
+    --accent-lt: #4a7a5a;
+    --amber:     #8a5a1a;
+    --red-soft:  #6a2a2a;
+  }
+
+  /* ── phase overrides (dark zone) ── */
+  [data-phase="nyx"]       { --ph:#eb6f92; --ph-dim:rgba(235,111,146,0.55); --ph-faint:rgba(235,111,146,0.18); --ph-rgb:235,111,146; --rule:rgba(235,111,146,0.12); }
+  [data-phase="choice"]    { --ph:#c8f563; --ph-dim:rgba(200,245,99,0.55); --ph-faint:rgba(200,245,99,0.18); --ph-rgb:200,245,99; --rule:rgba(200,245,99,0.12); }
+  [data-phase="desire"]    { --ph:#f6c177; --ph-dim:rgba(246,193,119,0.55); --ph-faint:rgba(246,193,119,0.18); --ph-rgb:246,193,119; --rule:rgba(246,193,119,0.12); }
+  [data-phase="still-pine"]{ --ph:#9ccfd8; --ph-dim:rgba(156,207,216,0.55); --ph-faint:rgba(156,207,216,0.18); --ph-rgb:156,207,216; --rule:rgba(156,207,216,0.12); }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ══════════════════════════════════════════════
+     DARK HERO — full-bleed, the app in the dark
+  ══════════════════════════════════════════════ */
+  .hero {
+    background: var(--void);
+    color: var(--text);
+    padding: 56px 48px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--cream));
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 680px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero { padding: 40px 24px 56px; }
+  }
+  .hero-copy {}
+  .hero-label {
+    font-size: 9px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--ph-dim);
+    margin-bottom: 18px;
+  }
+  .hero-wordmark {
+    font-family: 'IM Fell English', serif;
+    font-size: clamp(32px,5vw,52px);
+    color: var(--rim);
+    letter-spacing: -1px;
+    line-height: 1.05;
+    margin-bottom: 6px;
+  }
+  .hero-wordmark em { font-style: italic; color: var(--ph); }
+  .hero-tagline {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--dim);
+    margin-bottom: 28px;
+    line-height: 1.55;
+  }
+  .hero-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .hero-stat {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-stat::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ph);
+    box-shadow: 0 0 6px var(--ph);
+    flex-shrink: 0;
+  }
+  .hero-stat span { color: var(--ph-dim); }
+
+  /* fig-1: the live orb + ring side */
+  .fig-1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .fig-1-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--ph-faint);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    align-self: flex-start;
+  }
+  .fig-stage {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1;
+  }
+  .fig-stage canvas,
+  .fig-stage svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .fig-caption {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--ph-faint);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.7;
+  }
+  .fig-caption strong { color: var(--ph-dim); }
+
+  /* phase badge */
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ph-dim);
+    border: 1px solid var(--rule);
+    padding: 5px 12px;
+    margin-top: 14px;
+  }
+  .phase-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ph);
+    box-shadow: 0 0 6px var(--ph);
+    animation: pdot 2.4s ease-in-out infinite;
+  }
+  @keyframes pdot { 0%,100%{opacity:0.3}50%{opacity:1} }
+
+  /* ══════════════════════════════════════════════
+     CREAM BODY — clinical document
+  ══════════════════════════════════════════════ */
+  .doc {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 48px 100px;
+  }
+  @media (max-width: 680px) { .doc { padding: 36px 24px 80px; } }
+
+  /* nav */
+  .doc-nav {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule-c);
+    flex-wrap: wrap;
+  }
+  .doc-nav a {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .doc-nav a:hover { color: var(--ink); }
+  .doc-nav a.cta {
+    margin-left: auto;
+    color: var(--accent-c);
+    border: 1px solid var(--accent-c);
+    padding: 4px 12px;
+  }
+  .doc-nav a.cta:hover { background: var(--accent-c); color: var(--cream); }
+
+  /* lead */
+  .lead {
+    font-family: 'IM Fell English', serif;
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 40px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--rule-c);
+  }
+  .lead em { font-style: italic; color: var(--accent-c); }
+
+  /* two-col grid */
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 48px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 520px) { .body-grid { grid-template-columns: 1fr; } }
+
+  .sec-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .sec-title {
+    font-family: 'IM Fell English', serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 7px;
+    line-height: 1.3;
+  }
+  .sec-body {
+    color: var(--ink-muted);
+    font-size: 12px;
+    line-height: 1.75;
+  }
+
+  /* phase names inline */
+  .ph-nyx       { color: #eb6f92; font-weight: 700; }
+  .ph-choice    { color: #4a8a18; font-weight: 700; } /* darker for cream bg */
+  .ph-desire    { color: #8a5a00; font-weight: 700; } /* darker amber for cream bg */
+  .ph-still-pine{ color: #2a7a8a; font-weight: 700; } /* darker teal for cream bg */
+
+  /* 2am callout */
+  .callout {
+    background: var(--accent-c);
+    color: var(--cream);
+    padding: 28px 32px;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .callout::before {
+    content: '"';
+    font-family: 'IM Fell English', serif;
+    font-size: 120px;
+    color: rgba(255,255,255,0.07);
+    position: absolute;
+    top: -20px; left: 14px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .callout-text {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.6;
+    position: relative; z-index: 1;
+  }
+  .callout-sub {
+    font-size: 11px;
+    color: rgba(247,244,239,0.6);
+    margin-top: 12px;
+    letter-spacing: .5px;
+    position: relative; z-index: 1;
+  }
+
+  /* features grid */
+  .sec-label-full { display: block; margin-bottom: 14px; }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule-c);
+    border: 1px solid var(--rule-c);
+    margin-bottom: 40px;
+  }
+  @media (max-width: 520px) { .features { grid-template-columns: 1fr 1fr; } }
+  .feature {
+    background: var(--cream);
+    padding: 18px 16px;
+  }
+  .feature-glyph {
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    color: var(--accent-lt);
+    margin-bottom: 7px;
+    display: block;
+  }
+  .feature-name {
+    font-family: 'IM Fell English', serif;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .feature-desc {
+    font-size: 11px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  /* privacy */
+  .privacy-bar {
+    border: 1px solid var(--rule-c);
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .privacy-glyph { font-family: 'IM Fell English', serif; font-size: 36px; color: var(--accent-c); line-height: 1.1; }
+  .privacy-title { font-family: 'IM Fell English', serif; font-size: 15px; color: var(--ink); margin-bottom: 5px; }
+  .privacy-body  { font-size: 11px; color: var(--ink-muted); line-height: 1.7; }
+  .privacy-points { display: flex; flex-wrap: wrap; gap: 7px 22px; margin-top: 12px; }
+  .privacy-point { font-size: 10px; color: var(--ink-muted); }
+  .privacy-point::before { content: '✦ '; color: var(--accent-lt); }
+
+  /* notice */
+  .notice {
+    border-left: 3px solid var(--amber);
+    padding: 14px 18px;
+    margin-bottom: 40px;
+    background: rgba(138,90,26,0.04);
+  }
+  .notice-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; display: block; }
+  .notice-text  { font-size: 12px; color: var(--ink-muted); line-height: 1.7; }
+
+  /* pilot */
+  .pilot { border: 1px solid var(--ink); padding: 28px 32px; margin-bottom: 40px; }
+  .pilot-title { font-family: 'IM Fell English', serif; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+  .pilot-sub   { font-size: 12px; color: var(--ink-muted); margin-bottom: 20px; line-height: 1.7; }
+  .pilot-steps { display: flex; flex-direction: column; gap: 12px; }
+  .pilot-step  { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; }
+  .pilot-num   { font-family: 'IM Fell English', serif; font-size: 20px; color: var(--accent-lt); line-height: 1.2; }
+  .pilot-text  { font-size: 12px; color: var(--ink-muted); line-height: 1.7; padding-top: 2px; }
+
+  /* footer */
+  .doc-footer {
+    border-top: 1px solid var(--rule-c);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .doc-footer-left { font-size: 10px; color: var(--ink-faint); line-height: 1.9; }
+  .doc-footer-word { font-family: 'IM Fell English', serif; font-size: 22px; color: var(--ink-faint); letter-spacing: -.5px; }
+  .phase-tag { font-size: 9px; letter-spacing: 2px; margin-top: 6px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ DARK HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="hero-label">for clinicians · kataleya</div>
+      <div class="hero-wordmark">kata<em>leya</em></div>
+      <div class="hero-tagline">a between-session companion<br>for clients in recovery</div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span>fully local</span> — no data leaves the device</div>
+        <div class="hero-stat"><span>zero HIPAA exposure</span> — no account, no cloud</div>
+        <div class="hero-stat"><span>circadian-aware</span> — adapts to time of day</div>
+        <div class="hero-stat"><span>2am-ready</span> — built for the highest-risk window</div>
+      </div>
+      <div class="phase-badge">
+        <div class="phase-dot"></div>
+        <span id="phase-label-hero">loading phase</span>
+      </div>
+    </div>
+
+    <div class="fig-1">
+      <div class="fig-1-label">fig. 1 — what your client sees right now</div>
+      <div class="fig-stage" id="fig-stage">
+        <canvas id="fig-ouro" aria-hidden="true"></canvas>
+        <svg id="fig-orb" viewBox="0 0 200 200" style="width:46%;height:46%;position:absolute;top:27%;left:27%;"></svg>
+      </div>
+      <div class="fig-caption">
+        <strong>live · running in this page</strong><br>
+        the ouroboros ring marks the hour.<br>
+        the orb breathes at the circadian rate.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CREAM DOCUMENT ═══════════ -->
+<div class="doc">
+
+  <nav class="doc-nav">
+    <a href="#what-it-is">what it is</a>
+    <a href="#what-clients-experience">client experience</a>
+    <a href="#privacy">privacy</a>
+    <a href="#pilot">pilot program</a>
+    <a href="index.html" class="cta">open live demo →</a>
+  </nav>
+
+  <p class="lead" id="what-it-is">
+    Your clients do not struggle only during business hours.
+    The moment of highest risk is often <em>2am</em> — when the prefrontal cortex is
+    at its lowest, isolation is complete, and you are not available.
+    Kataleya is built for that moment.
+  </p>
+
+  <div class="body-grid">
+    <div>
+      <span class="sec-label">what it is</span>
+      <div class="sec-title">A private space between sessions</div>
+      <p class="sec-body">
+        Kataleya is a mobile application for people in recovery from substance use
+        and behavioral dependencies. It gives clients a structured, private space
+        to check in with themselves — mood, journal, breathing — between your appointments.
+        It is not a diagnostic tool. It does not replace therapy.
+      </p>
+    </div>
+    <div>
+      <span class="sec-label">what it is not</span>
+      <div class="sec-title">Not a clinical platform</div>
+      <p class="sec-body">
+        Kataleya does not generate clinical reports. It does not share client data
+        with you or anyone else. It does not make assessments or recommendations.
+        It is a companion — the equivalent of a private journal that also
+        knows what time it is.
+      </p>
+    </div>
+    <div>
+      <span class="sec-label">the circadian engine</span>
+      <div class="sec-title">The app knows what time it is</div>
+      <p class="sec-body">
+        Most apps treat 2am and 2pm identically. Kataleya does not. Its circadian
+        engine segments the day into four named phases —
+        <span class="ph-choice">choice</span> (morning),
+        <span class="ph-desire">desire</span> (afternoon),
+        <span class="ph-still-pine">still-pine</span> (evening),
+        <span class="ph-nyx">nyx</span> (night) — and adapts its tone, prompts,
+        and visual presence accordingly. Night mode is quieter, more grounding,
+        and more attuned to vulnerability.
+      </p>
+    </div>
+    <div>
+      <span class="sec-label">the sponsor relationship</span>
+      <div class="sec-title">Human connection, preserved</div>
+      <p class="sec-body">
+        Clients can connect one trusted person — a sponsor, a family member —
+        through an end-to-end encrypted channel. That person receives only what
+        the client explicitly sends. The relay server sees only ciphertext.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-text">
+      The prefrontal cortex — the seat of impulse control and reasoned decision-making
+      — is measurably less active in the late-night hours. Relapse risk is
+      disproportionately high between midnight and 4am. Kataleya does not keep
+      business hours.
+    </div>
+    <div class="callout-sub">
+      Circadian neuroscience · addiction medicine literature · built into the architecture
+    </div>
+  </div>
+
+  <span class="sec-label sec-label-full" id="what-clients-experience">what your clients experience</span>
+  <div class="features">
+    <div class="feature">
+      <span class="feature-glyph">◎</span>
+      <div class="feature-name">Breathing</div>
+      <p class="feature-desc">4-7-8 guided breathing with a visual orb. Phase-aware timing. No instruction required.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-glyph">✦</span>
+      <div class="feature-name">Journal prompts</div>
+      <p class="feature-desc">72 prompts weighted by time of day and recent mood. Never the same question twice in a row.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-glyph">·</span>
+      <div class="feature-name">Mood check-ins</div>
+      <p class="feature-desc">Six states, logged locally with circadian phase. Patterns surface over time — privately.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-glyph">〰</span>
+      <div class="feature-name">Urge surfing</div>
+      <p class="feature-desc">A timed, visual exercise for riding out cravings without acting on them.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-glyph">∿</span>
+      <div class="feature-name">Grounding</div>
+      <p class="feature-desc">5-4-3-2-1 sensory grounding. Activates when the client needs to anchor.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-glyph">○</span>
+      <div class="feature-name">Sobriety tracking</div>
+      <p class="feature-desc">Second-precise. Ten milestone markers using organic metaphor — seasons, not streaks.</p>
+    </div>
+  </div>
+
+  <div class="privacy-bar" id="privacy">
+    <div class="privacy-glyph">⊙</div>
+    <div>
+      <div class="privacy-title">Your liability is zero. By design.</div>
+      <p class="privacy-body">
+        Kataleya stores all client data exclusively on the client's device.
+        Nothing is transmitted to any server. There is no account, no cloud sync,
+        no analytics engine. We are architecturally incapable of accessing client data.
+        Recommending Kataleya creates no HIPAA obligation for your practice.
+      </p>
+      <div class="privacy-points">
+        <span class="privacy-point">no analytics</span>
+        <span class="privacy-point">no cloud storage</span>
+        <span class="privacy-point">no user accounts</span>
+        <span class="privacy-point">no crash reporting</span>
+        <span class="privacy-point">no advertising</span>
+        <span class="privacy-point">end-to-end encrypted messaging</span>
+        <span class="privacy-point">burn ritual — complete data destruction on demand</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <span class="notice-label">Important</span>
+    <p class="notice-text">
+      Kataleya is not a crisis intervention tool and should not be presented as one.
+      It does not connect clients to emergency services and is not monitored by any
+      person or system. Clients in acute crisis should contact emergency services,
+      a crisis line, or reach you directly. Please communicate this clearly
+      when recommending the app.
+    </p>
+  </div>
+
+  <div class="pilot" id="pilot">
+    <div class="pilot-title">Interested in a clinical pilot?</div>
+    <p class="pilot-sub">
+      We are currently inviting a small number of practicing clinicians to participate
+      in a structured pilot program — no cost, no obligation, no data collection on our end.
+    </p>
+    <div class="pilot-steps">
+      <div class="pilot-step">
+        <div class="pilot-num">1</div>
+        <div class="pilot-text">Recommend Kataleya to 5–10 willing clients for 6–8 weeks alongside your existing treatment approach.</div>
+      </div>
+      <div class="pilot-step">
+        <div class="pilot-num">2</div>
+        <div class="pilot-text">Share qualitative observations at the end — what you noticed, what clients reported, what could be better.</div>
+      </div>
+      <div class="pilot-step">
+        <div class="pilot-num">3</div>
+        <div class="pilot-text">Your feedback directly shapes the next version of the app. Participating clinicians are acknowledged in our clinical advisory materials.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <div class="doc-footer-left">
+      Kataleya will be available on iOS and Android.<br />
+      For clinician inquiries: autopsy@protonmail.com<br />
+      Architecture documentation available on request.
+      <div class="phase-tag" id="phase-tag-footer"></div>
+    </div>
+    <div class="doc-footer-word">kataleya</div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+/* ── phase engine ── */
+const PHASES = {
+  nyx:       { key:'nyx',        accent:'#eb6f92', shadow:'#4a1a2a', highlight:'#f0a0b8', ambient:'#0a0608', rim:'#f8e8ee', breathMs:4200, displayName:'nyx' },
+  choice:    { key:'choice',     accent:'#c8f563', shadow:'#3a5800', highlight:'#deff88', ambient:'#060a02', rim:'#f0ffe8', breathMs:3000, displayName:'choice' },
+  desire:    { key:'desire',     accent:'#f6c177', shadow:'#7a4800', highlight:'#ffdaa0', ambient:'#0a0702', rim:'#fff4e8', breathMs:3600, displayName:'desire' },
+  'still-pine':{ key:'still-pine', accent:'#9ccfd8', shadow:'#1a4a58', highlight:'#c0eef8', ambient:'#020a10', rim:'#e8f8ff', breathMs:4800, displayName:'still-pine' },
+};
+function getPhaseKey(h){ return h>=21||h<6?'nyx':h<11?'choice':h<17?'desire':'still-pine'; }
+function palette(){ return PHASES[phaseKey]; }
+
+let phaseKey = getPhaseKey(new Date().getHours());
+document.documentElement.setAttribute('data-phase', phaseKey);
+
+/* update hero phase label */
+const phaseNames = { nyx:'#eb6f92', choice:'#c8f563', desire:'#f6c177', 'still-pine':'#9ccfd8' };
+const heroLabel = document.getElementById('phase-label-hero');
+const footerTag = document.getElementById('phase-tag-footer');
+function updatePhaseLabel(){
+  const p = palette();
+  if(heroLabel){
+    heroLabel.textContent = p.displayName;
+    heroLabel.style.color = p.accent;
+  }
+  if(footerTag){
+    footerTag.textContent = p.displayName;
+    footerTag.style.color = p.accent;
+  }
+}
+updatePhaseLabel();
+
+/* ── global breath state ── */
+let breath = 0.5;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+(function breathLoop(){
+  let t0 = performance.now();
+  function tick(ts){
+    const p = palette();
+    const bms = p.breathMs;
+    breath = 0.5 + 0.5 * Math.sin((ts - t0) / bms * Math.PI * 2);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* ── mini orb ── */
+function buildOrb(svg){
+  const p = palette();
+  const uid = 'o'+Math.random().toString(36).slice(2,5);
+  svg.innerHTML = `
+    <defs>
+      <radialGradient id="${uid}-a" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="${p.rim}" stop-opacity="0.9"/>
+        <stop offset="40%" stop-color="${p.highlight}" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="${p.accent}" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="${uid}-b" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="${p.accent}" stop-opacity="0"/>
+        <stop offset="68%" stop-color="${p.accent}" stop-opacity="0.07"/>
+        <stop offset="100%" stop-color="${p.accent}" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="${uid}-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <circle cx="100" cy="100" r="92" fill="url(#${uid}-b)"/>
+    <circle class="orb-mem" cx="100" cy="100" r="66" fill="none" stroke="${p.accent}" stroke-opacity="0.12" stroke-width="0.8"/>
+    <circle class="orb-shell" cx="100" cy="100" r="52" fill="none" stroke="${p.accent}" stroke-opacity="0.35" stroke-width="0.8" filter="url(#${uid}-glow)"/>
+    <circle class="orb-nuc" cx="100" cy="100" r="22" fill="url(#${uid}-a)" filter="url(#${uid}-glow)"/>
+    <circle class="orb-core" cx="100" cy="100" r="7" fill="${p.rim}" opacity="0.8"/>`;
+  svg._uid = uid;
+}
+
+function animateOrb(svg){
+  if(!svg.isConnected) return;
+  const p = palette();
+  const shell = svg.querySelector('.orb-shell');
+  const nuc   = svg.querySelector('.orb-nuc');
+  const core  = svg.querySelector('.orb-core');
+  const mem   = svg.querySelector('.orb-mem');
+  if(!shell) return;
+  const br = breath;
+  if(!reduceMotion){
+    const r = 50 + br*5;
+    shell.setAttribute('r', r.toFixed(1));
+    shell.setAttribute('stroke-opacity', (0.25+br*0.35).toFixed(2));
+    nuc.setAttribute('r', (20+br*6).toFixed(1));
+    core.setAttribute('r', (5.5+(1-br)*3).toFixed(1));
+    mem.setAttribute('stroke-opacity', (0.08+br*0.1).toFixed(2));
+    mem.setAttribute('r', (64+br*4).toFixed(1));
+  }
+}
+
+/* ── canvas ouroboros (mini) ── */
+function hexRgba(hex,a){
+  hex=hex.replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const n=parseInt(hex,16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a.toFixed(3)})`;
+}
+
+function buildMiniOuro(canvas){
+  const dpr = Math.min(window.devicePixelRatio||1,2);
+  const parent = canvas.parentElement;
+  const size = Math.min(parent.clientWidth||280, parent.clientHeight||280, 280);
+  canvas.width  = Math.round(size*dpr);
+  canvas.height = Math.round(size*dpr);
+  canvas.style.width  = size+'px';
+  canvas.style.height = size+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  canvas._ctx  = ctx;
+  canvas._size = size;
+}
+
+function animateMiniOuro(canvas){
+  if(!canvas._ctx||!canvas.isConnected) return;
+  const ctx  = canvas._ctx;
+  const size = canvas._size;
+  const cx=size/2, cy=size/2, R=size*0.44;
+  const p = palette();
+  const d = new Date();
+  const hourF = d.getHours()+d.getMinutes()/60+d.getSeconds()/3600;
+  const nowAngle = (hourF/24)*Math.PI*2-Math.PI/2;
+  const SEGS=72;
+  const tailLen=SEGS*(7/24);
+  const nowSeg=(hourF/24)*SEGS;
+  const br = breath;
+
+  ctx.clearRect(0,0,size,size);
+
+  // ring
+  const segRad=(Math.PI*2)/SEGS;
+  for(let i=0;i<SEGS;i++){
+    const a0=(i/SEGS)*Math.PI*2-Math.PI/2;
+    const a1=a0+segRad*0.82;
+    let behind=nowSeg-i; if(behind<0) behind+=SEGS;
+    let alpha;
+    if(behind<=tailLen){
+      const t=1-behind/tailLen;
+      alpha=0.07+Math.pow(t,1.8)*(0.60+br*0.25);
+    } else {
+      alpha=0.04+br*0.02;
+    }
+    ctx.beginPath(); ctx.arc(cx,cy,R,a0,a1);
+    ctx.strokeStyle=hexRgba(p.accent,alpha);
+    ctx.lineWidth=behind<=tailLen*0.12?2.0+br*0.8:1.0;
+    ctx.lineCap='round';
+    ctx.stroke();
+  }
+
+  // head glow
+  const hx=cx+Math.cos(nowAngle)*R;
+  const hy=cy+Math.sin(nowAngle)*R;
+  const hGrad=ctx.createRadialGradient(hx,hy,0,hx,hy,10+br*5);
+  hGrad.addColorStop(0,hexRgba(p.rim,0.9));
+  hGrad.addColorStop(0.4,hexRgba(p.highlight,0.5));
+  hGrad.addColorStop(1,'transparent');
+  ctx.shadowColor=p.accent; ctx.shadowBlur=10+br*7;
+  ctx.fillStyle=hGrad;
+  ctx.beginPath(); ctx.arc(hx,hy,10+br*4,0,Math.PI*2); ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle=p.rim;
+  ctx.beginPath(); ctx.arc(hx,hy,2.6+br*1.2,0,Math.PI*2); ctx.fill();
+}
+
+/* ── render loop ── */
+const figOuro = document.getElementById('fig-ouro');
+const figOrb  = document.getElementById('fig-orb');
+buildMiniOuro(figOuro);
+buildOrb(figOrb);
+
+let lastPhase = phaseKey;
+(function loop(){
+  // phase check
+  const np = getPhaseKey(new Date().getHours());
+  if(np !== lastPhase){
+    lastPhase = np; phaseKey = np;
+    document.documentElement.setAttribute('data-phase',np);
+    buildOrb(figOrb);
+    updatePhaseLabel();
+  }
+  animateMiniOuro(figOuro);
+  animateOrb(figOrb);
+  requestAnimationFrame(loop);
+})();
+
+// rebuild on resize
+window.addEventListener('resize', ()=>{ buildMiniOuro(figOuro); }, { passive:true });
+</script>
+</body>
+</html>
