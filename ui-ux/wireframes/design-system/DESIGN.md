@@ -115,6 +115,17 @@ spacing:
 
 ---
 
+**Status (2026-07-06):** native mobile dev on this repo is backlogged
+indefinitely. The web app at kontor.studio is the active product — check
+there first for current feature state before assuming this repo reflects
+it. This file's circadian hour boundaries were corrected 2026-07-06
+(`getPhaseKey` in `constants/palettes.ts` had the same off-by-one-phase
+bug found across several other properties that day); the rest of this
+document has not been re-audited against the web app's actual current
+feature set.
+
+---
+
 ## 1. PROJECT
 
 **Kataleya** is a circadian-aware recovery companion. One screen, four phases, no metrics dashboard. The garden is a living presence that holds you at 2am.

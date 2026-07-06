@@ -85,8 +85,8 @@ export const BASE = {
 };
 
 export function getPhaseKey(hour: number): PhaseKey {
-  if (hour >= 5 && hour < 11)  return 'dawn';
+  if (hour >= 6 && hour < 11)  return 'dawn';
   if (hour >= 11 && hour < 17) return 'day';
-  if (hour >= 17 && hour < 20) return 'goldenHour';
+  if (hour >= 17 && hour < 21) return 'goldenHour';
   return 'night';
 }

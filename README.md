@@ -4,6 +4,16 @@
 
 ---
 
+**Status (2026-07-06): the web app is the active product.** Native mobile
+development (this repo) is backlogged indefinitely — no phone to test on,
+no reason to force it. The web app at kontor.studio is where real feature
+work is happening (breathing exercise, urge-surfing, Butterfly Card,
+craving-window awareness, Mercury Caduceus ambience — none of that has
+been ported back here). This repo stays as reference for the mobile
+architecture and design system; it isn't where new work lands right now.
+
+---
+
 ## 🌿 Try the Demo
 
 **[Open the Interactive Demo →](https://kontor.studio/)**
@@ -75,10 +85,10 @@ The orb alone has 5 SVG membrane layers: haze → body → rim → iris → nucl
 
 | Phase | Time | Color family |
 |-------|------|-------------|
-| Dawn | 05:00 – 10:59 | Warm amber `#d4a574` |
+| Dawn | 06:00 – 10:59 | Warm amber `#d4a574` |
 | Day | 11:00 – 16:59 | Cool mint `#8fb8a8` |
-| Golden Hour | 17:00 – 19:59 | Rich gold `#c9a959` |
-| Night | 20:00 – 04:59 | Deep slate `#8090b0` |
+| Golden Hour | 17:00 – 20:59 | Rich gold `#c9a959` |
+| Night | 21:00 – 05:59 | Deep slate `#8090b0` |
 
 ---
 

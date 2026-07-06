@@ -5,6 +5,18 @@
 
 ---
 
+**Status (2026-07-06):** the philosophy below is current and hasn't
+drifted. What has moved on is *where* it's being built — native mobile
+(this repo) is backlogged indefinitely; the web app at kontor.studio is
+where the mission is actually being expressed right now (Mercury River,
+the Ouroboros ring, the burn ritual, urge-surfing, and more all live
+there, built directly from this philosophy). Some named components below
+(Fortress, X25519 handshake, the sponsor E2E channel) were real and
+shipped once, then dropped in a later rebuild — see
+`~/vault/khaos-lab/kataleya/README.md` for the full accounting.
+
+---
+
 ### 1. PHILOSOPHY
 Kataleya is a privacy-first, circadian-aware recovery companion. It rejects performative metrics in favor of "Attunement by Design." It is built for human fragility, providing a non-judgmental "friend" that knows the user better than they know themselves, specifically for the high-risk 2am window.
 
