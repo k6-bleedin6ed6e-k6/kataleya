@@ -4,19 +4,20 @@
 
 ---
 
-**Status (2026-07-06): the web app is the active product.** Native mobile
+**Status (2026-07-07): the web app is the active product.** Native mobile
 development (this repo) is backlogged indefinitely — no phone to test on,
-no reason to force it. The web app at kontor.studio is where real feature
-work is happening (breathing exercise, urge-surfing, Butterfly Card,
-craving-window awareness, Mercury Caduceus ambience — none of that has
-been ported back here). This repo stays as reference for the mobile
-architecture and design system; it isn't where new work lands right now.
+no reason to force it. The web app at kontor.studio/kataleya-demo/ is where
+real feature work is happening (breathing exercise, urge-surfing, Butterfly
+Card, craving-window awareness, 5-4-3-2-1 grounding exercise, clinician-PIN
+mirror lock, Mercury Caduceus ambience — none of that has been ported back
+here). This repo stays as reference for the mobile architecture and design
+system; it isn't where new work lands right now.
 
 ---
 
 ## 🌿 Try the Demo
 
-**[Open the Interactive Demo →](https://kontor.studio/)**
+**[Open the Interactive Demo →](https://kontor.studio/kataleya-demo/)**
 
 Or open [`index.html`](./index.html) directly in your browser; it will redirect to the live demo. No build, no install — just a circadian-aware garden you can explore.
 
