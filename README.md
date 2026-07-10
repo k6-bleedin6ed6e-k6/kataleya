@@ -86,19 +86,29 @@ The orb alone has 5 SVG membrane layers: haze → body → rim → iris → nucl
 
 ### Circadian phases
 
-**As shipped (web app, canonical across kontor.studio):** the phases were renamed
-2026-07-04 from dawn/day/goldenHour/night to choice/desire/still-pine/nyx — same
-hour windows, same design intent, names aligned to the app's existential voice
-instead of literal time-of-day. This repo's own `constants/palettes.ts` (native
-RN source) still uses the old dawn/day/goldenHour/night keys — it hasn't been
-ported to the canonical naming since native dev is backlogged (see Status above).
+Two layers of naming, not a rename history — both are current, for different
+audiences. The codebase speaks its own internal "ouroboros" vocabulary
+(choice/desire/still-pine/nyx, canonical across kontor.studio since
+2026-07-04 — this is what's in `circadian.js`, this repo's own `clinician.html`,
+and every page that shares the phase engine). The product itself, as shipped
+and described to general users, names the same four windows in plain
+time-of-day language — dawn, day, golden hour, night. This repo's own
+`constants/palettes.ts` (native RN source) still keys its data by the plain
+names directly, which happens to match the user-facing language exactly.
 
-| Phase | Time | Color family |
-|-------|------|-------------|
-| **choice** *(was Dawn)* | 06:00 – 10:59 | `#c8f563` |
-| **desire** *(was Day)* | 11:00 – 16:59 | `#f6c177` |
-| **still-pine** *(was Golden Hour)* | 17:00 – 20:59 | `#9ccfd8` |
-| **nyx** *(was Night)* | 21:00 – 05:59 | `#eb6f92` |
+| Dawn / Day / Golden Hour / Night | Ouroboros (code) name | Time | Color |
+|---|---|---|---|
+| Dawn | choice | 06:00 – 10:59 | `#c8f563` |
+| Day | desire | 11:00 – 16:59 | `#f6c177` |
+| Golden Hour | still-pine | 17:00 – 20:59 | `#9ccfd8` |
+| Night | nyx | 21:00 – 05:59 | `#eb6f92` |
+
+**Worth knowing:** the shipped web app's Terminal screen currently displays the
+code name itself (e.g. "choice (morning)") rather than the plain product name
+("dawn") — verified live 2026-07-09. If the intent is for general users to
+only ever see dawn/day/golden hour/night, that display text still needs
+updating; this section documents the intended naming split, not a claim that
+every surface already honors it.
 
 ### The ouroboros ring
 
