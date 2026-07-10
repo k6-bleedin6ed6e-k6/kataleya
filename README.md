@@ -103,7 +103,7 @@ to a general reader, the family name is the human-readable version:
 |---|---|---|---|
 | Dawn | choice | rose pine gold | 06:00 – 10:59 |
 | Day | desire | midnight ocean | 11:00 – 16:59 |
-| Golden Hour | still-pine | rose pine dawn | 17:00 – 20:59 |
+| Golden Hour | still-pine | rose pine rose | 17:00 – 20:59 |
 | Night | nyx | rose pine iris | 21:00 – 05:59 |
 
 **Worth knowing:** the shipped web app's Terminal screen currently displays the
