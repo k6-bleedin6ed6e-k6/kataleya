@@ -100,6 +100,21 @@ ported to the canonical naming since native dev is backlogged (see Status above)
 | **still-pine** *(was Golden Hour)* | 17:00 – 20:59 | `#9ccfd8` |
 | **nyx** *(was Night)* | 21:00 – 05:59 | `#eb6f92` |
 
+### The ouroboros ring
+
+The ring around the orb isn't a 24-hour clock face — its glowing point is a
+sun-position marker. Noon sits at the top (the sun overhead), midnight at the
+bottom (its nadir), dawn rising on one side and dusk setting on the other. A
+7-hour comet-tail trails behind it, fading. There's no moonrise/moonset
+tracking — the philosophy is solar position only, matching how circadian
+rhythm actually works.
+
+**Known divergence:** the shipped web app (`kataleya-demo/index.html`) uses
+noon-at-top/midnight-at-bottom. This repo's own `components/ouroboros-ring.tsx`
+computes the same angle without the `+90°`/`-90°` offset applied the same way,
+which puts noon at the bottom and midnight at the top instead — inverted from
+the shipped version. Not yet reconciled; native dev is backlogged (see Status).
+
 ---
 
 ## Running locally
