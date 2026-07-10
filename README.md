@@ -96,12 +96,15 @@ time-of-day language — dawn, day, golden hour, night. This repo's own
 `constants/palettes.ts` (native RN source) still keys its data by the plain
 names directly, which happens to match the user-facing language exactly.
 
-| Dawn / Day / Golden Hour / Night | Ouroboros (code) name | Time | Color |
+Color families carry their own names too — hex digits read as hieroglyphics
+to a general reader, the family name is the human-readable version:
+
+| Dawn / Day / Golden Hour / Night | Ouroboros (code) name | Color family | Time |
 |---|---|---|---|
-| Dawn | choice | 06:00 – 10:59 | `#c8f563` |
-| Day | desire | 11:00 – 16:59 | `#f6c177` |
-| Golden Hour | still-pine | 17:00 – 20:59 | `#9ccfd8` |
-| Night | nyx | 21:00 – 05:59 | `#eb6f92` |
+| Dawn | choice | rose pine gold | 06:00 – 10:59 |
+| Day | desire | midnight ocean | 11:00 – 16:59 |
+| Golden Hour | still-pine | rose pine dawn | 17:00 – 20:59 |
+| Night | nyx | rose pine iris | 21:00 – 05:59 |
 
 **Worth knowing:** the shipped web app's Terminal screen currently displays the
 code name itself (e.g. "choice (morning)") rather than the plain product name
