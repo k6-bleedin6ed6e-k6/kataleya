@@ -9,9 +9,11 @@ development (this repo) is backlogged indefinitely — no phone to test on,
 no reason to force it. The web app at kontor.studio/kataleya-demo/ is where
 real feature work is happening (breathing exercise, urge-surfing, Butterfly
 Card, craving-window awareness, 5-4-3-2-1 grounding exercise, clinician-PIN
-mirror lock, Mercury Caduceus ambience — none of that has been ported back
-here). This repo stays as reference for the mobile architecture and design
-system; it isn't where new work lands right now.
+mirror lock, Mercury Caduceus ambience, ambient cocoon rain, river-ripples
+pulse on the orb, growth-stage + phase-mood insight on the Mirror screen,
+copy-paste backup codes — none of that has been ported back here). This repo
+stays as reference for the mobile architecture and design system; it isn't
+where new work lands right now.
 
 ---
 
@@ -77,19 +79,26 @@ The visual language is *bioluminescent organism at 2am* — deep ocean meets sta
 
 - **Light is the subject.** Every component is about how light moves, pools, fades, pulses.
 - **Depth through translucency.** 3-5 translucent gradient layers instead of one opaque fill.
-- **Phase color is sacred.** Four circadian phases (dawn/day/goldenHour/night), each with a full color family: accent, shadow, highlight, ambient, rim.
+- **Phase color is sacred.** Four circadian phases, each with a full color family: accent, shadow, highlight, ambient, rim.
 - **No flat fills.** Every surface is gradient, glow, or shadow.
 
 The orb alone has 5 SVG membrane layers: haze → body → rim → iris → nucleus. Directional light from upper-left. Off-center specular. It breathes independently of the aura — two rhythms drifting and recombining.
 
 ### Circadian phases
 
+**As shipped (web app, canonical across kontor.studio):** the phases were renamed
+2026-07-04 from dawn/day/goldenHour/night to choice/desire/still-pine/nyx — same
+hour windows, same design intent, names aligned to the app's existential voice
+instead of literal time-of-day. This repo's own `constants/palettes.ts` (native
+RN source) still uses the old dawn/day/goldenHour/night keys — it hasn't been
+ported to the canonical naming since native dev is backlogged (see Status above).
+
 | Phase | Time | Color family |
 |-------|------|-------------|
-| Dawn | 06:00 – 10:59 | Warm amber `#d4a574` |
-| Day | 11:00 – 16:59 | Cool mint `#8fb8a8` |
-| Golden Hour | 17:00 – 20:59 | Rich gold `#c9a959` |
-| Night | 21:00 – 05:59 | Deep slate `#8090b0` |
+| **choice** *(was Dawn)* | 06:00 – 10:59 | `#c8f563` |
+| **desire** *(was Day)* | 11:00 – 16:59 | `#f6c177` |
+| **still-pine** *(was Golden Hour)* | 17:00 – 20:59 | `#9ccfd8` |
+| **nyx** *(was Night)* | 21:00 – 05:59 | `#eb6f92` |
 
 ---
 
