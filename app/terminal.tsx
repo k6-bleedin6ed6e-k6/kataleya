@@ -26,6 +26,19 @@ import {
   type BreathTechnique,
 } from '../utils/storage';
 import { clearSanctuary } from '../utils/sanctuary';
+import type { PhaseKey } from '../constants/palettes';
+
+// The canonical "ouroboros" name per phase, per this project's own README —
+// palette.existential (v1, backward-compat) drifted from this over time
+// (day→'action', goldenHour→'desire', night→'void' — none match). Deriving
+// the display straight from `phase` instead of the drifted field keeps both
+// the plain name and the real canonical name visible and correct together.
+const OUROBOROS_NAME: Record<PhaseKey, string> = {
+  dawn: 'choice',
+  day: 'desire',
+  goldenHour: 'still-pine',
+  night: 'nyx',
+};
 
 const GREEN = '#33ff33';
 const GREEN_DIM = '#22cc22';
@@ -134,9 +147,8 @@ export default function TerminalScreen() {
               <Text style={styles.cmd}>status --circadian</Text>
             </View>
             <View style={styles.outBlock}>
-              <Text style={styles.out}>  phase       : {phase}</Text>
+              <Text style={styles.out}>  phase       : {phase} ({OUROBOROS_NAME[phase]})</Text>
               <Text style={styles.out}>  accent      : {palette.accent}</Text>
-              <Text style={styles.out}>  existential : {palette.existential}</Text>
               <Text style={styles.out}>  time        : {ts}</Text>
             </View>
           </View>

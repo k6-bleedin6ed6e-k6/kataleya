@@ -169,4 +169,7 @@ export function getAllJournalEntries(limit = 50): JournalEntry[] {
 // ------------------------------------------------------------------
 export function clearSanctuary(): void {
   db.execSync('DELETE FROM mood_logs; DELETE FROM urge_logs; DELETE FROM journal_entries;')
+  // VACUUM reclaims the freed disk space — the burn ritual is supposed to
+  // feel like real destruction, not just rows marked deleted.
+  db.execSync('VACUUM;')
 }

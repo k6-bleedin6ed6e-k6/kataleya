@@ -20,7 +20,7 @@ import Svg, { Circle } from 'react-native-svg'
 
 import { useCircadian } from '../hooks/use-circadian'
 import { useReEntry } from '../hooks/use-re-entry'
-import { getItem, getAttunement } from '../utils/storage'
+import { getAttunement } from '../utils/storage'
 import { selectPhrase } from '../constants/phrases'
 
 const { width: W, height: H } = Dimensions.get('window')
@@ -138,10 +138,7 @@ export default function RoomScreen() {
   const [sobrietyDays, setSobrietyDays] = useState<number | null>(null)
 
   useEffect(() => {
-    getItem<boolean>('has_seen_onboarding').then((seen) => {
-      if (!seen) router.replace('/onboarding')
-    })
-
+    // Onboarding gate now lives in app/_layout.tsx — global, not per-screen.
     getAttunement().then((att) => {
       if (att?.sobriety_date) {
         const start = new Date(att.sobriety_date)

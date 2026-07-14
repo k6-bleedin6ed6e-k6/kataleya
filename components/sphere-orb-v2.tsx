@@ -5,11 +5,12 @@
 // the aura blooms and fades (45% scale, 0→18% opacity).
 // they run at slightly different rates — organic, not mechanical.
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Animated, Pressable, StyleSheet, View, type ViewStyle } from 'react-native'
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg'
 import * as Haptics from 'expo-haptics'
 import { PHASES, type PhaseKey } from '../constants/palettes'
+import { getItem } from '../utils/storage'
 
 export type OrbVariant = 'lung' | 'iris' | 'etched'
 
@@ -33,6 +34,21 @@ export function SphereOrbV2({ phase, size, speed, variant = 'lung', style, onPre
 
   const breathBody = useRef(new Animated.Value(0)).current
   const breathGlow = useRef(new Animated.Value(0)).current
+
+  // Defaults true (matches prior always-on behavior) until the real
+  // preference loads, then respects it — a user who's turned haptics off
+  // in Settings should never feel them here.
+  const [hapticsEnabled, setHapticsEnabled] = useState(true)
+  useEffect(() => {
+    getItem<boolean>('haptics_enabled').then((v) => {
+      if (v !== null) setHapticsEnabled(v)
+    })
+  }, [])
+
+  const handlePress = () => {
+    if (hapticsEnabled) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    onPress?.()
+  }
 
   useEffect(() => {
     const a = Animated.loop(Animated.sequence([
@@ -76,8 +92,7 @@ export function SphereOrbV2({ phase, size, speed, variant = 'lung', style, onPre
       {/* body — barely moves. the light is the breath, not the movement. */}
       <Animated.View style={[StyleSheet.absoluteFillObject, { transform: [{ scale: bodyScale }] }]}>
         <Pressable
-          onPress={onPress}
-          onPressIn={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+          onPress={handlePress}
           onLongPress={onLongPress}
           style={StyleSheet.absoluteFillObject}
         >
