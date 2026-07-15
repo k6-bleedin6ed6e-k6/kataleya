@@ -229,7 +229,7 @@ export default function RoomScreen() {
 
         {/* ── bottom whisper ── */}
         <View style={styles.bottomWhisper} pointerEvents="none">
-          <Text style={styles.bottomWhisperText}>you're not alone.</Text>
+          <Text style={styles.bottomWhisperText}>{"you're not alone."}</Text>
         </View>
 
         {/* ── gesture ghost ── */}

@@ -21,6 +21,7 @@ import {
   type JournalEntry,
   type MoodLog,
 } from '../utils/sanctuary'
+import { moodLabel } from '../utils/insights'
 
 const GREEN = '#33ff33'
 const GREEN_DIM = '#22cc22'
@@ -38,16 +39,6 @@ function formatEntryBody(body: string): string {
   return body.slice(0, 28) + '...'
 }
 
-function moodLabel(v: number): string {
-  const map: Record<number, string> = {
-    1: 'storm',
-    2: 'rain',
-    3: 'grey',
-    4: 'clear',
-    5: 'sun',
-  }
-  return map[v] ?? 'unknown'
-}
 
 type VaultItem =
   | { type: 'journal'; data: JournalEntry }

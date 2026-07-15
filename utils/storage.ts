@@ -50,12 +50,24 @@ export async function getItem<T>(key: StorageKey): Promise<T | null> {
   }
 }
 
-export async function setItem<T>(key: StorageKey, value: T): Promise<void> {
-  await AsyncStorage.setItem(KEYS[key], JSON.stringify(value));
+export async function setItem<T>(key: StorageKey, value: T): Promise<boolean> {
+  try {
+    await AsyncStorage.setItem(KEYS[key], JSON.stringify(value));
+    return true;
+  } catch (err) {
+    if (__DEV__) console.error(`storage: failed to save ${key}`, err);
+    return false;
+  }
 }
 
-export async function removeItem(key: StorageKey): Promise<void> {
-  await AsyncStorage.removeItem(KEYS[key]);
+export async function removeItem(key: StorageKey): Promise<boolean> {
+  try {
+    await AsyncStorage.removeItem(KEYS[key]);
+    return true;
+  } catch (err) {
+    if (__DEV__) console.error(`storage: failed to remove ${key}`, err);
+    return false;
+  }
 }
 
 // ------------------------------------------------------------------
@@ -65,7 +77,7 @@ export async function getLastOpen(): Promise<number | null> {
   return getItem<number>('last_open_at');
 }
 
-export async function setLastOpen(timestamp: number = Date.now()): Promise<void> {
+export async function setLastOpen(timestamp: number = Date.now()): Promise<boolean> {
   return setItem('last_open_at', timestamp);
 }
 
@@ -84,9 +96,10 @@ export async function getAttunement(): Promise<Attunement | null> {
   return { name, sobriety_date };
 }
 
-export async function setAttunement(data: Attunement): Promise<void> {
-  await setItem('user_name', data.name);
-  await setItem('sobriety_date', data.sobriety_date);
+export async function setAttunement(data: Attunement): Promise<boolean> {
+  const nameOk = await setItem('user_name', data.name);
+  const dateOk = await setItem('sobriety_date', data.sobriety_date);
+  return nameOk && dateOk;
 }
 
 // ------------------------------------------------------------------
@@ -99,7 +112,7 @@ export async function getBreathTechnique(): Promise<BreathTechnique> {
   return stored ?? 'resonant'; // default: 11s resonant cycle
 }
 
-export async function setBreathTechnique(technique: BreathTechnique): Promise<void> {
+export async function setBreathTechnique(technique: BreathTechnique): Promise<boolean> {
   return setItem('breath_technique', technique);
 }
 
@@ -111,7 +124,7 @@ export async function getOrbSensitivity(): Promise<number> {
   return stored ?? 0.5; // default: medium
 }
 
-export async function setOrbSensitivity(value: number): Promise<void> {
+export async function setOrbSensitivity(value: number): Promise<boolean> {
   const clamped = Math.max(0, Math.min(1, value));
   return setItem('orb_sensitivity', clamped);
 }
@@ -124,7 +137,7 @@ export async function getHapticsEnabled(): Promise<boolean> {
   return stored ?? true; // default: on
 }
 
-export async function setHapticsEnabled(enabled: boolean): Promise<void> {
+export async function setHapticsEnabled(enabled: boolean): Promise<boolean> {
   return setItem('haptics_enabled', enabled);
 }
 
@@ -138,13 +151,19 @@ export async function getActiveSeason(): Promise<Season> {
   return stored ?? 'seed'; // default: new users begin as seed
 }
 
-export async function setActiveSeason(season: Season): Promise<void> {
+export async function setActiveSeason(season: Season): Promise<boolean> {
   return setItem('active_season', season);
 }
 
 // ------------------------------------------------------------------
 // nuclear: clear all surface vault data (not sanctuary, not fortress)
 // ------------------------------------------------------------------
-export async function clearSurfaceVault(): Promise<void> {
-  await AsyncStorage.multiRemove(Object.values(KEYS));
+export async function clearSurfaceVault(): Promise<boolean> {
+  try {
+    await AsyncStorage.multiRemove(Object.values(KEYS));
+    return true;
+  } catch (err) {
+    if (__DEV__) console.error('storage: failed to clear surface vault', err);
+    return false;
+  }
 }

@@ -82,11 +82,17 @@ export interface JournalEntry {
 // ------------------------------------------------------------------
 // mood_logs — write
 // ------------------------------------------------------------------
-export function insertMoodLog(phase: PhaseKey, mood_value: MoodValue): void {
-  db.runSync(
-    'INSERT INTO mood_logs (phase, mood_value, logged_at) VALUES (?, ?, ?)',
-    [phase, mood_value, Date.now()]
-  )
+export function insertMoodLog(phase: PhaseKey, mood_value: MoodValue): boolean {
+  try {
+    db.runSync(
+      'INSERT INTO mood_logs (phase, mood_value, logged_at) VALUES (?, ?, ?)',
+      [phase, mood_value, Date.now()]
+    )
+    return true
+  } catch (err) {
+    if (__DEV__) console.error('sanctuary: failed to insert mood log', err)
+    return false
+  }
 }
 
 // ------------------------------------------------------------------
@@ -109,11 +115,17 @@ export function getRecentMoodLogs(limit = 10): MoodLog[] {
 // ------------------------------------------------------------------
 // urge_logs — write
 // ------------------------------------------------------------------
-export function insertUrgeLog(phase: PhaseKey, intensity: UrgeIntensity): void {
-  db.runSync(
-    'INSERT INTO urge_logs (phase, intensity, logged_at) VALUES (?, ?, ?)',
-    [phase, intensity, Date.now()]
-  )
+export function insertUrgeLog(phase: PhaseKey, intensity: UrgeIntensity): boolean {
+  try {
+    db.runSync(
+      'INSERT INTO urge_logs (phase, intensity, logged_at) VALUES (?, ?, ?)',
+      [phase, intensity, Date.now()]
+    )
+    return true
+  } catch (err) {
+    if (__DEV__) console.error('sanctuary: failed to insert urge log', err)
+    return false
+  }
 }
 
 // ------------------------------------------------------------------
@@ -136,13 +148,19 @@ export function getRecentUrgeLogs(limit = 10): UrgeLog[] {
 // ------------------------------------------------------------------
 // journal_entries — write
 // ------------------------------------------------------------------
-export function insertJournalEntry(phase: PhaseKey, body: string): void {
+export function insertJournalEntry(phase: PhaseKey, body: string): boolean {
   const trimmed = body.trim()
-  if (!trimmed) return
-  db.runSync(
-    'INSERT INTO journal_entries (phase, body, logged_at) VALUES (?, ?, ?)',
-    [phase, trimmed, Date.now()]
-  )
+  if (!trimmed) return false
+  try {
+    db.runSync(
+      'INSERT INTO journal_entries (phase, body, logged_at) VALUES (?, ?, ?)',
+      [phase, trimmed, Date.now()]
+    )
+    return true
+  } catch (err) {
+    if (__DEV__) console.error('sanctuary: failed to insert journal entry', err)
+    return false
+  }
 }
 
 // ------------------------------------------------------------------
@@ -189,9 +207,15 @@ export function getAllJournalEntries(limit = 50): JournalEntry[] {
 // ------------------------------------------------------------------
 // nuclear: wipe sanctuary (for settings / reset)
 // ------------------------------------------------------------------
-export function clearSanctuary(): void {
-  db.execSync('DELETE FROM mood_logs; DELETE FROM urge_logs; DELETE FROM journal_entries;')
-  // VACUUM reclaims the freed disk space — the burn ritual is supposed to
-  // feel like real destruction, not just rows marked deleted.
-  db.execSync('VACUUM;')
+export function clearSanctuary(): boolean {
+  try {
+    db.execSync('DELETE FROM mood_logs; DELETE FROM urge_logs; DELETE FROM journal_entries;')
+    // VACUUM reclaims the freed disk space — the burn ritual is supposed to
+    // feel like real destruction, not just rows marked deleted.
+    db.execSync('VACUUM;')
+    return true
+  } catch (err) {
+    if (__DEV__) console.error('sanctuary: failed to clear', err)
+    return false
+  }
 }

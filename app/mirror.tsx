@@ -19,43 +19,14 @@ import Svg, { Rect, Line, Polyline, Polygon } from 'react-native-svg'
 
 import { useCircadian } from '../hooks/use-circadian'
 import { getAttunement } from '../utils/storage'
-import {
-  getLatestMoodLog,
-  getAllMoodLogs,
-  type MoodLog,
-} from '../utils/sanctuary'
+import { getLatestMoodLog, getAllMoodLogs } from '../utils/sanctuary'
+import { daysSince, timeAgo, moodTrend } from '../utils/insights'
 
 const { height: H } = Dimensions.get('window')
 const GREEN = '#00FF41'
 const GREEN_DIM = '#22cc22'
 const GREEN_FAINT = '#113311'
 const BLACK = '#000000'
-
-function daysSince(iso: string): number {
-  const start = new Date(iso)
-  const now = new Date()
-  const ms = now.getTime() - start.getTime()
-  return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)))
-}
-
-function timeAgo(ms: number): string {
-  const mins = Math.floor((Date.now() - ms) / 60000)
-  if (mins < 1) return 'now'
-  if (mins < 60) return `${mins}m`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h`
-  const days = Math.floor(hrs / 24)
-  return `${days}d`
-}
-
-function moodTrend(logs: MoodLog[]): string {
-  if (logs.length === 0) return '—'
-  const avg = logs.reduce((s, l) => s + l.mood_value, 0) / logs.length
-  if (avg >= 4.5) return 'ascendant'
-  if (avg >= 3.5) return 'stable'
-  if (avg >= 2.5) return 'unsettled'
-  return 'critical'
-}
 
 export default function MirrorScreen() {
   const router = useRouter()

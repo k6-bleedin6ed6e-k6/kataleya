@@ -220,7 +220,7 @@ export default function BridgeScreen() {
 
         {/* footer */}
         <View style={styles.footer} pointerEvents="none">
-          <Text style={styles.footerText}>// origin: thinkBad-doGood-sa.my</Text>
+          <Text style={styles.footerText}>{'// origin: thinkBad-doGood-sa.my'}</Text>
           <Text style={styles.footerHint}>[ swipe right to return ]</Text>
         </View>
       </View>

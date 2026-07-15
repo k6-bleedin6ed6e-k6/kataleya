@@ -23,38 +23,15 @@ import {
   type MoodLog,
   type UrgeLog,
 } from '../utils/sanctuary'
+import { timeAgoTerminal, moodLabel, moodColor as moodColorOf } from '../utils/insights'
 
 const GREEN = '#33ff33'
 const GREEN_DIM = '#22cc22'
 const GREEN_FAINT = '#113311'
 const BLACK = '#000000'
 
-function timeAgo(ms: number): string {
-  const mins = Math.floor((Date.now() - ms) / 60000)
-  if (mins < 1) return 'now'
-  if (mins < 60) return `${mins}m_ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h_ago`
-  const days = Math.floor(hrs / 24)
-  return `${days}d_ago`
-}
-
-function moodLabel(v: number): string {
-  const map: Record<number, string> = {
-    1: 'storm',
-    2: 'rain',
-    3: 'grey',
-    4: 'clear',
-    5: 'sun',
-  }
-  return map[v] ?? 'unknown'
-}
-
-function moodColor(v: number): string {
-  if (v <= 2) return '#ff4444'
-  if (v === 3) return '#ffaa00'
-  return GREEN
-}
+const timeAgo = timeAgoTerminal
+const moodColor = (v: number): string => moodColorOf(v, GREEN)
 
 type ScarItem =
   | { type: 'mood'; data: MoodLog }
