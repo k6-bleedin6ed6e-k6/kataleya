@@ -9,7 +9,16 @@ import type { PhaseKey } from '../constants/palettes'
 
 const db = SQLite.openDatabaseSync('sanctuary.db')
 
-db.execSync(`
+// ------------------------------------------------------------------
+// schema migrations — versioned via SQLite's own user_version pragma.
+// `CREATE TABLE IF NOT EXISTS` alone can't evolve a table that already
+// exists on someone's device (adding/renaming a column silently does
+// nothing), so every schema change from here on is a new numbered step
+// instead of edits to the existing ones.
+// ------------------------------------------------------------------
+const MIGRATIONS: string[] = [
+  // v1 — initial schema
+  `
   CREATE TABLE IF NOT EXISTS mood_logs (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     phase       TEXT    NOT NULL,
@@ -28,7 +37,20 @@ db.execSync(`
     body        TEXT    NOT NULL,
     logged_at   INTEGER NOT NULL
   );
-`)
+  `,
+]
+
+function migrate(): void {
+  const { user_version: version } = db.getFirstSync<{ user_version: number }>(
+    'PRAGMA user_version'
+  )!
+  for (let v = version; v < MIGRATIONS.length; v++) {
+    db.execSync(MIGRATIONS[v])
+    db.execSync(`PRAGMA user_version = ${v + 1}`)
+  }
+}
+
+migrate()
 
 // ------------------------------------------------------------------
 // types
