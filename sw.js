@@ -6,7 +6,7 @@
 // the moment it's reachable), cache-first for the static bits that never
 // change mid-session.
 
-const CACHE_NAME = 'kataleya-shell-v4'; // bumped: send-a-light auto-relay added
+const CACHE_NAME = 'kataleya-shell-v5'; // Stable phrase slot and accessible grounding flow
 const SHELL_ASSETS = [
   '/kataleya-demo/',
   '/kataleya-demo/index.html',
